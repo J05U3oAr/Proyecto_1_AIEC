@@ -7,7 +7,7 @@ describe('ChatHeader', () => {
   beforeEach(() => {
     useChatStore.setState({
       isOpen: true,
-      messages: [{ id: '1', role: 'user', content: 'test', timestamp: 123 }],
+      messages: [{ id: '1', role: 'user', content: 'test', timestamp: 123, status: 'sent' }],
       isTyping: false,
     });
   });

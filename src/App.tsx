@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { ChatWidget } from './components/widget/ChatWidget';
 
 export const App: React.FC = () => {
   const [count, setCount] = useState(0);
@@ -23,6 +24,7 @@ export const App: React.FC = () => {
           </span>
         </div>
       </div>
+      <ChatWidget />
     </main>
   );
 };

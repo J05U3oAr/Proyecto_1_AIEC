@@ -1,10 +1,12 @@
 import React, { useState, KeyboardEvent, useRef, useEffect } from 'react';
 import { ArrowRight } from 'lucide-react';
-import { useChatStore } from '../../store/useChatStore';
+import { chatService } from '@/services/chatService';
+import { useChatStore } from '@/store/useChatStore';
 
 export const ChatInput: React.FC = () => {
   const [text, setText] = useState('');
-  const { addMessage } = useChatStore();
+  const { sendMessage, receiveMessage, markMessageAsSent, markMessageAsError, setTyping } =
+    useChatStore();
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
   // Auto-ajuste de altura del textarea
@@ -15,37 +17,27 @@ export const ChatInput: React.FC = () => {
     el.style.height = `${Math.min(el.scrollHeight, 120)}px`;
   }, [text]);
 
-  const handleSend = () => {
+  const handleSend = async (): Promise<void> => {
     const trimmed = text.trim();
     if (!trimmed) return;
 
-    // Agregar mensaje del usuario
-    addMessage({
-      role: 'user',
-      content: trimmed,
-    });
+    const messageId = sendMessage(trimmed);
     setText('');
-
-    // Obtener la función setTyping directamente del store
-    const { setTyping } = useChatStore.getState();
     setTyping(true);
 
-    // Simular respuesta del agente para probar la UI
-    // Esto se reemplazará cuando conectemos el IChatService
-    setTimeout(() => {
-      setTyping(false);
-      addMessage({
-        role: 'assistant',
-        content:
-          'Según La guía del autoestopista galáctico de Douglas Adams, la respuesta a la pregunta última sobre la vida, el universo y todo lo demás es 42.',
-      });
-    }, 2000);
+    try {
+      const response = await chatService.sendMessage(trimmed);
+      markMessageAsSent(messageId);
+      receiveMessage(response.response);
+    } catch {
+      markMessageAsError(messageId);
+    }
   };
 
   const handleKeyDown = (e: KeyboardEvent<HTMLTextAreaElement>) => {
     if (e.key === 'Enter' && !e.shiftKey) {
       e.preventDefault(); // Evitar el salto de línea
-      handleSend();
+      void handleSend();
     }
   };
 
@@ -62,7 +54,7 @@ export const ChatInput: React.FC = () => {
           aria-label="Campo de texto para mensaje"
         />
         <button
-          onClick={handleSend}
+          onClick={() => void handleSend()}
           disabled={!text.trim()}
           className="flex-shrink-0 w-11 h-11 bg-black text-white rounded-full flex items-center justify-center disabled:opacity-50 disabled:cursor-not-allowed transition-opacity focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-black"
           aria-label="Enviar mensaje"

@@ -10,8 +10,8 @@ export const MessageBubble: React.FC<Props> = ({ message }) => {
 
   if (isUser) {
     return (
-      <div className="flex justify-center mb-6">
-        <div className="px-6 py-2 border border-black rounded-full max-w-[85%] bg-white text-black text-sm text-center shadow-sm">
+      <div className="flex justify-end mb-6">
+        <div className="px-6 py-2 border border-black rounded-full max-w-[85%] bg-white text-black text-sm shadow-sm">
           {message.content}
         </div>
       </div>

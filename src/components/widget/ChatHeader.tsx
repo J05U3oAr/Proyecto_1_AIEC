@@ -1,5 +1,5 @@
 import React from 'react';
-import { Minus, RotateCcw } from 'lucide-react';
+import { Minus, RotateCcw, Maximize2, Minimize2 } from 'lucide-react';
 import { useChatStore } from '../../store/useChatStore';
 
 // Simple bear head SVG matching the minimalist wireframe
@@ -17,7 +17,7 @@ const BearAvatar = () => (
 );
 
 export const ChatHeader: React.FC = () => {
-  const { toggleChat, clearChat } = useChatStore();
+  const { toggleChat, clearChat, isExpanded, toggleExpand } = useChatStore();
 
   return (
     <div className="flex flex-col items-center px-6 pt-10 pb-4 bg-white relative">
@@ -30,6 +30,14 @@ export const ChatHeader: React.FC = () => {
           title="Reiniciar chat"
         >
           <RotateCcw size={16} strokeWidth={2} />
+        </button>
+        <button
+          onClick={toggleExpand}
+          className="p-1 text-gray-400 hover:text-black transition-colors rounded-full"
+          aria-label={isExpanded ? "Contraer chat" : "Expandir chat"}
+          title={isExpanded ? "Contraer chat" : "Expandir chat"}
+        >
+          {isExpanded ? <Minimize2 size={16} strokeWidth={2} /> : <Maximize2 size={16} strokeWidth={2} />}
         </button>
         <button
           onClick={toggleChat}

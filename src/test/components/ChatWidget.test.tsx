@@ -19,4 +19,11 @@ describe('ChatWidget', () => {
     render(<ChatWidget />);
     expect(screen.getByText(/soy tu asistente virtual/i)).toBeInTheDocument();
   });
+
+  it('renderiza clases de expansión cuando isExpanded es true', () => {
+    useChatStore.setState({ isOpen: true, isExpanded: true });
+    render(<ChatWidget />);
+    // Verificar que el contenedor tenga la clase de ancho expandido
+    expect(screen.getByText(/soy tu asistente virtual/i).closest('div.fixed')).toHaveClass('w-[800px]');
+  });
 });

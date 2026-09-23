@@ -9,9 +9,11 @@ export interface Message {
 
 export interface ChatState {
   isOpen: boolean;
+  isExpanded: boolean;
   messages: Message[];
   isTyping: boolean;
   toggleChat: () => void;
+  toggleExpand: () => void;
   addMessage: (message: Omit<Message, 'id' | 'timestamp'>) => void;
   setTyping: (isTyping: boolean) => void;
   clearChat: () => void;

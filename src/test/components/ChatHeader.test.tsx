@@ -29,4 +29,11 @@ describe('ChatHeader', () => {
     fireEvent.click(clearBtn);
     expect(useChatStore.getState().messages.length).toBe(0);
   });
+
+  it('expande el chat al hacer clic en el botón expandir', () => {
+    render(<ChatHeader />);
+    const expandBtn = screen.getByRole('button', { name: /Expandir chat/i });
+    fireEvent.click(expandBtn);
+    expect(useChatStore.getState().isExpanded).toBe(true);
+  });
 });

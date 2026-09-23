@@ -32,6 +32,7 @@
     "vitest.config.ts",
     "vite.config.ts",
     "vite.lib.config.ts",
+    "tailwind.sdk.config.js",
     "tsconfig.lib.json"
   ]
 }

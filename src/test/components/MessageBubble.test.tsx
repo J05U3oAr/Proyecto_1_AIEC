@@ -25,4 +25,12 @@ describe('MessageBubble', () => {
 
     expect(screen.getByText('respuesta enriquecida').tagName).toBe('STRONG');
   });
+
+  it('informa cuando un mensaje del usuario no pudo enviarse', () => {
+    render(
+      <MessageBubble message={{ ...createMessage('user', 'Mensaje fallido'), status: 'error' }} />
+    );
+
+    expect(screen.getByRole('status')).toHaveTextContent('No se pudo enviar');
+  });
 });

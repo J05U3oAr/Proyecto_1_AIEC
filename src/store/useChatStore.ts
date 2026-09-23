@@ -23,13 +23,6 @@ export const useChatStore = create<ChatState>()(
       isTyping: false,
       toggleChat: () => set(state => ({ isOpen: !state.isOpen })),
       toggleExpand: () => set(state => ({ isExpanded: !state.isExpanded })),
-      addMessage: message =>
-        set(state => ({
-          messages: [
-            ...state.messages,
-            createMessage(message.role, message.content, message.status ?? 'sent'),
-          ],
-        })),
       sendMessage: content => {
         const message = createMessage('user', content, 'sending');
         set(state => ({ messages: [...state.messages, message] }));

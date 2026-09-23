@@ -16,7 +16,6 @@ export interface ChatState {
   isTyping: boolean;
   toggleChat: () => void;
   toggleExpand: () => void;
-  addMessage: (message: { role: Role; content: string; status?: MessageStatus }) => void;
   sendMessage: (content: string) => string;
   receiveMessage: (content: string) => void;
   markMessageAsSent: (messageId: string) => void;

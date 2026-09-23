@@ -5,7 +5,7 @@ import type { ChatRequest, ChatResponse } from '@/services/types';
 const getLatency = (): number => 800 + Math.floor(Math.random() * 701);
 
 export const handlers = [
-  http.post('/api/chat', async ({ request }) => {
+  http.post('*/api/chat', async ({ request }) => {
     const body = (await request.json()) as ChatRequest;
 
     await delay(getLatency());

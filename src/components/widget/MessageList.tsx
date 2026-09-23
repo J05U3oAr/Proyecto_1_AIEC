@@ -19,7 +19,7 @@ export const MessageList: React.FC = () => {
   }, [messages, isTyping]);
 
   return (
-    <ScrollArea.Root className="flex-1 w-full bg-white overflow-hidden relative">
+    <ScrollArea.Root className="relative w-full flex-1 overflow-hidden bg-[var(--agichat-surface)]">
       <ScrollArea.Viewport ref={viewportRef} className="w-full h-full px-6 py-4">
         {messages.map(msg => (
           <MessageBubble key={msg.id} message={msg} />

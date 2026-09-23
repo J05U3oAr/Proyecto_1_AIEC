@@ -11,7 +11,7 @@ export const TypingIndicator: React.FC = () => {
     duration: 0.5,
     repeat: Infinity,
     repeatType: 'reverse' as const,
-    ease: 'easeInOut',
+    ease: 'easeInOut' as const,
   };
 
   return (

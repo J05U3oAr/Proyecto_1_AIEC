@@ -24,10 +24,10 @@ describe('ChatInput', () => {
     render(<ChatInput />);
     const input = screen.getByRole('textbox', { name: /Campo de texto para mensaje/i });
     const btn = screen.getByRole('button', { name: /Enviar mensaje/i });
-    
+
     fireEvent.change(input, { target: { value: 'Mensaje prueba' } });
     fireEvent.click(btn);
-    
+
     expect(useChatStore.getState().messages).toHaveLength(1);
     expect(useChatStore.getState().messages[0].content).toBe('Mensaje prueba');
     expect(input).toHaveValue('');
@@ -36,10 +36,10 @@ describe('ChatInput', () => {
   it('envía mensaje al presionar Enter sin Shift', () => {
     render(<ChatInput />);
     const input = screen.getByRole('textbox', { name: /Campo de texto para mensaje/i });
-    
+
     fireEvent.change(input, { target: { value: 'Mensaje con Enter' } });
     fireEvent.keyDown(input, { key: 'Enter', code: 'Enter', shiftKey: false });
-    
+
     expect(useChatStore.getState().messages).toHaveLength(1);
     expect(useChatStore.getState().messages[0].content).toBe('Mensaje con Enter');
   });
@@ -48,10 +48,10 @@ describe('ChatInput', () => {
     render(<ChatInput />);
     const input = screen.getByRole('textbox', { name: /Campo de texto para mensaje/i });
     const btn = screen.getByRole('button', { name: /Enviar mensaje/i });
-    
+
     fireEvent.change(input, { target: { value: '   ' } });
     fireEvent.click(btn);
-    
+
     expect(useChatStore.getState().messages).toHaveLength(0);
   });
 
@@ -59,18 +59,18 @@ describe('ChatInput', () => {
     render(<ChatInput />);
     const input = screen.getByRole('textbox', { name: /Campo de texto para mensaje/i });
     const btn = screen.getByRole('button', { name: /Enviar mensaje/i });
-    
+
     fireEvent.change(input, { target: { value: 'Hola' } });
     fireEvent.click(btn);
-    
+
     // Inmediatamente después de enviar, el usuario tiene su mensaje y el agente escribe
     expect(useChatStore.getState().isTyping).toBe(true);
-    
+
     // Avanzar 2000ms en el tiempo para disparar el setTimeout de la respuesta simulada
     act(() => {
       vi.advanceTimersByTime(2000);
     });
-    
+
     expect(useChatStore.getState().isTyping).toBe(false);
     expect(useChatStore.getState().messages).toHaveLength(2); // Usuario + Asistente
     expect(useChatStore.getState().messages[1].role).toBe('assistant');
@@ -79,10 +79,10 @@ describe('ChatInput', () => {
   it('no envía mensaje al presionar Shift+Enter', () => {
     render(<ChatInput />);
     const input = screen.getByRole('textbox', { name: /Campo de texto para mensaje/i });
-    
+
     fireEvent.change(input, { target: { value: 'Salto de linea' } });
     fireEvent.keyDown(input, { key: 'Enter', code: 'Enter', shiftKey: true });
-    
+
     expect(useChatStore.getState().messages).toHaveLength(0);
   });
 

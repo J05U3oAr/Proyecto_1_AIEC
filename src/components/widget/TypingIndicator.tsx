@@ -15,7 +15,10 @@ export const TypingIndicator: React.FC = () => {
   };
 
   return (
-    <div className="flex justify-start mb-6 items-center h-6 pl-2" aria-label="El asistente está escribiendo...">
+    <div
+      className="flex justify-start mb-6 items-center h-6 pl-2"
+      aria-label="El asistente está escribiendo..."
+    >
       <div className="flex gap-1.5">
         <motion.span
           className="w-1.5 h-1.5 bg-black rounded-full"

@@ -25,7 +25,7 @@ export const ChatInput: React.FC = () => {
       content: trimmed,
     });
     setText('');
-    
+
     // Obtener la función setTyping directamente del store
     const { setTyping } = useChatStore.getState();
     setTyping(true);
@@ -36,7 +36,8 @@ export const ChatInput: React.FC = () => {
       setTyping(false);
       addMessage({
         role: 'assistant',
-        content: 'Según La guía del autoestopista galáctico de Douglas Adams, la respuesta a la pregunta última sobre la vida, el universo y todo lo demás es 42.',
+        content:
+          'Según La guía del autoestopista galáctico de Douglas Adams, la respuesta a la pregunta última sobre la vida, el universo y todo lo demás es 42.',
       });
     }, 2000);
   };
@@ -54,7 +55,7 @@ export const ChatInput: React.FC = () => {
         <textarea
           ref={textareaRef}
           value={text}
-          onChange={(e) => setText(e.target.value)}
+          onChange={e => setText(e.target.value)}
           onKeyDown={handleKeyDown}
           className="flex-1 resize-none overflow-y-auto rounded-md border border-black px-4 py-2.5 text-sm focus:outline-none focus:ring-1 focus:ring-black text-black bg-white placeholder-gray-500 min-h-[44px]"
           rows={1}

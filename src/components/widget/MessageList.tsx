@@ -21,12 +21,12 @@ export const MessageList: React.FC = () => {
   return (
     <ScrollArea.Root className="flex-1 w-full bg-white overflow-hidden relative">
       <ScrollArea.Viewport ref={viewportRef} className="w-full h-full px-6 py-4">
-        {messages.map((msg) => (
+        {messages.map(msg => (
           <MessageBubble key={msg.id} message={msg} />
         ))}
         {isTyping && <TypingIndicator />}
       </ScrollArea.Viewport>
-      
+
       <ScrollArea.Scrollbar
         className="flex select-none touch-none p-0.5 bg-transparent hover:bg-gray-100 transition-colors duration-[160ms] ease-out data-[orientation=vertical]:w-2"
         orientation="vertical"

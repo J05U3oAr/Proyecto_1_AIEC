@@ -24,6 +24,8 @@ describe('ChatWidget', () => {
     useChatStore.setState({ isOpen: true, isExpanded: true });
     render(<ChatWidget />);
     // Verificar que el contenedor tenga la clase de ancho expandido
-    expect(screen.getByText(/soy tu asistente virtual/i).closest('div.fixed')).toHaveClass('w-[800px]');
+    expect(screen.getByText(/soy tu asistente virtual/i).closest('div.fixed')).toHaveClass(
+      'w-[800px]'
+    );
   });
 });

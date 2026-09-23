@@ -5,7 +5,11 @@ import { useChatStore } from '../../store/useChatStore';
 
 describe('ChatHeader', () => {
   beforeEach(() => {
-    useChatStore.setState({ isOpen: true, messages: [{ id: '1', role: 'user', content: 'test', timestamp: 123 }], isTyping: false });
+    useChatStore.setState({
+      isOpen: true,
+      messages: [{ id: '1', role: 'user', content: 'test', timestamp: 123 }],
+      isTyping: false,
+    });
   });
 
   it('renderiza la cabecera con el título y el avatar', () => {
@@ -24,7 +28,7 @@ describe('ChatHeader', () => {
   it('limpia el chat al hacer clic en el botón reiniciar', () => {
     render(<ChatHeader />);
     expect(useChatStore.getState().messages.length).toBe(1);
-    
+
     const clearBtn = screen.getByRole('button', { name: /Reiniciar chat/i });
     fireEvent.click(clearBtn);
     expect(useChatStore.getState().messages.length).toBe(0);

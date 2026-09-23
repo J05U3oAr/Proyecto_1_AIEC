@@ -3,8 +3,8 @@ import { Minus, RotateCcw, Maximize2, Minimize2 } from 'lucide-react';
 import { useChatStore } from '../../store/useChatStore';
 
 // Simple bear head SVG matching the minimalist wireframe
-const BearAvatar = () => (
-  <svg width="64" height="64" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Avatar de Sofía">
+export const BearAvatar = ({ size = 64 }: { size?: number | string }) => (
+  <svg width={size} height={size} viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Avatar de Sofía">
     <circle cx="32" cy="32" r="31" fill="white" stroke="black" strokeWidth="1.5" />
     <circle cx="18" cy="23.5" r="9" fill="black" />
     <circle cx="46" cy="23.5" r="9" fill="black" />

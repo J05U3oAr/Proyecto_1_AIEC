@@ -9,10 +9,10 @@ export const ChatInput: React.FC = () => {
 
   // Auto-ajuste de altura del textarea
   useEffect(() => {
-    if (textareaRef.current) {
-      textareaRef.current.style.height = 'auto';
-      textareaRef.current.style.height = `${Math.min(textareaRef.current.scrollHeight, 120)}px`;
-    }
+    const el = textareaRef.current!;
+
+    el.style.height = 'auto';
+    el.style.height = `${Math.min(el.scrollHeight, 120)}px`;
   }, [text]);
 
   const handleSend = () => {

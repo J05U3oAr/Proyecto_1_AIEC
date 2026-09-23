@@ -10,12 +10,12 @@ export const MessageList: React.FC = () => {
 
   // Auto-scroll hacia el final cada vez que cambian los mensajes o el estado de isTyping
   useEffect(() => {
-    if (viewportRef.current) {
-      viewportRef.current.scrollTo({
-        top: viewportRef.current.scrollHeight,
-        behavior: 'smooth',
-      });
-    }
+    const el = viewportRef.current!;
+
+    el.scrollTo({
+      top: el.scrollHeight,
+      behavior: 'smooth',
+    });
   }, [messages, isTyping]);
 
   return (

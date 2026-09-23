@@ -93,4 +93,11 @@ describe('ChatInput', () => {
     fireEvent.keyDown(input, { key: 'A', code: 'KeyA', shiftKey: false });
     expect(useChatStore.getState().messages).toHaveLength(0);
   });
+
+  it('no envía mensaje al presionar Enter con texto vacío (cobertura handleSend)', () => {
+    render(<ChatInput />);
+    const input = screen.getByRole('textbox', { name: /Campo de texto para mensaje/i });
+    fireEvent.keyDown(input, { key: 'Enter', code: 'Enter', shiftKey: false });
+    expect(useChatStore.getState().messages).toHaveLength(0);
+  });
 });

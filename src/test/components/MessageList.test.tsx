@@ -24,8 +24,8 @@ describe('MessageList', () => {
   it('renderiza los mensajes correctamente', () => {
     useChatStore.setState({
       messages: [
-        { id: '1', role: 'user', content: 'Hola', timestamp: 1 },
-        { id: '2', role: 'assistant', content: 'Respuesta', timestamp: 2 },
+        { id: '1', role: 'user', content: 'Hola', timestamp: 1, status: 'sent' },
+        { id: '2', role: 'assistant', content: 'Respuesta', timestamp: 2, status: 'sent' },
       ],
     });
     render(<MessageList />);

@@ -1,103 +1,91 @@
-import { render, screen, fireEvent, act } from '@testing-library/react';
-import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
-import { ChatInput } from '../../components/widget/ChatInput';
-import { useChatStore } from '../../store/useChatStore';
+import { act, fireEvent, render, screen } from '@testing-library/react';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+import { ChatInput } from '@/components/widget/ChatInput';
+import { useChatStore } from '@/store/useChatStore';
+
+const sendMessageMock = vi.hoisted(() => vi.fn());
+
+vi.mock('@/services/chatService', () => ({
+  chatService: { sendMessage: sendMessageMock },
+}));
 
 describe('ChatInput', () => {
   beforeEach(() => {
     useChatStore.setState({ isOpen: true, messages: [], isTyping: false });
-    vi.useFakeTimers();
+    sendMessageMock.mockResolvedValue({ response: 'Respuesta del agente' });
   });
 
   afterEach(() => {
-    vi.useRealTimers();
+    vi.clearAllMocks();
   });
 
   it('escribe en el campo de texto', () => {
     render(<ChatInput />);
-    const input = screen.getByRole('textbox', { name: /Campo de texto para mensaje/i });
-    fireEvent.change(input, { target: { value: 'Prueba' } });
-    expect(input).toHaveValue('Prueba');
-  });
 
-  it('envía mensaje al hacer clic en el botón', () => {
-    render(<ChatInput />);
-    const input = screen.getByRole('textbox', { name: /Campo de texto para mensaje/i });
-    const btn = screen.getByRole('button', { name: /Enviar mensaje/i });
-
-    fireEvent.change(input, { target: { value: 'Mensaje prueba' } });
-    fireEvent.click(btn);
-
-    expect(useChatStore.getState().messages).toHaveLength(1);
-    expect(useChatStore.getState().messages[0].content).toBe('Mensaje prueba');
-    expect(input).toHaveValue('');
-  });
-
-  it('envía mensaje al presionar Enter sin Shift', () => {
-    render(<ChatInput />);
-    const input = screen.getByRole('textbox', { name: /Campo de texto para mensaje/i });
-
-    fireEvent.change(input, { target: { value: 'Mensaje con Enter' } });
-    fireEvent.keyDown(input, { key: 'Enter', code: 'Enter', shiftKey: false });
-
-    expect(useChatStore.getState().messages).toHaveLength(1);
-    expect(useChatStore.getState().messages[0].content).toBe('Mensaje con Enter');
-  });
-
-  it('no envía mensaje si está vacío o solo tiene espacios', () => {
-    render(<ChatInput />);
-    const input = screen.getByRole('textbox', { name: /Campo de texto para mensaje/i });
-    const btn = screen.getByRole('button', { name: /Enviar mensaje/i });
-
-    fireEvent.change(input, { target: { value: '   ' } });
-    fireEvent.click(btn);
-
-    expect(useChatStore.getState().messages).toHaveLength(0);
-  });
-
-  it('simula respuesta del agente y manipula isTyping', () => {
-    render(<ChatInput />);
-    const input = screen.getByRole('textbox', { name: /Campo de texto para mensaje/i });
-    const btn = screen.getByRole('button', { name: /Enviar mensaje/i });
-
-    fireEvent.change(input, { target: { value: 'Hola' } });
-    fireEvent.click(btn);
-
-    // Inmediatamente después de enviar, el usuario tiene su mensaje y el agente escribe
-    expect(useChatStore.getState().isTyping).toBe(true);
-
-    // Avanzar 2000ms en el tiempo para disparar el setTimeout de la respuesta simulada
-    act(() => {
-      vi.advanceTimersByTime(2000);
+    fireEvent.change(screen.getByRole('textbox', { name: /campo de texto/i }), {
+      target: { value: 'Prueba' },
     });
 
-    expect(useChatStore.getState().isTyping).toBe(false);
-    expect(useChatStore.getState().messages).toHaveLength(2); // Usuario + Asistente
-    expect(useChatStore.getState().messages[1].role).toBe('assistant');
+    expect(screen.getByRole('textbox')).toHaveValue('Prueba');
   });
 
-  it('no envía mensaje al presionar Shift+Enter', () => {
+  it('envía el mensaje al servicio y agrega la respuesta del agente', async () => {
     render(<ChatInput />);
-    const input = screen.getByRole('textbox', { name: /Campo de texto para mensaje/i });
+    const input = screen.getByRole('textbox', { name: /campo de texto/i });
+    fireEvent.change(input, { target: { value: 'Mensaje prueba' } });
 
-    fireEvent.change(input, { target: { value: 'Salto de linea' } });
+    await act(async () => {
+      fireEvent.click(screen.getByRole('button', { name: /enviar mensaje/i }));
+    });
+
+    expect(sendMessageMock).toHaveBeenCalledWith('Mensaje prueba');
+    expect(useChatStore.getState().messages).toMatchObject([
+      { role: 'user', content: 'Mensaje prueba', status: 'sent' },
+      { role: 'assistant', content: 'Respuesta del agente', status: 'sent' },
+    ]);
+    expect(input).toHaveValue('');
+    expect(useChatStore.getState().isTyping).toBe(false);
+  });
+
+  it('envía el mensaje al presionar Enter sin Shift', async () => {
+    render(<ChatInput />);
+    const input = screen.getByRole('textbox', { name: /campo de texto/i });
+    fireEvent.change(input, { target: { value: 'Mensaje con Enter' } });
+
+    await act(async () => {
+      fireEvent.keyDown(input, { key: 'Enter', code: 'Enter', shiftKey: false });
+    });
+
+    expect(sendMessageMock).toHaveBeenCalledWith('Mensaje con Enter');
+  });
+
+  it('marca el mensaje como error si el servicio falla', async () => {
+    sendMessageMock.mockRejectedValue(new Error('Sin conexión'));
+    render(<ChatInput />);
+    fireEvent.change(screen.getByRole('textbox', { name: /campo de texto/i }), {
+      target: { value: 'Mensaje fallido' },
+    });
+
+    await act(async () => {
+      fireEvent.click(screen.getByRole('button', { name: /enviar mensaje/i }));
+    });
+
+    expect(useChatStore.getState().messages).toMatchObject([
+      { role: 'user', content: 'Mensaje fallido', status: 'error' },
+    ]);
+    expect(useChatStore.getState().isTyping).toBe(false);
+  });
+
+  it('no envía mensajes vacíos ni al presionar Shift+Enter', () => {
+    render(<ChatInput />);
+    const input = screen.getByRole('textbox', { name: /campo de texto/i });
+    fireEvent.keyDown(input, { key: 'Enter', code: 'Enter', shiftKey: false });
+    fireEvent.change(input, { target: { value: '   ' } });
+    fireEvent.click(screen.getByRole('button', { name: /enviar mensaje/i }));
+    fireEvent.change(input, { target: { value: 'Salto de línea' } });
     fireEvent.keyDown(input, { key: 'Enter', code: 'Enter', shiftKey: true });
 
-    expect(useChatStore.getState().messages).toHaveLength(0);
-  });
-
-  it('no envía mensaje si se presiona otra tecla', () => {
-    render(<ChatInput />);
-    const input = screen.getByRole('textbox', { name: /Campo de texto para mensaje/i });
-    fireEvent.change(input, { target: { value: 'Test' } });
-    fireEvent.keyDown(input, { key: 'A', code: 'KeyA', shiftKey: false });
-    expect(useChatStore.getState().messages).toHaveLength(0);
-  });
-
-  it('no envía mensaje al presionar Enter con texto vacío (cobertura handleSend)', () => {
-    render(<ChatInput />);
-    const input = screen.getByRole('textbox', { name: /Campo de texto para mensaje/i });
-    fireEvent.keyDown(input, { key: 'Enter', code: 'Enter', shiftKey: false });
-    expect(useChatStore.getState().messages).toHaveLength(0);
+    expect(sendMessageMock).not.toHaveBeenCalled();
+    expect(useChatStore.getState().messages).toEqual([]);
   });
 });

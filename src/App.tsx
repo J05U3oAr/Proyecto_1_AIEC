@@ -1,6 +1,7 @@
 import React from 'react';
 import { ChatWidget } from '@/components/widget/ChatWidget';
 import { BearAvatar } from '@/components/widget/ChatHeader';
+import { ScenarioButtons } from '@/components/widget/ScenarioButtons';
 
 export const App: React.FC = () => {
   return (
@@ -15,6 +16,7 @@ export const App: React.FC = () => {
         <BearAvatar size={250} />
         <h1 className="text-4xl font-bold mt-8 tracking-widest uppercase">AGIChat</h1>
       </div>
+      <ScenarioButtons />
       <ChatWidget />
     </main>
   );

@@ -27,5 +27,11 @@
       "@/*": ["src/*"]
     }
   },
-  "include": ["src", "vitest.config.ts", "vite.config.ts"]
+  "include": [
+    "src",
+    "vitest.config.ts",
+    "vite.config.ts",
+    "vite.lib.config.ts",
+    "tsconfig.lib.json"
+  ]
 }

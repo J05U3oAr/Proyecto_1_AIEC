@@ -42,21 +42,21 @@ export const ChatInput: React.FC = () => {
   };
 
   return (
-    <div className="p-4 bg-white w-full">
+    <div className="w-full bg-[var(--agichat-surface)] p-4">
       <div className="flex items-end gap-3 max-w-full">
         <textarea
           ref={textareaRef}
           value={text}
           onChange={e => setText(e.target.value)}
           onKeyDown={handleKeyDown}
-          className="flex-1 resize-none overflow-y-auto rounded-md border border-black px-4 py-2.5 text-sm focus:outline-none focus:ring-1 focus:ring-black text-black bg-white placeholder-gray-500 min-h-[44px]"
+          className="min-h-[44px] flex-1 resize-none overflow-y-auto rounded-md border border-[var(--agichat-border)] bg-[var(--agichat-surface)] px-4 py-2.5 text-sm text-[var(--agichat-text)] placeholder:text-[var(--agichat-text-muted)] focus:outline-none focus:ring-1 focus:ring-[var(--agichat-primary)]"
           rows={1}
           aria-label="Campo de texto para mensaje"
         />
         <button
           onClick={() => void handleSend()}
           disabled={!text.trim()}
-          className="flex-shrink-0 w-11 h-11 bg-black text-white rounded-full flex items-center justify-center disabled:opacity-50 disabled:cursor-not-allowed transition-opacity focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-black"
+          className="flex h-11 w-11 flex-shrink-0 items-center justify-center rounded-full bg-[var(--agichat-primary)] text-[var(--agichat-primary-contrast)] transition-opacity focus:outline-none focus:ring-2 focus:ring-[var(--agichat-primary)] focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
           aria-label="Enviar mensaje"
         >
           <ArrowRight size={20} strokeWidth={2} />

@@ -1,9 +1,15 @@
 import React from 'react';
 import { Minus, RotateCcw, Maximize2, Minimize2 } from 'lucide-react';
-import { useChatStore } from '../../store/useChatStore';
+import { useChatStore } from '@/store/useChatStore';
 
 // Simple bear head SVG matching the minimalist wireframe
-export const BearAvatar = ({ size = 64 }: { size?: number | string }) => (
+export const BearAvatar = ({
+  size = 64,
+  ariaLabel = 'Avatar de Sofía',
+}: {
+  size?: number | string;
+  ariaLabel?: string;
+}) => (
   <svg
     width={size}
     height={size}
@@ -11,7 +17,7 @@ export const BearAvatar = ({ size = 64 }: { size?: number | string }) => (
     fill="none"
     xmlns="http://www.w3.org/2000/svg"
     role="img"
-    aria-label="Avatar de Sofía"
+    aria-label={ariaLabel}
   >
     <circle cx="32" cy="32" r="31" fill="white" stroke="black" strokeWidth="1.5" />
     <circle cx="18" cy="23.5" r="9" fill="black" />
@@ -30,16 +36,26 @@ export const BearAvatar = ({ size = 64 }: { size?: number | string }) => (
   </svg>
 );
 
-export const ChatHeader: React.FC = () => {
+interface ChatHeaderProps {
+  agentName?: string;
+  welcomeMessage?: string;
+  avatarUrl?: string;
+}
+
+export const ChatHeader: React.FC<ChatHeaderProps> = ({
+  agentName = 'Sofía',
+  welcomeMessage = 'Escribe una duda y yo te ayudaré en lo que pueda',
+  avatarUrl,
+}) => {
   const { toggleChat, clearChat, isExpanded, toggleExpand } = useChatStore();
 
   return (
-    <div className="flex flex-col items-center px-6 pt-10 pb-4 bg-white relative">
+    <div className="relative flex flex-col items-center bg-[var(--agichat-surface)] px-6 pb-4 pt-10 text-[var(--agichat-text)]">
       {/* Botones de acción minimalistas en la esquina superior derecha */}
       <div className="absolute top-4 right-4 flex gap-2">
         <button
           onClick={clearChat}
-          className="p-1 text-gray-400 hover:text-black transition-colors rounded-full"
+          className="rounded-full p-1 text-[var(--agichat-text-muted)] transition-colors hover:text-[var(--agichat-text)]"
           aria-label="Reiniciar chat"
           title="Reiniciar chat"
         >
@@ -47,7 +63,7 @@ export const ChatHeader: React.FC = () => {
         </button>
         <button
           onClick={toggleExpand}
-          className="p-1 text-gray-400 hover:text-black transition-colors rounded-full"
+          className="rounded-full p-1 text-[var(--agichat-text-muted)] transition-colors hover:text-[var(--agichat-text)]"
           aria-label={isExpanded ? 'Contraer chat' : 'Expandir chat'}
           title={isExpanded ? 'Contraer chat' : 'Expandir chat'}
         >
@@ -59,7 +75,7 @@ export const ChatHeader: React.FC = () => {
         </button>
         <button
           onClick={toggleChat}
-          className="p-1 text-gray-400 hover:text-black transition-colors rounded-full"
+          className="rounded-full p-1 text-[var(--agichat-text-muted)] transition-colors hover:text-[var(--agichat-text)]"
           aria-label="Minimizar ventana"
           title="Minimizar ventana"
         >
@@ -68,7 +84,15 @@ export const ChatHeader: React.FC = () => {
       </div>
 
       <div className="mb-4 relative">
-        <BearAvatar />
+        {avatarUrl ? (
+          <img
+            src={avatarUrl}
+            alt={`Avatar de ${agentName}`}
+            className="h-16 w-16 rounded-full border border-[var(--agichat-border)] object-cover"
+          />
+        ) : (
+          <BearAvatar ariaLabel={`Avatar de ${agentName}`} />
+        )}
         {/* Indicador de estado online */}
         <span
           className="absolute bottom-1 right-1 w-3 h-3 bg-green-500 border-2 border-white rounded-full"
@@ -76,12 +100,12 @@ export const ChatHeader: React.FC = () => {
         ></span>
       </div>
 
-      <h2 className="text-center font-bold text-lg text-black mb-1 max-w-[280px]">
-        ¡Hola soy tu asistente virtual Sofía!
+      <h2 className="mb-1 max-w-[280px] text-center text-lg font-bold text-[var(--agichat-text)]">
+        ¡Hola soy tu asistente virtual {agentName}!
       </h2>
 
-      <p className="text-center text-sm text-black max-w-[280px]">
-        Escribe una duda y yo te ayudaré en lo que pueda
+      <p className="max-w-[280px] text-center text-sm text-[var(--agichat-text-muted)]">
+        {welcomeMessage}
       </p>
     </div>
   );

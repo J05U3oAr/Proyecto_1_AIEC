@@ -9,6 +9,7 @@ const createMessage = (role: Message['role'], content: string): Message => ({
   role,
   content,
   timestamp: 1,
+  status: 'sent',
 });
 
 describe('MessageBubble', () => {

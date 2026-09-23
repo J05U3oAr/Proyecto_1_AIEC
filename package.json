@@ -3,9 +3,24 @@
   "private": true,
   "version": "1.0.0",
   "type": "module",
+  "main": "./dist-sdk/agichat-widget.umd.cjs",
+  "module": "./dist-sdk/agichat-widget.js",
+  "types": "./dist-sdk/types/sdk/index.d.ts",
+  "files": [
+    "dist-sdk"
+  ],
+  "exports": {
+    ".": {
+      "types": "./dist-sdk/types/sdk/index.d.ts",
+      "import": "./dist-sdk/agichat-widget.js",
+      "require": "./dist-sdk/agichat-widget.umd.cjs"
+    },
+    "./styles.css": "./dist-sdk/agichat-widget.css"
+  },
   "scripts": {
     "dev": "vite",
     "build": "tsc -b && vite build",
+    "build:sdk": "tsc -b && vite build --config vite.lib.config.ts && tsc -p tsconfig.lib.json",
     "preview": "vite preview",
     "test": "vitest run",
     "test:watch": "vitest",

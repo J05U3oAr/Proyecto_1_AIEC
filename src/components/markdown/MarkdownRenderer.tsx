@@ -37,20 +37,20 @@ const markdownComponents: Components = {
       {...props}
       target="_blank"
       rel="noopener noreferrer"
-      className="font-semibold text-agi-primary underline decoration-agi-primary/40 underline-offset-2 hover:decoration-agi-primary"
+      className="font-semibold text-[var(--agichat-primary)] underline underline-offset-2"
     >
       {children}
     </a>
   ),
   blockquote: ({ children }) => (
-    <blockquote className="my-3 border-l-4 border-agi-accent bg-slate-50 px-4 py-2 text-slate-600">
+    <blockquote className="my-3 border-l-4 border-[var(--agichat-primary)] bg-[var(--agichat-surface-muted)] px-4 py-2 text-[var(--agichat-text-muted)]">
       {children}
     </blockquote>
   ),
   code: ({ children, className, node: _node, ...props }) => (
     <code
       {...props}
-      className={`${className ?? ''} rounded bg-slate-100 px-1 py-0.5 font-mono text-[0.9em] text-slate-800`}
+      className={`${className ?? ''} rounded bg-[var(--agichat-surface-muted)] px-1 py-0.5 font-mono text-[0.9em] text-[var(--agichat-text)]`}
     >
       {children}
     </code>
@@ -77,22 +77,28 @@ const markdownComponents: Components = {
     );
   },
   table: ({ children }) => (
-    <div className="my-3 overflow-x-auto rounded-lg border border-slate-200">
+    <div className="my-3 overflow-x-auto rounded-lg border border-[var(--agichat-border)]">
       <table className="w-full border-collapse text-left text-xs">{children}</table>
     </div>
   ),
-  tbody: ({ children }) => <tbody className="divide-y divide-slate-200">{children}</tbody>,
+  tbody: ({ children }) => (
+    <tbody className="divide-y divide-[var(--agichat-border)]">{children}</tbody>
+  ),
   td: ({ children }) => <td className="px-3 py-2 align-top">{children}</td>,
   th: ({ children }) => (
-    <th className="bg-slate-100 px-3 py-2 font-semibold text-slate-800">{children}</th>
+    <th className="bg-[var(--agichat-surface-muted)] px-3 py-2 font-semibold text-[var(--agichat-text)]">
+      {children}
+    </th>
   ),
-  thead: ({ children }) => <thead className="border-b border-slate-200">{children}</thead>,
+  thead: ({ children }) => (
+    <thead className="border-b border-[var(--agichat-border)]">{children}</thead>
+  ),
   ul: ({ children }) => <ul className="my-2 list-disc space-y-1 pl-5">{children}</ul>,
 };
 
 export function MarkdownRenderer({ content }: MarkdownRendererProps) {
   return (
-    <div className="break-words text-sm leading-relaxed text-slate-900">
+    <div className="break-words text-sm leading-relaxed text-[var(--agichat-text)]">
       <ReactMarkdown
         remarkPlugins={[remarkGfm]}
         rehypePlugins={[rehypeHighlight]}

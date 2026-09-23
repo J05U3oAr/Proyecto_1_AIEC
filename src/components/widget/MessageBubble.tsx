@@ -1,5 +1,6 @@
 import React from 'react';
-import { Message } from '../../store/types';
+import { MarkdownRenderer } from '@/components/markdown/MarkdownRenderer';
+import { Message } from '@/store/types';
 
 interface Props {
   message: Message;
@@ -21,8 +22,8 @@ export const MessageBubble: React.FC<Props> = ({ message }) => {
   // Assistant message: Plain text left-aligned, no bubble background according to wireframe
   return (
     <div className="flex justify-start mb-6">
-      <div className="text-black text-sm max-w-[90%] leading-relaxed font-medium">
-        {message.content}
+      <div className="max-w-[90%] text-black">
+        <MarkdownRenderer content={message.content} />
       </div>
     </div>
   );

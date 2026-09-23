@@ -55,6 +55,7 @@ Bienvenido al repositorio oficial del **Chat Widget SDK** desarrollado para **AG
 | `npm run build:sdk`     | Genera el paquete reutilizable, estilos y tipos en `dist-sdk/`             |
 | `npm run preview`       | Previsualiza el bundle compilado localmente                                |
 | `npm run test`          | Ejecuta las pruebas unitarias una sola vez                                 |
+| `npm run test:e2e`      | Ejecuta el flujo E2E del widget con MSW                                    |
 | `npm run test:watch`    | Ejecuta las pruebas en modo interactivo con recarga en caliente            |
 | `npm run test:coverage` | Ejecuta las pruebas con reporte de cobertura (**falla si es menor a 80%**) |
 | `npm run lint`          | Valida errores de código y estilo con ESLint                               |

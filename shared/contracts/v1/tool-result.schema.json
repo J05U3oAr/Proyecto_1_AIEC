@@ -1,0 +1,270 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$defs": {
+    "Adaptation": {
+      "additionalProperties": false,
+      "properties": {
+        "movieId": {
+          "exclusiveMinimum": 0,
+          "title": "Movieid",
+          "type": "integer"
+        },
+        "status": {
+          "enum": [
+            "confirmed",
+            "uncertain",
+            "not_found"
+          ],
+          "title": "Status",
+          "type": "string"
+        },
+        "book": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Book"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "evidence": {
+          "items": {
+            "$ref": "#/$defs/Evidence"
+          },
+          "maxItems": 10,
+          "title": "Evidence",
+          "type": "array"
+        },
+        "limitations": {
+          "items": {
+            "maxLength": 4000,
+            "minLength": 1,
+            "type": "string"
+          },
+          "maxItems": 10,
+          "title": "Limitations",
+          "type": "array"
+        }
+      },
+      "required": [
+        "movieId",
+        "status"
+      ],
+      "title": "Adaptation",
+      "type": "object"
+    },
+    "Book": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "pattern": "^[A-Za-z0-9_-]{1,128}$",
+          "title": "Id",
+          "type": "string"
+        },
+        "title": {
+          "maxLength": 300,
+          "minLength": 1,
+          "title": "Title",
+          "type": "string"
+        },
+        "authors": {
+          "items": {
+            "maxLength": 200,
+            "minLength": 1,
+            "type": "string"
+          },
+          "maxItems": 20,
+          "title": "Authors",
+          "type": "array"
+        },
+        "year": {
+          "anyOf": [
+            {
+              "maximum": 2200,
+              "minimum": 1000,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Year"
+        },
+        "description": {
+          "default": "",
+          "maxLength": 4000,
+          "title": "Description",
+          "type": "string"
+        },
+        "url": {
+          "title": "Url",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "title",
+        "url"
+      ],
+      "title": "Book",
+      "type": "object"
+    },
+    "Evidence": {
+      "additionalProperties": false,
+      "properties": {
+        "statement": {
+          "maxLength": 4000,
+          "minLength": 1,
+          "title": "Statement",
+          "type": "string"
+        },
+        "source": {
+          "$ref": "#/$defs/Source"
+        }
+      },
+      "required": [
+        "statement",
+        "source"
+      ],
+      "title": "Evidence",
+      "type": "object"
+    },
+    "Movie": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "exclusiveMinimum": 0,
+          "title": "Id",
+          "type": "integer"
+        },
+        "title": {
+          "maxLength": 300,
+          "minLength": 1,
+          "title": "Title",
+          "type": "string"
+        },
+        "year": {
+          "anyOf": [
+            {
+              "maximum": 2200,
+              "minimum": 1800,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Year"
+        },
+        "overview": {
+          "default": "",
+          "maxLength": 4000,
+          "title": "Overview",
+          "type": "string"
+        },
+        "poster": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Poster"
+        },
+        "tmdb": {
+          "title": "Tmdb",
+          "type": "string"
+        },
+        "imdb": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Imdb"
+        }
+      },
+      "required": [
+        "id",
+        "title",
+        "tmdb"
+      ],
+      "title": "Movie",
+      "type": "object"
+    },
+    "Source": {
+      "additionalProperties": false,
+      "properties": {
+        "provider": {
+          "enum": [
+            "tmdb",
+            "imdb",
+            "google_books"
+          ],
+          "title": "Provider",
+          "type": "string"
+        },
+        "url": {
+          "title": "Url",
+          "type": "string"
+        },
+        "label": {
+          "maxLength": 200,
+          "minLength": 1,
+          "title": "Label",
+          "type": "string"
+        }
+      },
+      "required": [
+        "provider",
+        "url",
+        "label"
+      ],
+      "title": "Source",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "movies": {
+      "items": {
+        "$ref": "#/$defs/Movie"
+      },
+      "maxItems": 5,
+      "title": "Movies",
+      "type": "array"
+    },
+    "books": {
+      "items": {
+        "$ref": "#/$defs/Book"
+      },
+      "maxItems": 5,
+      "title": "Books",
+      "type": "array"
+    },
+    "adaptation": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/Adaptation"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null
+    }
+  },
+  "title": "ToolResult",
+  "type": "object"
+}

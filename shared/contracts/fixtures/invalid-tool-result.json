@@ -1,0 +1,1 @@
+{"movies":[{"id":1,"title":"Fixture adversarial","tmdb":"https://www.themoviedb.org.evil.example/movie/1","poster":"javascript:alert(1)"}]}

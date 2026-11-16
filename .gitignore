@@ -26,6 +26,8 @@ dist-ssr
 *.sw?
 skills-lock.json
 .agents/
+.codex/
+.impeccable/
 
 # Testing & Coverage
 coverage/

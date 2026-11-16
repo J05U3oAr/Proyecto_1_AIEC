@@ -1,0 +1,74 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$defs": {
+    "NavigationIntent": {
+      "additionalProperties": false,
+      "properties": {
+        "provider": {
+          "enum": [
+            "imdb",
+            "google_books"
+          ],
+          "title": "Provider",
+          "type": "string"
+        }
+      },
+      "required": [
+        "provider"
+      ],
+      "title": "NavigationIntent",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "prompt": {
+      "maxLength": 4000,
+      "minLength": 1,
+      "title": "Prompt",
+      "type": "string"
+    },
+    "sessionId": {
+      "anyOf": [
+        {
+          "pattern": "^[A-Za-z0-9_-]{1,128}$",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Sessionid"
+    },
+    "requestId": {
+      "anyOf": [
+        {
+          "pattern": "^[A-Za-z0-9_-]{1,128}$",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Requestid"
+    },
+    "navigationIntent": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/NavigationIntent"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null
+    }
+  },
+  "required": [
+    "prompt"
+  ],
+  "title": "ChatRequest",
+  "type": "object"
+}

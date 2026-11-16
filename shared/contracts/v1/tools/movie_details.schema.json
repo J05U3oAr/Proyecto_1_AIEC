@@ -1,0 +1,16 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "movieId": {
+      "exclusiveMinimum": 0,
+      "title": "Movieid",
+      "type": "integer"
+    }
+  },
+  "required": [
+    "movieId"
+  ],
+  "title": "MovieId",
+  "type": "object"
+}

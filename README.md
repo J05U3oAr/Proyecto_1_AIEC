@@ -67,8 +67,13 @@ Bienvenido al repositorio oficial del **Chat Widget SDK** desarrollado para **AG
 
 ## Documentación del Proyecto
 
-- **[ARQUITECTURA.md](./ARQUITECTURA.md)**: Diagrama de arquitectura de alto nivel en Mermaid.js, justificación técnica del diseño por capas y guía detallada de carpetas para el equipo.
-- **[AGENTS.md](./AGENTS.md)**: Directivas y lineamientos de codificación para desarrolladores y herramientas agénticas (cobertura $\ge 80\%$, estándares de TypeScript y checklist para Pull Requests).
+Consultar el **[índice de documentación](docs/README.md)** para arquitectura,
+guías de integración, asignaciones y evidencias. La documentación de la segunda
+entrega está en `docs/delivery/`; la [guía para M3](docs/integration/m3-libros-evals.md)
+recoge los contratos y dependencias actuales.
+
+- **[ARQUITECTURA.md](docs/architecture/ARQUITECTURA.md)**: Diagrama de arquitectura de alto nivel en Mermaid.js, justificación técnica del diseño por capas y guía detallada de carpetas para el equipo.
+- **[AGENTS.md](AGENTS.md)**: Directivas y lineamientos de codificación para desarrolladores y herramientas agénticas (cobertura $\ge 80\%$, estándares de TypeScript y checklist para Pull Requests).
 
 ---
 
@@ -111,11 +116,39 @@ El widget acepta las propiedades `agentName`, `welcomeMessage`, `avatarUrl`, `po
 `theme`. La posición puede ubicarse en cualquiera de las cuatro esquinas. El tema puede ser
 `light`, `dark` o un objeto parcial de colores personalizados.
 
+## Estructura del repositorio
+
+```text
+AGIChat/
+├── src/                  # Widget, SDK y demo React
+├── server/               # Backend, agente, scripts y pruebas Python
+├── mcp/
+│   ├── movies/           # Servidor MCP de películas
+│   ├── books/            # Reservado para M3, pendiente de implementación
+│   ├── catalog_common/   # Caché y cuota compartidas
+│   └── tests/
+├── shared/contracts/     # Schemas neutrales y fixtures
+├── infra/
+│   ├── docker/           # Dockerfiles e ignores por imagen
+│   ├── compose.yaml      # Backend, películas y Redis
+│   ├── compose.test.yaml # Redis aislado para pruebas
+│   ├── compose.tls.yaml  # Gateway local opcional
+│   └── Caddyfile
+├── docs/                 # Arquitectura, integración, entrega y evidencias
+└── evals/                # Reservado para el harness de M3
+```
+
+`AGENTS.md`, `INSTRUCTIONS.md`, `DESIGN.md` y este README son las guías de entrada.
+Los README operativos permanecen en su módulo. La configuración y el lockfile de
+Python se conservan en `server/` y se comparten con MCP; los comandos Python se
+siguen ejecutando desde ese directorio. No se duplicaron dependencias ni imports.
+Consultar [rutas y verificación de la reorganización](docs/integration/estructura.md).
+
 ## Segunda entrega — implementación M2
 
-El [MCP de películas](./mcp/README.md) usa TMDB con caché/cuota Redis compartidas,
+El [MCP de películas](mcp/README.md) usa TMDB con caché/cuota Redis compartidas,
 validación de contratos, token de acceso y consultas acotadas. Consultar
-[evidencia y limitaciones](./mcp/IMPLEMENTACION.md) y [operación](./infra/README.md).
+[evidencia y limitaciones](docs/delivery/implementacion-m2.md) y [operación](infra/README.md).
 
 Con `.env` configurado según `.env.example` (sin sobrescribir credenciales existentes):
 
@@ -126,12 +159,12 @@ npm run dev:real
 ```
 
 `npm run dev` conserva la demo con MSW. `npm run dev:real` llama al backend local;
-los componentes enriquecidos, la sesión del cliente, Créditos y navegación siguen
-a cargo de M4. Libros/evals corresponden a M3. La variabilidad observada del LLM
+el cliente ya conserva la sesión HTTP en memoria; los componentes enriquecidos,
+Créditos y navegación siguen a cargo de M4. Libros/evals corresponden a M3. La variabilidad observada del LLM
 se registra separada de las pruebas del catálogo; no se afirma cumplimiento global
 hasta integrar y evaluar esas partes.
 
 Checks Python de backend/contratos/MCP: levantar el Redis aislado de
-`server/compose.test.yaml`, ejecutar `uv sync --frozen --python 3.12` desde `server/`
+`infra/compose.test.yaml`, ejecutar `uv sync --frozen --python 3.12` desde `server/`
 y luego `npm run check:python` desde raíz. CI ejecuta frontend/SDK, Python y arranque
 de contenedores sin consumir APIs de proveedores.

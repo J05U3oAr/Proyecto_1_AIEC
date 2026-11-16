@@ -4,7 +4,7 @@ services:
     ports:
       - '127.0.0.1:8443:8443'
     volumes:
-      - ../infra/Caddyfile:/etc/caddy/Caddyfile:ro
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
       - gateway-data:/data
       - gateway-config:/config
     depends_on:

@@ -1,13 +1,22 @@
 services:
   redis:
     image: redis:7.4-alpine
-    command: ["redis-server", "--appendonly", "yes", "--maxmemory", "256mb", "--maxmemory-policy", "noeviction"]
+    command:
+      [
+        'redis-server',
+        '--appendonly',
+        'yes',
+        '--maxmemory',
+        '256mb',
+        '--maxmemory-policy',
+        'noeviction',
+      ]
     volumes:
       - sessions:/data
     ports:
-      - "127.0.0.1:6379:6379"
+      - '127.0.0.1:6379:6379'
     healthcheck:
-      test: ["CMD", "redis-cli", "ping"]
+      test: ['CMD', 'redis-cli', 'ping']
       interval: 5s
       timeout: 2s
       retries: 10
@@ -21,12 +30,18 @@ services:
       MOVIES_MCP_URL: ${MOVIES_MCP_URL:-http://movies:8001/mcp}
       BOOKS_MCP_URL: ${BOOKS_MCP_URL:-http://books:8002/mcp}
     ports:
-      - "127.0.0.1:8000:8000"
+      - '127.0.0.1:8000:8000'
     depends_on:
       redis:
         condition: service_healthy
     healthcheck:
-      test: ["CMD", ".venv/bin/python", "-c", "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8000/health/ready')"]
+      test:
+        [
+          'CMD',
+          '.venv/bin/python',
+          '-c',
+          "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8000/health/ready')",
+        ]
       interval: 10s
       timeout: 3s
       retries: 5

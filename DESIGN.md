@@ -2,7 +2,7 @@
 
 ## Propósito y alcance
 
-Guía común para todos los miembros y sus agentes. Leer junto con `AGENTS.md`, `INSTRUCTIONS.md` y `tasks/contexto-curso-rubrica.md`. Define la experiencia objetivo; **no indica que estos estilos o comportamientos ya estén implementados**. M4 custodia la implementación visual; M1/M2/M3 deben entregar los datos y estados necesarios, sin convertir decisiones del modelo en instrucciones de diseño.
+Guía común para todos los miembros y sus agentes. Leer junto con `AGENTS.md`, `INSTRUCTIONS.md` y `docs/delivery/contexto-curso-rubrica.md`. Define la experiencia objetivo; **no indica que estos estilos o comportamientos ya estén implementados**. M4 custodia la implementación visual; M1/M2/M3 deben entregar los datos y estados necesarios, sin convertir decisiones del modelo en instrucciones de diseño.
 
 Sofía ayuda a elegir una película según preferencias y a decidir si verla cuando adapta un libro. Debe permitir entender por qué la recomienda, corregir una elección y verificar referencias. Se conserva el widget embebible y el SDK de la primera entrega. La demo muestra el producto funcionando; no necesita una nueva landing de marketing.
 
@@ -160,4 +160,4 @@ TMDB exige logo aprobado sin cambios y aviso en una sección tipo About/Credits.
 - [ ] Créditos y procedencia de assets verificados; ninguna afirmación de respaldo de TMDB.
 - [ ] Tests del componente, integración y build SDK pasan. Revisión humana antes de commit.
 
-Referencias: skills locales `frontend-design` y `ui-ux-pro-max`; diapositivas CC3116 de experiencias IA partes 1/2 y contexto legal (páginas mapeadas en `tasks/contexto-curso-rubrica.md`); [MDN sobre apertura de ventanas](https://developer.mozilla.org/en-US/docs/Web/API/Window/open). No se modificó la interfaz como parte de la creación de esta guía.
+Referencias: skills locales `frontend-design` y `ui-ux-pro-max`; diapositivas CC3116 de experiencias IA partes 1/2 y contexto legal (páginas mapeadas en `docs/delivery/contexto-curso-rubrica.md`); [MDN sobre apertura de ventanas](https://developer.mozilla.org/en-US/docs/Web/API/Window/open). No se modificó la interfaz como parte de la creación de esta guía.

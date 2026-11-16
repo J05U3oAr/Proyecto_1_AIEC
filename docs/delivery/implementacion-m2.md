@@ -52,24 +52,24 @@ haber escrito este documento.
 - También hubo fallos reales: ID solicitado sin catálogo previo fue rechazado
   como `unverified_resource`; otros intentos HTTP devolvieron
   `upstream_unavailable` e `invalid_llm_result`. Se conservaron en
-  [live-check.json](evidence/live-check.json), sin descartar fallos. No se
+  [live-check.json](../evidence/m2/live-check.json), sin descartar fallos. No se
   cambiaron controles de M1 para forzar respuestas exitosas.
 - Navegador real: demo MSW preservada (tabla visible) y modo real conectado,
   cuyo turno observado respondió de forma conservadora que no tenía recurso
-  verificado. Las capturas [mock](evidence/mock-browser.jpg) y
-  [real](evidence/real-browser.jpg) documentan ese alcance; no se presentan como
+  verificado. Las capturas [mock](../evidence/m2/mock-browser.jpg) y
+  [real](../evidence/m2/real-browser.jpg) documentan ese alcance; no se presentan como
   una tarjeta/póster de M4 ya implementada. Chrome DevTools MCP no estaba
   disponible; se usó el navegador integrado para esta revisión visual.
 - Carga offline: 40 consultas, concurrencia 8, dos clientes de caché en un
   proceso, **5 consultas al proveedor simulado, 0 errores**, p50 0.384 ms y
   p95 58.975 ms en esta máquina.
-  [Medición](evidence/benchmark.json). Otra prueba usa **dos procesos Python**
+  [Medición](../evidence/m2/benchmark.json). Otra prueba usa **dos procesos Python**
   y verifica que comparten exactamente siete permisos de una cuota de siete.
 - Revisión independiente de solo lectura: encontró un límite de candidatos
   aplicado antes de descartar géneros. La prueba nueva falló antes y pasó tras
   corregir el contador; el revisor confirmó la corrección.
 
-Resultados resumidos en [quality-summary.json](evidence/quality-summary.json).
+Resultados resumidos en [quality-summary.json](../evidence/m2/quality-summary.json).
 Las ejecuciones locales no equivalen a un run remoto de GitHub Actions: estos
 cambios permanecen sin commits, sin push y sin modificación de protección remota.
 
@@ -104,11 +104,11 @@ limpio, CI de la integración completa, protección/revisión humana en GitHub y
 un recorrido HTTP/widget estable de recomendación real. Los éxitos de MCP y
 `Agent.run` no se presentan como sustitutos de esas pruebas. La auditoría
 criterio por criterio está en
-[la guía de M2](../tasks/miembro-2-peliculas-infra.md).
+[la guía de M2](miembro-2-peliculas-infra.md).
 
 ## Corrección posterior del flujo conversacional
 
-La [verificación de conversación](../server/CONVERSACION.md) documenta el arreglo
+La [verificación de conversación](../integration/conversacion.md) documenta el arreglo
 de saludos, capacidades y continuidad de sesión, con evidencia HTTP/TMDB y en
 navegador. El cliente ahora conserva la sesión en memoria; M4 mantiene a su cargo
 las tarjetas, Créditos y acciones enriquecidas. Los resultados históricos de

@@ -299,3 +299,65 @@ async def test_rejected_genres_do_not_consume_detail_candidate_budget(make_catal
     result = await make_catalog(handler).search(SearchMovies(query="Dune", genre="Ciencia ficción"))
     assert [m.id for m in result.movies] == [438631]
     assert queried == ["/3/movie/438631"]
+
+
+def test_metadata_normalizes_verified_details_and_missing_values():
+    from movies.tmdb import RawMovie
+
+    raw = RawMovie.model_validate(
+        {
+            **RAW,
+            "genres": [{"id": 878, "name": "Ciencia ficción"}],
+            "vote_average": 8.125,
+            "vote_count": 1200,
+        }
+    )
+    movie = TMDB._movie(raw, None)
+    assert movie.genres == ["Ciencia ficción"]
+    assert movie.runtime == 155 and movie.tmdbRating == 8.125 and movie.voteCount == 1200
+    for changes in [{"runtime": 0}, {"runtime": None}]:
+        missing = TMDB._movie(RawMovie.model_validate({**RAW, **changes}), None)
+        assert missing.runtime is None and missing.tmdbRating is None
+        assert missing.genres == [] and missing.voteCount is None
+    unrated = TMDB._movie(
+        RawMovie.model_validate({**RAW, "vote_average": 0, "vote_count": 0}), None
+    )
+    assert unrated.tmdbRating is None and unrated.voteCount == 0
+    no_count = TMDB._movie(RawMovie.model_validate({**RAW, "vote_average": 8}), None)
+    assert no_count.tmdbRating is None
+
+
+@pytest.mark.parametrize(
+    "changes",
+    [
+        {"vote_average": 11},
+        {"vote_average": -1},
+        {"vote_average": float("inf")},
+        {"vote_count": -1},
+        {"vote_count": "12"},
+        {"genres": [{"id": 1, "name": ""}]},
+        {"genres": [{"id": "1", "name": "Drama"}]},
+    ],
+)
+def test_invalid_provider_metadata_is_rejected(changes):
+    from pydantic import ValidationError
+
+    from movies.tmdb import RawMovie
+
+    with pytest.raises(ValidationError):
+        RawMovie.model_validate({**RAW, **changes})
+
+
+async def test_pre_metadata_cache_does_not_mask_new_provider_fields(make_catalog):
+    import json
+
+    enriched = {**RAW, "poster_path": None, "vote_average": 8.1, "vote_count": 100}
+    catalog = make_catalog(lambda _: httpx.Response(200, json=enriched))
+
+    async def old_payload():
+        return {**RAW, "poster_path": None}
+
+    legacy_key = json.dumps(["/movie/438631", {"language": "es-ES"}], sort_keys=True)
+    await catalog.cache.get(legacy_key, old_payload)
+    result = await catalog.details(MovieId(movieId=438631))
+    assert result.movies[0].tmdbRating == 8.1

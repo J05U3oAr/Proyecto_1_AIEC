@@ -15,6 +15,12 @@ from catalog_common.cache import CatalogCache, CatalogError
 from sofia.models import Movie, MovieId, SearchMovies, ToolResult
 
 
+class RawGenre(BaseModel):
+    model_config = ConfigDict(strict=True)
+    id: int = Field(gt=0)
+    name: Annotated[str, StringConstraints(strip_whitespace=True, min_length=1, max_length=100)]
+
+
 class RawMovie(BaseModel):
     model_config = ConfigDict(strict=True)
     id: int = Field(gt=0)
@@ -24,8 +30,10 @@ class RawMovie(BaseModel):
     poster_path: str | None = None
     imdb_id: str | None = None
     genre_ids: list[int] = Field(default_factory=list, max_length=30)
-    genres: list[dict[str, object]] = Field(default_factory=list, max_length=30)
+    genres: list[RawGenre] = Field(default_factory=list, max_length=30)
     runtime: int | None = Field(default=None, ge=0, le=10000)
+    vote_average: float | None = Field(default=None, ge=0, le=10, allow_inf_nan=False)
+    vote_count: int | None = Field(default=None, ge=0)
     adult: bool = False
 
     def year(self) -> int | None:
@@ -157,7 +165,8 @@ class TMDB:
         ):
             raise CatalogError("invalid_arguments")
         query = {"language": "es-ES", **(params or {})}
-        key = json.dumps([path, query], sort_keys=True)
+        # Version raw payloads so pre-metadata cache entries cannot hide the new fields.
+        key = json.dumps(["movie-metadata-v1", path, query], sort_keys=True)
         return await self.cache.get(key, lambda: self._request(path, query))
 
     @staticmethod
@@ -168,6 +177,10 @@ class TMDB:
             title=raw.title,
             year=raw.year(),
             overview=raw.overview[:2000],
+            genres=list(dict.fromkeys(genre.name for genre in raw.genres)),
+            runtime=raw.runtime or None,
+            tmdbRating=raw.vote_average if raw.vote_count else None,
+            voteCount=raw.vote_count,
             poster=(image_base + raw.poster_path) if raw.poster_path and image_base else None,
             tmdb=f"https://www.themoviedb.org/movie/{raw.id}",
             imdb=f"https://www.imdb.com/title/{raw.imdb_id}/" if raw.imdb_id else None,

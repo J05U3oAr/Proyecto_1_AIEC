@@ -1,9 +1,11 @@
 # Backend de Sofía — miembro 1
 
+[Índice de documentación](../docs/README.md).
+
 Python 3.12+, `uv`, Docker y Compose. Frontend conservado; no se instalaron
 dependencias servidor en el SDK. Los contratos neutrales están en
 [`shared/contracts`](../shared/contracts/README.md); M2 ya verificó compatibilidad de las tools de películas;
-la aceptación de M3/M4 sigue pendiente. Ver [decisiones y evidencia](IMPLEMENTACION.md).
+la aceptación de M3/M4 sigue pendiente. Ver [decisiones y evidencia](../docs/delivery/implementacion-m1.md).
 
 ## Configuración y arranque
 
@@ -14,7 +16,7 @@ con `VITE_`. El ejemplo contiene todas las opciones, con credenciales vacías.
 Backend + Redis + MCP películas (M2):
 
 ```bash
-docker compose --env-file .env -p sofia -f server/compose.yaml up --build -d
+docker compose --env-file .env -p sofia -f infra/compose.yaml up --build -d
 ```
 
 API: `http://localhost:8000`, documentación: `/docs`, checks: `/health/live` y
@@ -39,7 +41,7 @@ Ver [operación M2](../mcp/README.md) e [infraestructura](../infra/README.md).
 Desarrollo Python local, después de levantar solo Redis:
 
 ```bash
-docker compose -p sofia-m1 -f server/compose.yaml up -d redis
+docker compose -p sofia-m1 -f infra/compose.yaml up -d redis
 cd server
 uv sync --frozen --python 3.12
 uv run --frozen --env-file ../.env uvicorn sofia.main:app --host 127.0.0.1 --port 8000 --no-access-log
@@ -62,7 +64,7 @@ a reportes. Enviar cabecera y `sessionId` en seguimientos, conforme al contrato.
 Redis aislado para pruebas, sin volumen ni llamadas externas:
 
 ```bash
-docker compose -p sofia-m1-test -f server/compose.test.yaml up -d --wait
+docker compose -p sofia-m1-test -f infra/compose.test.yaml up -d --wait
 cd server
 uv sync --frozen --python 3.12
 make check
@@ -99,14 +101,14 @@ No ejecutarla repetidamente para medir cobertura.
 ## Integración y evals
 
 - M2 integró estos comandos, cobertura por archivo, SDK y contenedores en CI;
-  ver [evidencia y limitaciones de M2](../mcp/IMPLEMENTACION.md).
+  ver [evidencia y limitaciones de M2](../docs/delivery/implementacion-m2.md).
 - M3 invoca `Agent.run` con los mismos adaptadores de producción. Recibe
   `TurnResult.response`, `trace` y `usage`; los errores `PublicError` también
   conservan observaciones sanitizadas. No enviar trazas al navegador.
 - [`evaluation_cases.json`](evaluation_cases.json) aporta funcionalidad y cuatro
   ataques LLM01/LLM07 para su harness; no es evidencia de eval real ejecutada.
 - M2 añadió `npm run dev:real` para evitar MSW. El cliente ya conserva la sesión
-  HTTP en memoria y la elimina al reiniciar; ver [flujo conversacional](CONVERSACION.md).
+  HTTP en memoria y la elimina al reiniciar; ver [flujo conversacional](../docs/integration/conversacion.md).
   M4 completa las tarjetas y acciones enriquecidas con validación y deduplicación.
 
 Datos de catálogo, sinopsis e historial son no confiables. Herramientas acotadas,

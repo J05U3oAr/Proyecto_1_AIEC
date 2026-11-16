@@ -2,7 +2,7 @@
 
 ## Contexto y meta
 
-Leer `AGENTS.md`, `DESIGN.md`, el plan y `tasks/contexto-curso-rubrica.md`. El frontend/SDK ya existen y funcionan con respuestas de texto simuladas. Tu meta es que un usuario descubra películas, vea pósteres, entienda la comparación con libros y abra referencias desde la conversación, conservando accesibilidad y compatibilidad del SDK.
+Leer `AGENTS.md`, `DESIGN.md`, el plan y `docs/delivery/contexto-curso-rubrica.md`. El frontend/SDK ya existen y funcionan con respuestas de texto simuladas. Tu meta es que un usuario descubra películas, vea pósteres, entienda la comparación con libros y abra referencias desde la conversación, conservando accesibilidad y compatibilidad del SDK.
 
 Carga: 16 puntos. Propiedad: `src/services/`, `src/store/`, `src/hooks/`, componentes, SDK, demo, mocks, CSS/Tailwind, pruebas frontend y navegador. Coordinar contratos con M1 y scripts/dependencias con M2. Las llamadas a proveedores y credenciales no pertenecen al frontend.
 

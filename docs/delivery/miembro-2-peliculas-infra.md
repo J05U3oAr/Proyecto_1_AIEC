@@ -2,7 +2,7 @@
 
 ## Contexto y meta
 
-Leer las reglas, el plan común y `tasks/reutilizacion-a2a.md`. M2 incorpora ahora TMDB y MCP; ver `mcp/IMPLEMENTACION.md` para evidencia y límites. Tu meta es entregar herramientas de películas utilizables por Sofía y por otro cliente MCP, junto con un arranque y controles de calidad que incluyan todos los módulos nuevos.
+Leer las reglas, el plan común y `docs/delivery/reutilizacion-a2a.md`. M2 incorpora ahora TMDB y MCP; ver `docs/delivery/implementacion-m2.md` para evidencia y límites. Tu meta es entregar herramientas de películas utilizables por Sofía y por otro cliente MCP, junto con un arranque y controles de calidad que incluyan todos los módulos nuevos.
 
 Carga: 16 puntos. Propiedad: `mcp/movies/`, pruebas, `infra/`, `.github/`, configuraciones raíz, scripts, lockfiles, `.env.example` y sección operativa de `README.md`. La atribución visual es de M4; tú verificas la procedencia de recursos. No asumir que FastMCP y A2A son equivalentes.
 
@@ -62,7 +62,7 @@ verificados; M2.4 y sus criterios de integración tienen pendientes.
 | Protección de main y revisión de compañero           | Pendiente humano          | No se verificaron reglas remotas ni aprobación de PR por un compañero. La revisión de otro agente no sustituye ese requisito.                                                                                                                                                                                                              |
 
 Detalle reproducible y resultados, incluidos fallos:
-[evidencia de M2](../mcp/IMPLEMENTACION.md). Los pendientes no se eliminan ni se
+[evidencia de M2](implementacion-m2.md). Los pendientes no se eliminan ni se
 rebajan por pertenecer a una integración compartida: se mantienen hasta obtener
 la evidencia correspondiente.
 
@@ -77,6 +77,6 @@ Ejecutar los comandos frontend de `AGENTS.md`, los nuevos de backend/MCP y el en
 M2.1–M2.3 están implementados con pruebas de regresión y consulta TMDB real.
 M2.4 tiene CI/operación local y TLS opcional verificados; la corrida remota,
 protección de main y la demo enriquecida con M3/M4 siguen pendientes.
-Consultar [evidencia](../mcp/IMPLEMENTACION.md), [uso MCP](../mcp/README.md)
-y [operación](../infra/README.md). La tabla de auditoría anterior distingue
+Consultar [evidencia](implementacion-m2.md), [uso MCP](../../mcp/README.md)
+y [operación](../../infra/README.md). La tabla de auditoría anterior distingue
 cumplimiento, implementación parcial y evidencia pendiente por criterio.

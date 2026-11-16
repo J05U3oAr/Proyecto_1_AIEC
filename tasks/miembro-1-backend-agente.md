@@ -6,6 +6,12 @@ Leer `AGENTS.md`, `INSTRUCTIONS.md`, `DESIGN.md`, `tasks/plan.md` y `tasks/reuti
 
 Carga estimada: 16 puntos. Carpetas propias: `server/`, `shared/contracts/`, pruebas asociadas y `ARQUITECTURA.md`. Coordinar scripts con M2; no editar el cliente/store de M4 para integrar a escondidas. Reutilizar patrones del A2A según el análisis; Python es una alternativa preferente si la prueba inicial reduce trabajo, manteniendo contratos neutrales al lenguaje.
 
+Avance de implementación: [operación y pruebas](../server/README.md),
+[contratos](../shared/contracts/README.md) y
+[decisiones/evidencia/pendientes](../server/IMPLEMENTACION.md). Los criterios de
+aceptación integrados permanecen abiertos hasta disponer de consumidores y
+proveedores reales; no se marca completado por pruebas con dobles.
+
 ## Objetivos y tareas ordenadas
 
 ### M1.1 — Contrato y sesión (3 puntos)

@@ -59,13 +59,13 @@ nunca por el usuario/modelo. Se rechazan redirecciones. HTTP sin TLS solo para
 loopback y nombres internos `movies`/`books`; acceso remoto requiere HTTPS/token.
 El operador debe fijar los destinos confiables de infraestructura.
 
-| Tool | Servidor | Entrada | Salida estructurada |
-| --- | --- | --- | --- |
-| `search_movies` | películas | query, genre?, maxRuntime?, limit ≤5 | `{ movies: [...] }` |
-| `movie_details` | películas | movieId | `{ movies: [película] }` o vacío |
-| `search_books` | libros | query, limit ≤5 | `{ books: [...] }` |
-| `book_details` | libros | bookId | `{ books: [libro] }` o vacío |
-| `adaptation_evidence` | libros | movieId | `{ adaptation: {...} }` |
+| Tool                  | Servidor  | Entrada                              | Salida estructurada              |
+| --------------------- | --------- | ------------------------------------ | -------------------------------- |
+| `search_movies`       | películas | query, genre?, maxRuntime?, limit ≤5 | `{ movies: [...] }`              |
+| `movie_details`       | películas | movieId                              | `{ movies: [película] }` o vacío |
+| `search_books`        | libros    | query, limit ≤5                      | `{ books: [...] }`               |
+| `book_details`        | libros    | bookId                               | `{ books: [libro] }` o vacío     |
+| `adaptation_evidence` | libros    | movieId                              | `{ adaptation: {...} }`          |
 
 Usar `structuredContent`, validado con `tool-result.schema.json`; no texto libre
 como protocolo. Máximo 32 KiB de resultado y entradas según schemas por tool.

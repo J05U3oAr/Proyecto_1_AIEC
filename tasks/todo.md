@@ -2,6 +2,12 @@
 
 Estado inicial: planificación lista para revisión; implementación y evidencia pendientes. No marcar checks por haber escrito documentación. Criterios detallados y verificación están en cada archivo individual. Dependencias: hito 0 primero, luego porciones integradas; ver `plan.md`.
 
+Actualización M1 (15/11/2026): backend, contratos, sesiones Redis y cliente MCP
+implementados con pruebas locales; probe NVIDIA real con catálogo sintético.
+Ver [evidencia y pendientes](../server/IMPLEMENTACION.md). La aprobación del
+contrato por consumidores y la integración widget/proveedores/evals siguen
+pendientes; estos checks globales no se cierran con dobles.
+
 ## Hito 0 — contratos y riesgos
 
 - [ ] M1.1: schemas y fixtures HTTP/MCP + sesión aprobados por consumidores. [Detalle M1](miembro-1-backend-agente.md).

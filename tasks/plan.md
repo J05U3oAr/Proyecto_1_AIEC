@@ -8,6 +8,12 @@ Existe un frontend React 18/TypeScript con widget, Markdown, SDK configurable, Z
 
 Este cambio entrega instrucciones y planificación; no implementa esas piezas ni acredita que las pruebas del producto pasen.
 
+Actualización posterior de M1 (15/11/2026): el diagnóstico anterior describe el
+punto de partida. Ahora existen backend Python, contratos JSON, sesiones Redis,
+adaptadores y pruebas. La integración de producto con M2/M3/M4 sigue pendiente;
+ver [decisiones y evidencia](../server/IMPLEMENTACION.md) y la
+[arquitectura simplificada actualizada](../ARQUITECTURA.md).
+
 ## Reparto equilibrado
 
 Estimación relativa inicial: **16 puntos por miembro**, en cuatro paquetes de trabajo. Los puntos miden esfuerzo/incertidumbre, no horas ni calificación. Incluyen implementación, pruebas y documentación. Revisar el reparto tras el primer flujo integrado; si una restricción de proveedor/navegador cambia el esfuerzo, transferir una tarea concreta, no cargar toda la integración a una persona.

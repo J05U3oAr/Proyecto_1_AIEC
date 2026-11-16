@@ -88,4 +88,14 @@ describe('ChatInput', () => {
     expect(sendMessageMock).not.toHaveBeenCalled();
     expect(useChatStore.getState().messages).toEqual([]);
   });
+
+  it('no permite un segundo envío mientras espera una respuesta', () => {
+    useChatStore.getState().setTyping(true);
+    render(<ChatInput />);
+    const input = screen.getByRole('textbox');
+    fireEvent.change(input, { target: { value: '2006' } });
+    fireEvent.keyDown(input, { key: 'Enter', code: 'Enter' });
+    expect(screen.getByRole('button', { name: /enviar mensaje/i })).toBeDisabled();
+    expect(sendMessageMock).not.toHaveBeenCalled();
+  });
 });

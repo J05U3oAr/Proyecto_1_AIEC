@@ -15,6 +15,8 @@ class PublicError(Exception):
         self.status = status
         self.retryable = retryable
         self.retry_after = retry_after
+        self.trace: list[dict[str, object]] = []
+        self.usage: dict[str, int] = {}
 
 
 def unavailable() -> PublicError:

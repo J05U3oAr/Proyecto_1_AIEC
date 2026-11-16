@@ -2,7 +2,7 @@
 
 ## Contexto y meta
 
-Leer las reglas, el plan común y `tasks/reutilizacion-a2a.md`. No existe integración TMDB ni MCP en este proyecto. Tu meta es entregar herramientas de películas utilizables por Sofía y por otro cliente MCP, junto con un arranque y controles de calidad que incluyan todos los módulos nuevos.
+Leer las reglas, el plan común y `tasks/reutilizacion-a2a.md`. M2 incorpora ahora TMDB y MCP; ver `mcp/IMPLEMENTACION.md` para evidencia y límites. Tu meta es entregar herramientas de películas utilizables por Sofía y por otro cliente MCP, junto con un arranque y controles de calidad que incluyan todos los módulos nuevos.
 
 Carga: 16 puntos. Propiedad: `mcp/movies/`, pruebas, `infra/`, `.github/`, configuraciones raíz, scripts, lockfiles, `.env.example` y sección operativa de `README.md`. La atribución visual es de M4; tú verificas la procedencia de recursos. No asumir que FastMCP y A2A son equivalentes.
 
@@ -37,16 +37,46 @@ Carga: 16 puntos. Propiedad: `mcp/movies/`, pruebas, `infra/`, `.github/`, confi
 
 ## Criterios de aceptación
 
-- [ ] Otro cliente MCP puede listar/invocar las tools sin depender del frontend ni del orquestador.
+- [x] Otro cliente MCP puede listar/invocar las tools sin depender del frontend ni del orquestador.
 - [ ] Una recomendación real devuelve datos TMDB, póster si existe y referencia IMDb válida si existe.
-- [ ] Créditos y registro académico están documentados; ninguna credencial llega al bundle o reporte.
-- [ ] El presupuesto diario y caché son coherentes entre dos instancias y ante fallos/reintentos.
+- [x] Créditos y registro académico están documentados; ninguna credencial llega al bundle o reporte.
+- [x] El presupuesto diario y caché son coherentes entre dos instancias y ante fallos/reintentos.
 - [ ] Un clon limpio arranca el sistema con pasos verificables; no se exige tarjeta para la demo.
 - [ ] CI cubre todos los módulos productivos, conserva ≥80% en líneas/funciones/ramas/sentencias y compila SDK.
 - [ ] Un mantenedor verificó protección de `main`, checks requeridos y revisión por un compañero; registrar evidencia sin que el agente cambie reglas remotas.
+
+## Auditoría de los criterios de aceptación (15/11/2026)
+
+Los checks se refieren a evidencia de cumplimiento, no solo a que exista código.
+El cierre de M2 **todavía no está completo**: M2.1–M2.3 están implementados y
+verificados; M2.4 y sus criterios de integración tienen pendientes.
+
+| Criterio                                             | Estado                    | Evidencia o pendiente concreto                                                                                                                                                                                                                                                                                                             |
+| ---------------------------------------------------- | ------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| Cliente MCP independiente                            | Cumplido                  | Cliente HTTP lista/invoca las tools; consumidor M1 compatible. Tests en `mcp/tests/test_mcp_movies.py`.                                                                                                                                                                                                                                    |
+| Recomendación real con datos, póster e IMDb          | Parcial                   | TMDB/MCP devuelve póster e IMDb y un `Agent.run` real completó recomendación. Los intentos por HTTP/widget no acreditaron un recorrido estable: hubo rechazos/errores y una respuesta sin recurso verificado. Conservar abierto hasta probar la integración completa; presentación enriquecida depende de M4 y estabilidad/evals de M1/M3. |
+| Créditos/registro documentados y secretos protegidos | Cumplido                  | Instrucciones académicas, aviso y recursos oficiales en `mcp/README.md`; verificación de que los secretos locales no aparecen en fuentes/reportes/bundles. Este criterio documenta el registro; no certifica datos privados de la cuenta ni acredita los Créditos visibles de M4. Antes estaba cumplido pero sin marcar.                   |
+| Cuota y caché compartidas                            | Cumplido                  | Pruebas Redis entre instancias y dos procesos, concurrencia, fallos, reintentos y límite más estricto.                                                                                                                                                                                                                                     |
+| Arranque desde clon limpio sin tarjeta               | Pendiente de acreditación | Imágenes y arranque local comprobados con lockfiles, pero no se hizo una instalación completa desde un clon/exportación limpio. Tener pasos documentados no equivale a haber ejecutado esa comprobación.                                                                                                                                   |
+| CI de todos los módulos y cobertura/build            | Parcial                   | Workflow preparado y checks locales aprobados (184 Python, 60 frontend, SDK y cobertura por archivo). No hay run remoto de estos cambios; MCP libros y harness de evals de M3 aún deben incorporarse a los controles cuando existan.                                                                                                       |
+| Protección de main y revisión de compañero           | Pendiente humano          | No se verificaron reglas remotas ni aprobación de PR por un compañero. La revisión de otro agente no sustituye ese requisito.                                                                                                                                                                                                              |
+
+Detalle reproducible y resultados, incluidos fallos:
+[evidencia de M2](../mcp/IMPLEMENTACION.md). Los pendientes no se eliminan ni se
+rebajan por pertenecer a una integración compartida: se mantienen hasta obtener
+la evidencia correspondiente.
 
 ## Verificación y entrega
 
 Ejecutar los comandos frontend de `AGENTS.md`, los nuevos de backend/MCP y el ensayo con upstream simulado. Ejecutar una consulta TMDB real acotada y rastrearla hasta una tarjeta visible con M4. Entregar configuración de arranque, tabla de variables sin valores secretos, resultados de CI/cobertura y explicación de límites de escala.
 
 **Parte completada:** herramientas TMDB reales e independientes, cuota compartida verificada y operación reproducible de todo el sistema. Preparar defensa del recorrido hasta TMDB, caché, cuotas y por qué agregar réplicas no aumenta el free tier. También debes poder explicar comparación y defensas generales. No hacer commits, push ni despliegues externos con IA.
+
+## Avance implementado en `feat/mcp`
+
+M2.1–M2.3 están implementados con pruebas de regresión y consulta TMDB real.
+M2.4 tiene CI/operación local y TLS opcional verificados; la corrida remota,
+protección de main y la demo enriquecida con M3/M4 siguen pendientes.
+Consultar [evidencia](../mcp/IMPLEMENTACION.md), [uso MCP](../mcp/README.md)
+y [operación](../infra/README.md). La tabla de auditoría anterior distingue
+cumplimiento, implementación parcial y evidencia pendiente por criterio.

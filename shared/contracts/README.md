@@ -1,5 +1,7 @@
 # Contratos v1 de Sofía
 
+[Índice de documentación](../../docs/README.md).
+
 Estado: implementado por M1; M2 verificó las tools de películas sin cambiar los schemas.
 Pendiente de revisión por M3/M4.
 Los schemas JSON de `v1/` son el artefacto neutral para todos los consumidores.

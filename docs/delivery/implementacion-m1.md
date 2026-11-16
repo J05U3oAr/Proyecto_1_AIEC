@@ -48,7 +48,7 @@ aceptación de contratos y recorrido real del producto pendientes del equipo.
 - Catálogo del probe sintético vacío: **no acredita TMDB/Books ni comparación real**.
 - Cliente MCP independiente listó e invocó una herramienta mediante HTTP real
   contra FastMCP sintético. Prueba además cliente productivo y fallo sanitizado.
-- Cobertura y tests: ver [README](README.md) para repetir `make check`; reportes
+- Cobertura y tests: ver [README](../../server/README.md) para repetir `make check`; reportes
   locales `coverage.json`/`coverage.xml` no se versionan. Resultado: **120 pruebas
   aprobadas**, líneas/sentencias **98,62%**, ramas **94,33%**, y ≥80% en las cuatro
   métricas **por archivo**, incluidos scripts. Ruff, formato, mypy estricto y

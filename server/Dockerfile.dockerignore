@@ -1,0 +1,17 @@
+# Build from an allowlist: credentials and local development files never enter it.
+**
+!server/
+!server/Dockerfile
+!server/pyproject.toml
+!server/uv.lock
+!server/sofia/
+!server/sofia/*.py
+!shared/
+!shared/contracts/
+!shared/contracts/**
+
+# Keep these exclusions last, including inside otherwise allowed directories.
+**/.env
+**/.env.*
+**/__pycache__/
+**/*.pyc

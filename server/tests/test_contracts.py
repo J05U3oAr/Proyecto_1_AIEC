@@ -103,3 +103,42 @@ def test_tool_contracts():
 def test_prompt_limits(prompt):
     with pytest.raises(ValidationError):
         ChatRequest(prompt=prompt)
+
+
+def test_contract_publisher_writes_and_detects_drift(tmp_path, monkeypatch):
+    monkeypatch.setattr("sofia.contracts.ROOT", tmp_path)
+    assert not publish(check=True)
+    assert publish()
+    assert publish(check=True)
+    (tmp_path / "v1" / "book.schema.json").write_text("{}")
+    assert not publish(check=True)
+
+
+def test_book_and_adaptation_tool_shapes():
+    from sofia.errors import PublicError
+    from sofia.models import Book
+
+    book = Book(id="x", title="Book", url="https://books.google.com/books?id=x")
+    for name, values in [
+        ("search_books", {"query": "x", "limit": 1}),
+        ("book_details", {"bookId": "x"}),
+    ]:
+        args = TOOLS[name].arguments.model_validate(values)
+        validate_result(name, args, ToolResult(books=[book]))
+        with pytest.raises(PublicError):
+            validate_result(
+                name,
+                args,
+                ToolResult(movies=[Movie.model_validate(fixture("movie-result")["movies"][0])]),
+            )
+    args = TOOLS["book_details"].arguments.model_validate({"bookId": "other"})
+    with pytest.raises(PublicError):
+        validate_result("book_details", args, ToolResult(books=[book]))
+    args = TOOLS["adaptation_evidence"].arguments.model_validate({"movieId": 1})
+    validate_result(
+        "adaptation_evidence",
+        args,
+        ToolResult(adaptation=Adaptation(movieId=1, status="not_found")),
+    )
+    with pytest.raises(PublicError):
+        validate_result("adaptation_evidence", args, ToolResult())

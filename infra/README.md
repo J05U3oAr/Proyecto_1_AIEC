@@ -1,5 +1,7 @@
 # Operación local de M1 + M2
 
+[Índice de documentación](../docs/README.md).
+
 Requisitos: Node 22, npm, Docker Compose y, para checks Python locales, uv/Python
 3.12. Desde un clon limpio: `npm ci`, crear `.env` a partir de `.env.example` si no
 existe, configurar tokens y ejecutar `npm run start:services`. No copiar un `.env`
@@ -10,6 +12,22 @@ Ver [MCP README](../mcp/README.md) para registro académico y comandos de diagn�
 redirige `/api` al backend local. El SDK todavía necesita la integración enriquecida
 de M4; las herramientas y datos del backend no equivalen a una tarjeta ya visible.
 
+## Archivos de infraestructura
+
+- `infra/compose.yaml`: backend, películas y Redis; contexto de build en la raíz.
+- `infra/compose.test.yaml`: Redis de pruebas, sin datos de desarrollo.
+- `infra/compose.tls.yaml` y `infra/Caddyfile`: gateway opcional.
+- `infra/docker/backend.Dockerfile` y `infra/docker/movies.Dockerfile`: imágenes.
+  Cada Dockerfile tiene su `.dockerignore` específico al lado; mantener la
+  allowlist y las exclusiones de secretos al modificarla.
+
+Ejecutar los comandos documentados desde la raíz. Los scripts npm y GitHub Actions
+ya usan estas rutas. Mantener `-p sofia` para reutilizar el proyecto y volumen de
+sesiones existentes; cambiar de nombre de proyecto crearía otros recursos.
+La ubicación nueva no requiere borrar contenedores ni volúmenes con `down -v`.
+Para M3, incorporar su Dockerfile en `infra/docker/` y su servicio aquí cuando esté
+implementado; `mcp/books/` y `evals/` contienen por ahora solo guías de inicio.
+
 ## Límites de red y TLS
 
 Compose solo publica puertos en loopback. Redis y MCP no deben exponerse a Internet;
@@ -19,7 +37,7 @@ Docker compartida implica confianza de operador: no añadir servicios desconocid
 Gateway TLS local opcional:
 
 ```bash
-docker compose --env-file .env -p sofia -f server/compose.yaml -f infra/compose.tls.yaml up --build -d --wait
+docker compose --env-file .env -p sofia -f infra/compose.yaml -f infra/compose.tls.yaml up --build -d --wait
 ```
 
 La API queda también en `https://localhost:8443`, con certificado de CA local

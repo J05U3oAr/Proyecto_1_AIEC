@@ -2,9 +2,22 @@
 
 ## Contexto y meta
 
-Leer reglas, plan, `tasks/reutilizacion-a2a.md` y `tasks/reutilizacion-evals.md`. El sistema debe comparar una película con el libro del que se adapta y justificar si vale la pena verla. Google Books ofrece catálogo y descripciones, no garantiza prueba de adaptación ni texto íntegro. Tu meta es aportar herramientas y evidencias confiables y un proceso de evaluación que mida el comportamiento real del agente.
+Leer reglas, plan, `docs/delivery/reutilizacion-a2a.md` y `docs/delivery/reutilizacion-evals.md`. El sistema debe comparar una película con el libro del que se adapta y justificar si vale la pena verla. Google Books ofrece catálogo y descripciones, no garantiza prueba de adaptación ni texto íntegro. Tu meta es aportar herramientas y evidencias confiables y un proceso de evaluación que mida el comportamiento real del agente.
 
 Carga: 16 puntos. Propiedad: `mcp/books/`, sus pruebas y `evals/`. M1 redacta la comparación final con tu evidencia; M4 la presenta. Cada compañero aporta sus casos; tú mantienes el runner y reporte común, no asumes todos sus tests.
+
+## Punto de partida actualizado de M2
+
+Antes de implementar, leer la [guía de integración para M3](../integration/m3-libros-evals.md).
+Contiene los contratos reales de las tres tools, restricciones de fuentes,
+metadatos TMDB nuevos, caché/cuota reutilizable, transporte y pasos para incluir
+libros/evals en CI. M2 verificó 248 tests Python y 70 frontend; su evidencia no
+acredita que el MCP de libros o el harness ya estén implementados.
+
+Los cambios de M2 fueron subidos por Hugo; la rama local coincide con el tracking
+`origin/feat/mcp` al revisar el 15/11/2026. Revisar esos cambios antes de integrar
+la rama de M3. CI remoto, aprobación humana y protección de `main` no se infieren
+del push. Mantener abiertos los criterios de M3 hasta obtener evidencia propia.
 
 ## Objetivos y tareas ordenadas
 
@@ -28,7 +41,7 @@ Carga: 16 puntos. Propiedad: `mcp/books/`, sus pruebas y `evals/`. M1 redacta la
 
 ### M3.4 — Harness de evaluaciones (5 puntos)
 
-- Adaptar el patrón `agent_provider.py` + `promptfooconfig.yaml` de HDT6-IA-Evals como referencia principal; los archivos revisados son idénticos a los de HDT7, por lo que no se mantienen dos harnesses. Seguir `tasks/reutilizacion-evals.md` y usar del HDT7 el patrón de llamadas MCP, no los servicios locales de HDT6. Invocar el mismo turno/backend usado por el widget; registrar herramienta, argumentos sanitizados, resultados/efectos, latencia y consumo. Las evals de navegación verifican además efectos en navegador con M4.
+- Adaptar el patrón `agent_provider.py` + `promptfooconfig.yaml` de HDT6-IA-Evals como referencia principal; los archivos revisados son idénticos a los de HDT7, por lo que no se mantienen dos harnesses. Seguir `docs/delivery/reutilizacion-evals.md` y usar del HDT7 el patrón de llamadas MCP, no los servicios locales de HDT6. Invocar el mismo turno/backend usado por el widget; registrar herramienta, argumentos sanitizados, resultados/efectos, latencia y consumo. Las evals de navegación verifican además efectos en navegador con M4.
 - Dataset mínimo propuesto: 8 casos funcionales (recomendación, póster, anuncio de comparación, comparación confirmada, ambigüedad/ausencia, referencia IMDb, Google Books y fallo/cuota); 6 LLM01 (al menos 3 directos y 3 indirectos en datos MCP); 6 LLM07 (extracción directa, traducción/codificación y conversación de varios turnos). Asegurar variedad, no seis paráfrasis idénticas.
 - Cada caso contiene ID, categoría/edición OWASP, entrada o fixture adversarial, expectativa, tools permitidas/prohibidas y evaluador. Usar canarios sintéticos, nunca secretos reales. No confundir el nombre público de una tool MCP con un secreto.
 - Umbral interno inicial: 100% de invariantes deterministas de seguridad y ≥90% de casos funcionales por corrida. Ejecutar 3 repeticiones acotadas de la suite real, reportar denominadores, tasas por categoría y todos los fallos. Ajustar datos/configuración con revisión, nunca bajar el umbral para ocultar fallos. Estos números son criterios del equipo, no porcentajes exigidos por la rúbrica.

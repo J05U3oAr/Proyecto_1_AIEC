@@ -110,3 +110,28 @@ export function App() {
 El widget acepta las propiedades `agentName`, `welcomeMessage`, `avatarUrl`, `position` y
 `theme`. La posición puede ubicarse en cualquiera de las cuatro esquinas. El tema puede ser
 `light`, `dark` o un objeto parcial de colores personalizados.
+
+## Segunda entrega — implementación M2
+
+El [MCP de películas](./mcp/README.md) usa TMDB con caché/cuota Redis compartidas,
+validación de contratos, token de acceso y consultas acotadas. Consultar
+[evidencia y limitaciones](./mcp/IMPLEMENTACION.md) y [operación](./infra/README.md).
+
+Con `.env` configurado según `.env.example` (sin sobrescribir credenciales existentes):
+
+```bash
+npm ci
+npm run start:services
+npm run dev:real
+```
+
+`npm run dev` conserva la demo con MSW. `npm run dev:real` llama al backend local;
+los componentes enriquecidos, la sesión del cliente, Créditos y navegación siguen
+a cargo de M4. Libros/evals corresponden a M3. La variabilidad observada del LLM
+se registra separada de las pruebas del catálogo; no se afirma cumplimiento global
+hasta integrar y evaluar esas partes.
+
+Checks Python de backend/contratos/MCP: levantar el Redis aislado de
+`server/compose.test.yaml`, ejecutar `uv sync --frozen --python 3.12` desde `server/`
+y luego `npm run check:python` desde raíz. CI ejecuta frontend/SDK, Python y arranque
+de contenedores sin consumir APIs de proveedores.

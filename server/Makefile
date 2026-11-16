@@ -1,9 +1,9 @@
 .PHONY: check test contracts
 
 check:
-	uv run --frozen ruff check sofia scripts tests
-	uv run --frozen ruff format --check sofia scripts tests
-	uv run --frozen mypy sofia scripts
+	uv run --frozen ruff check --config pyproject.toml sofia scripts tests ../mcp
+	uv run --frozen ruff format --check --config pyproject.toml sofia scripts tests ../mcp
+	uv run --frozen mypy sofia scripts ../mcp/movies ../mcp/catalog_common
 	uv run --frozen python -m sofia.contracts --check
 	$(MAKE) test
 

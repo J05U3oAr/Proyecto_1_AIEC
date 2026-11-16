@@ -6,32 +6,72 @@ on:
   pull_request:
     branches: [main]
 
+permissions:
+  contents: read
+
 jobs:
   quality-checks:
-    name: Lint, Test Coverage & Build
+    name: Frontend and SDK
     runs-on: ubuntu-latest
-
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
         with:
-          node-version: 20
-          cache: 'npm'
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npm run lint
+      - run: npm run format:check
+      - run: npm run test:coverage
+      - run: npm run test:e2e
+      - run: npm run build
+      - run: npm run build:sdk
 
-      - name: Install dependencies
-        run: npm ci
+  python-checks:
+    name: Backend, contracts and MCP
+    runs-on: ubuntu-latest
+    services:
+      redis:
+        image: redis:7.4-alpine
+        ports:
+          - 16379:6379
+        options: >-
+          --health-cmd "redis-cli ping"
+          --health-interval 1s --health-timeout 1s --health-retries 10
+    defaults:
+      run:
+        working-directory: server
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@c771a70e6277c0a99b617c7a806ffedaca235ff9 # v9.0.0
+        with:
+          version: '0.13.1'
+          python-version: '3.12'
+          enable-cache: true
+          cache-dependency-glob: server/uv.lock
+      - run: uv sync --frozen
+      - run: make check
+      - name: Offline scale check with two cache clients
+        run: uv run --frozen python -m movies.benchmark --requests 40 --concurrency 8
+        env:
+          PYTHONPATH: .:../mcp
+          CATALOG_TEST_REDIS_URL: redis://localhost:16379/14
 
-      - name: Run Linter (ESLint)
-        run: npm run lint
-
-      - name: Check Code Formatting (Prettier)
-        run: npm run format:check
-
-      - name: Run Test Suite with Coverage (Threshold >= 80%)
-        run: npm run test:coverage
-
-      - name: Typecheck and Build Production Bundle
-        run: npm run build
+  container-checks:
+    name: Service images and readiness
+    runs-on: ubuntu-latest
+    env:
+      MCP_TOKEN: synthetic-ci-token-not-a-secret
+      TMDB_READ_TOKEN: synthetic-ci-token-not-a-provider-credential
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build and start local services (no provider calls)
+        run: docker compose --env-file .env.example -p sofia-ci -f server/compose.yaml up --build -d --wait
+      - name: Check health and authentication
+        run: |
+          curl --fail --silent http://127.0.0.1:8000/health/ready
+          curl --fail --silent http://127.0.0.1:8001/health/ready
+          test "$(curl --silent --output /dev/null --write-out '%{http_code}' -X POST http://127.0.0.1:8001/mcp)" = 401
+      - name: Stop test services
+        if: always()
+        run: docker compose --env-file .env.example -p sofia-ci -f server/compose.yaml down

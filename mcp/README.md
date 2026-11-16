@@ -1,12 +1,15 @@
 # M2 — Catálogo de películas MCP y utilidades de proveedor
 
+[Índice de documentación](../docs/README.md).
+
 Implementación de Hugo para la segunda entrega. Usa Python 3.12 y el SDK MCP
 oficial 1.30.0 ya fijado por M1 en `server/uv.lock`; no incorpora otro framework
 agéntico ni dependencias del servidor al SDK del navegador.
 
 ## Herramientas y contrato aceptado por M2
 
-Se aceptan los schemas v1 de M1 **sin cambiar los campos públicos**. Sus modelos
+Se usan los schemas v1 de M1 con la ampliación opcional de metadatos de películas
+(`genres`, `runtime`, `tmdbRating`, `voteCount`). Sus modelos
 runtime (`sofia.models`) son la fuente de validación compartida. El contenedor
 MCP incluye esos validadores, no importa ni ejecuta el agente. Otro cliente MCP
 puede usar el servicio sin el widget o el backend conversacional.
@@ -96,6 +99,12 @@ Redis, **no acredita que el token TMDB sea válido**. Ninguna credencial es part
 del build; usuario de imagen no root y contexto de build por allowlist. Apagar
 con `npm run stop:services`; no borrar volúmenes para detener los servicios.
 
+## Integración para M3
+
+Ver la [guía de integración actualizada](../docs/integration/m3-libros-evals.md): contratos de libros,
+restricciones de fuentes, metadatos nuevos, pruebas, CI y evidencia disponible.
+El push de M2 no implica que los criterios globales o las evals ya estén cerrados.
+
 ## Cuota y caché para M3
 
 `catalog_common.cache.CatalogCache(redis, provider, daily_limit, ttl)` puede
@@ -138,7 +147,7 @@ La distinción adicional no cambia el schema de `ChatResponse` o sus clientes vi
 ## Pruebas y medición
 
 ```bash
-docker compose -p sofia-m2-test -f server/compose.test.yaml up -d --wait
+docker compose -p sofia-m2-test -f infra/compose.test.yaml up -d --wait
 npm run check:python
 ```
 
@@ -169,7 +178,7 @@ Usa el cliente MCP de M1 y un ID de película conocido; imprime solo éxito, ID 
 presencia de póster/IMDb. Como máximo dos caché misses (detalle/configuración),
 con el reintento configurado: hasta cuatro intentos HTTP. No consume LLM ni prueba
 la presentación visual del widget. Las corridas reales se registran en
-[IMPLEMENTACION.md](IMPLEMENTACION.md).
+[IMPLEMENTACION.md](../docs/delivery/implementacion-m2.md).
 
 ## Atribución para M4
 

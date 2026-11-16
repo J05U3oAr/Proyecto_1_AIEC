@@ -8,10 +8,12 @@ Leer antes de trabajar, en este orden:
 
 1. `INSTRUCTIONS.md`: requisitos académicos originales. No modificarlo para acomodar una implementación.
 2. Este `AGENTS.md`: reglas transversales de ingeniería y colaboración.
-3. `tasks/plan.md`: reparto, contratos propuestos, dependencias y trazabilidad.
-4. El archivo `tasks/miembro-N-*.md` correspondiente y `tasks/todo.md`.
-5. `tasks/contexto-curso-rubrica.md` y `tasks/reutilizacion-a2a.md`: rúbrica, contexto docente y reutilización propuesta.
-6. `DESIGN.md` para cualquier cambio visible; `ARQUITECTURA.md` como descripción de la primera entrega hasta que se actualice.
+3. `docs/delivery/plan.md`: reparto, contratos propuestos, dependencias y trazabilidad.
+4. El archivo `docs/delivery/miembro-N-*.md` correspondiente y `docs/delivery/todo.md`.
+5. `docs/delivery/contexto-curso-rubrica.md` y `docs/delivery/reutilizacion-a2a.md`: rúbrica, contexto docente y reutilización propuesta.
+6. `DESIGN.md` para cualquier cambio visible; `docs/architecture/ARQUITECTURA.md` como descripción de la primera entrega hasta que se actualice.
+
+Índice de navegación: [documentación](docs/README.md). Los README operativos permanecen junto a cada módulo.
 
 Las carpetas y contratos nuevos descritos en el plan son propuestas de implementación, no capacidades ya existentes. Si las fuentes discrepan, documentar la diferencia y resolverla con el equipo; no eliminar requisitos ni inventar evidencias.
 
@@ -96,12 +98,12 @@ Para cambios solo de documentación, verificar formato, enlaces relativos, traza
 
 ## 8. Responsabilidad y definición de terminado
 
-| Miembro | Responsable propuesto | Área principal                        | Instrucciones                        |
-| ------- | --------------------- | ------------------------------------- | ------------------------------------ |
-| 1       | Diego Calderón        | Backend, agente, contratos y defensas | `tasks/miembro-1-backend-agente.md`  |
-| 2       | Hugo Méndez           | MCP películas, infraestructura y CI   | `tasks/miembro-2-peliculas-infra.md` |
-| 3       | Pedro Caso            | MCP libros, comparación y evals       | `tasks/miembro-3-libros-evals.md`    |
-| 4       | Arodi Chávez          | Widget, SDK, navegación y UX/UI       | `tasks/miembro-4-widget-ux.md`       |
+| Miembro | Responsable propuesto | Área principal                        | Instrucciones                                |
+| ------- | --------------------- | ------------------------------------- | -------------------------------------------- |
+| 1       | Diego Calderón        | Backend, agente, contratos y defensas | `docs/delivery/miembro-1-backend-agente.md`  |
+| 2       | Hugo Méndez           | MCP películas, infraestructura y CI   | `docs/delivery/miembro-2-peliculas-infra.md` |
+| 3       | Pedro Caso            | MCP libros, comparación y evals       | `docs/delivery/miembro-3-libros-evals.md`    |
+| 4       | Arodi Chávez          | Widget, SDK, navegación y UX/UI       | `docs/delivery/miembro-4-widget-ux.md`       |
 
 Asignación acordada: Diego asume la parte 1, Hugo la parte 2 y Pedro la parte 3; no presupone experiencia particular. Cada miembro implementa y prueba su área, documenta su operación y participa en la integración y revisión cruzada.
 

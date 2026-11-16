@@ -1,0 +1,48 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "type": {
+      "const": "open_reference",
+      "default": "open_reference",
+      "title": "Type",
+      "type": "string"
+    },
+    "id": {
+      "pattern": "^[A-Za-z0-9_-]{1,128}$",
+      "title": "Id",
+      "type": "string"
+    },
+    "requestId": {
+      "pattern": "^[A-Za-z0-9_-]{1,128}$",
+      "title": "Requestid",
+      "type": "string"
+    },
+    "provider": {
+      "enum": [
+        "imdb",
+        "google_books"
+      ],
+      "title": "Provider",
+      "type": "string"
+    },
+    "resourceId": {
+      "pattern": "^[A-Za-z0-9_-]{1,128}$",
+      "title": "Resourceid",
+      "type": "string"
+    },
+    "url": {
+      "title": "Url",
+      "type": "string"
+    }
+  },
+  "required": [
+    "id",
+    "requestId",
+    "provider",
+    "resourceId",
+    "url"
+  ],
+  "title": "Action",
+  "type": "object"
+}

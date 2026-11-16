@@ -17,6 +17,9 @@ const createMessage = (
 export const useChatStore = create<ChatState>()(
   persist(
     set => ({
+      session: null,
+      conversationVersion: 0,
+      setSession: session => set({ session }),
       isOpen: false,
       isExpanded: false,
       messages: [],
@@ -40,14 +43,24 @@ export const useChatStore = create<ChatState>()(
           ),
         })),
       markMessageAsError: messageId =>
-        set(state => ({
-          messages: state.messages.map(message =>
-            message.id === messageId ? { ...message, status: 'error' } : message
-          ),
-          isTyping: false,
-        })),
+        set(state =>
+          state.messages.some(message => message.id === messageId)
+            ? {
+                messages: state.messages.map(message =>
+                  message.id === messageId ? { ...message, status: 'error' } : message
+                ),
+                isTyping: false,
+              }
+            : state
+        ),
       setTyping: isTyping => set({ isTyping }),
-      clearChat: () => set({ messages: [], isTyping: false }),
+      clearChat: () =>
+        set(state => ({
+          messages: [],
+          isTyping: false,
+          session: null,
+          conversationVersion: state.conversationVersion + 1,
+        })),
     }),
     {
       name: 'agichat-conversation',

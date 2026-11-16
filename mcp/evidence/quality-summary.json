@@ -1,0 +1,18 @@
+{
+  "pythonTests": 184,
+  "pythonCoverageCombinedPercent": 97.62202753441802,
+  "fourMetricsPerPythonFileAtLeast80": true,
+  "frontendTests": 60,
+  "frontendCoverage": {
+    "statements": 95.85,
+    "branches": 92.03,
+    "functions": 95.18,
+    "lines": 96.12
+  },
+  "e2eVitestTests": 1,
+  "applicationBuild": true,
+  "sdkBuild": true,
+  "productionNpmAuditVulnerabilities": 0,
+  "ciRemoteRun": "not_run_uncommitted_changes",
+  "review": "Independent read-only review; candidate-filter bug fixed with red/green regression test"
+}

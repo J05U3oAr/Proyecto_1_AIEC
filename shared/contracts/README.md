@@ -95,3 +95,22 @@ cambia el schema de resultados exitosos ni de la respuesta HTTP pública.
 
 Sin credenciales embebidas, fragmentos, hosts semejantes, esquemas alternativos,
 query adicional o redirecciones. Normalizar URLs del proveedor antes de publicar.
+
+## Metadatos de películas
+
+`Movie` incorpora campos opcionales: `genres` (lista de nombres, por defecto
+vacía), `runtime` (minutos positivos o null), `tmdbRating` (0–10 o null) y
+`voteCount` (entero no negativo o null). El validador exige votos positivos cuando
+hay puntuación. No es una puntuación IMDb. El proveedor puede omitir datos;
+no convertir ausencia de promedio en una nota cero. Las respuestas antiguas y
+sesiones sin estos campos siguen siendo entradas válidas del contrato actualizado.
+
+Se regeneraron `movie`, `chat-response` y `tool-result` desde `sofia.models`.
+Los consumidores con validadores estrictos deben actualizar esos schemas al
+integrar esta ampliación; versiones anteriores con `additionalProperties: false`
+rechazarán los campos nuevos. El cliente HTTP actual admite propiedades adicionales.
+La presentación del agente identifica TMDB y muestra cantidad de votos y un
+decimal, conservando la precisión original en `tmdbRating`.
+
+Fuentes: [búsqueda y votos de TMDB](https://developer.themoviedb.org/docs/search-and-query-for-details)
+y [detalles de película](https://developer.themoviedb.org/reference/movie-details).

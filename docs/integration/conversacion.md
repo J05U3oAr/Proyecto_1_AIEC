@@ -49,13 +49,13 @@ mostrar el historial anterior, pero inicia una sesión nueva en el servidor.
   cuatro métricas pasan con el umbral de 80%, sin rebajarlo.
 - Frontend: 70 tests, incluidos sesión, reset, errores tardíos, redirecciones y envío; lint,
   formato, cobertura, e2e JSDOM y compilaciones de aplicación/SDK.
-- [Diez casos HTTP reales](../mcp/evidence/dialogue-check.json), con backend,
+- [Diez casos HTTP reales](../evidence/m2/dialogue-check.json), con backend,
   Redis y MCP/TMDB reales, sin MSW. Ambas sesiones de prueba se eliminaron.
   Estos casos no necesitaron inferencia LLM; la salida hostil del modelo se
   prueba con dobles y no se presenta como una eval real del proveedor.
 - Navegador integrado, modo real: «hola», «Cars → 2006 → Cars 2006», «Shrek 1»,
   solicitud de código y capacidades. Se observó Cars (2006), Shrek (2001), saludo
-  y rechazo adecuados. [Captura](../mcp/evidence/dialogue-browser.jpg).
+  y rechazo adecuados. [Captura](../evidence/m2/dialogue-browser.jpg).
 
 Esto corrige el flujo conversacional; no acredita MCP libros, navegación real
 con acciones enriquecidas, protección absoluta frente a prompt injection ni el
@@ -88,7 +88,7 @@ Persisten los avisos de tamaño de bundle de Vite. Las pruebas con dobles cubren
 valores ausentes/inválidos, sesiones y caché antiguas, puntuaciones inventadas y
 fallos del proveedor; no equivalen a evals adversariales reales del LLM.
 
-[Registro HTTP real de siete casos](../mcp/evidence/metadata-check.json): Cars 2 e
+[Registro HTTP real de siete casos](../evidence/m2/metadata-check.json): Cars 2 e
 Interstellar con TMDB/MCP/Redis reales, sin MSW ni inferencia LLM para esos
 recorridos. La sesión de prueba se eliminó. Los votos/promedios pueden cambiar
-con el tiempo. [Captura del widget real](../mcp/evidence/metadata-browser.jpg).
+con el tiempo. [Captura del widget real](../evidence/m2/metadata-browser.jpg).

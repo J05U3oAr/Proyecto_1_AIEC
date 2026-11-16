@@ -1,0 +1,15 @@
+services:
+  gateway:
+    image: caddy:2.10-alpine
+    ports:
+      - '127.0.0.1:8443:8443'
+    volumes:
+      - ../infra/Caddyfile:/etc/caddy/Caddyfile:ro
+      - gateway-data:/data
+      - gateway-config:/config
+    depends_on:
+      backend:
+        condition: service_healthy
+volumes:
+  gateway-data:
+  gateway-config:

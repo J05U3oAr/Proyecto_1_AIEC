@@ -1,0 +1,60 @@
+{
+  "checks": [
+    {
+      "mode": "real_backend_llm_mcp_tmdb",
+      "status": 422,
+      "hasResponse": false,
+      "movieIds": [],
+      "poster": false,
+      "imdb": false,
+      "errorCode": "unverified_resource",
+      "tmdbRequestsDuringTurn": 0
+    },
+    {
+      "mode": "real_backend_llm_mcp_tmdb",
+      "status": 503,
+      "hasResponse": false,
+      "movieIds": [],
+      "poster": false,
+      "imdb": false,
+      "errorCode": "upstream_unavailable",
+      "tmdbRequestsDuringTurn": 1
+    },
+    {
+      "mode": "real_agent_llm_mcp_tmdb",
+      "ok": true,
+      "movieIds": [693134, 438631, 1170608, 841, 915935],
+      "hasResponse": true,
+      "usage": {
+        "llmRequests": 2,
+        "promptTokens": 3469,
+        "completionTokens": 250
+      },
+      "trace": [
+        {
+          "tool": "search_movies",
+          "status": "ok"
+        }
+      ]
+    },
+    {
+      "mode": "real_backend_llm_mcp_tmdb",
+      "status": 503,
+      "hasResponse": false,
+      "movieIds": [],
+      "poster": false,
+      "imdb": false,
+      "errorCode": "invalid_llm_result",
+      "tmdbRequestsDuringTurn": 0
+    }
+  ],
+  "date": "2026-11-15",
+  "detailsProbe": {
+    "mode": "live_mcp_tmdb",
+    "ok": true,
+    "movieId": 438631,
+    "poster": true,
+    "imdb": true
+  },
+  "browserRealMode": "Reached M1 through Vite proxy; observed conservative no-verified-resource response, not a movie-card acceptance check"
+}

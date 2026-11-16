@@ -133,7 +133,7 @@ class RemoteMCP:
                             await session.initialize()
                             result = await session.call_tool(name, arguments.model_dump())
                             if result.isError:
-                                raise unavailable()
+                                raise catalog_error(result.structuredContent)
                             if result.structuredContent is None:
                                 raise ValueError("Structured MCP results required")
                             if len(json.dumps(result.structuredContent)) > 32768:
@@ -160,3 +160,22 @@ def mcp_http_client(
         follow_redirects=False,
         trust_env=False,
     )
+
+
+def catalog_error(payload: object) -> PublicError:
+    """Accept only reviewed error codes, never messages supplied by MCP/providers."""
+    if not isinstance(payload, dict) or not isinstance(payload.get("error"), dict):
+        return unavailable()
+    error = payload["error"]
+    code = error.get("code")
+    if not isinstance(code, str):
+        return unavailable()
+    if code in {"quota_exhausted", "provider_rate_limited"}:
+        value = error.get("retryAfter", 60)
+        delay = max(1, min(value, 86400)) if type(value) is int else 60
+        return PublicError(
+            code, "El catálogo pide esperar antes de otra consulta.", 429, True, delay
+        )
+    if code == "provider_timeout":
+        return PublicError(code, "El catálogo tardó demasiado en responder.", 504, True)
+    return unavailable()

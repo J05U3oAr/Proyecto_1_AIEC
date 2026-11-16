@@ -1,0 +1,133 @@
+{
+  "executedAt": "2026-11-16T04:46:07.989229+00:00",
+  "scope": "Backend local, Redis y MCP/TMDB reales; sin MSW ni LLM para estos recorridos. Valores sujetos a cambios en TMDB.",
+  "sessionDeleted": true,
+  "checks": [
+    {
+      "input": "Cars 2",
+      "status": 200,
+      "movie": {
+        "id": 49013,
+        "title": "Cars 2",
+        "year": 2011,
+        "overview": "Rayo McQueen y su amigo, la grúa Mate, viajan al extranjero para participar en el primer Campeonato Mundial en el que se decidirá cuál es el coche más rápido del planeta. La primera etapa es Tokio (Japón), donde Mate tendrá que convertirse en un espía secreto al verse envuelto inesperadamente en un caso de espionaje internacional, que lo llevará a París y a Londres. También vivirán una aventura de proporciones épicas al viajar a Porto Corsa (Italia), para disputar el Campeonato. Sin embargo, los dos tendrán que renunciar a los placeres de la Riviera italiana -yates, playas y pasta al pesto- ya que Mate está muy ocupado con su labor de espía, mientras que McQueen compite contra los mejores coches del mundo.",
+        "poster": "https://image.tmdb.org/t/p/w500/kxfxsxJJ8e3vCRRLSfcELHtgMLh.jpg",
+        "tmdb": "https://www.themoviedb.org/movie/49013",
+        "imdb": "https://www.imdb.com/title/tt1216475/",
+        "genres": ["Animación", "Familia", "Aventura", "Comedia"],
+        "runtime": 106,
+        "tmdbRating": 6.202,
+        "voteCount": 8847
+      },
+      "response": "**Cars 2 (2011)**\n\nGéneros: Animación, Familia, Aventura, Comedia\n\nDuración: 106 min\n\nPuntuación TMDB: 6.2/10 (8847 votos)\n\nSinopsis de TMDB: Rayo McQueen y su amigo, la grúa Mate, viajan al extranjero para participar en el primer Campeonato Mundial en el que se decidirá cuál es el coche más rápido del planeta. La primera etapa es Tokio \\(Japón\\), donde Mate tendrá que convertirse en un espía secreto al verse envuelto inesperadamente en un caso de espionaje internacional, que lo llevará a París y a Londres. También vivirán una aventura de proporciones épicas al viajar a Porto Corsa \\(Italia\\), para disputar el Campeonato. Sin embargo, los dos tendrán que renunciar a los placeres de la Riviera italiana -yates, playas y pasta al pesto- ya que Mate está muy ocupado con su labor de espía, mientras que McQueen compite contra los mejores coches del mundo.\n\nPuedo comparar películas con sus libros cuando exista evidencia de adaptación."
+    },
+    {
+      "input": "y su puntuación?",
+      "status": 200,
+      "movie": {
+        "id": 49013,
+        "title": "Cars 2",
+        "year": 2011,
+        "overview": "Rayo McQueen y su amigo, la grúa Mate, viajan al extranjero para participar en el primer Campeonato Mundial en el que se decidirá cuál es el coche más rápido del planeta. La primera etapa es Tokio (Japón), donde Mate tendrá que convertirse en un espía secreto al verse envuelto inesperadamente en un caso de espionaje internacional, que lo llevará a París y a Londres. También vivirán una aventura de proporciones épicas al viajar a Porto Corsa (Italia), para disputar el Campeonato. Sin embargo, los dos tendrán que renunciar a los placeres de la Riviera italiana -yates, playas y pasta al pesto- ya que Mate está muy ocupado con su labor de espía, mientras que McQueen compite contra los mejores coches del mundo.",
+        "poster": "https://image.tmdb.org/t/p/w500/kxfxsxJJ8e3vCRRLSfcELHtgMLh.jpg",
+        "tmdb": "https://www.themoviedb.org/movie/49013",
+        "imdb": "https://www.imdb.com/title/tt1216475/",
+        "genres": ["Animación", "Familia", "Aventura", "Comedia"],
+        "runtime": 106,
+        "tmdbRating": 6.202,
+        "voteCount": 8847
+      },
+      "response": "**Cars 2 (2011)**\n\nGéneros: Animación, Familia, Aventura, Comedia\n\nDuración: 106 min\n\nPuntuación TMDB: 6.2/10 (8847 votos)\n\nSinopsis de TMDB: Rayo McQueen y su amigo, la grúa Mate, viajan al extranjero para participar en el primer Campeonato Mundial en el que se decidirá cuál es el coche más rápido del planeta. La primera etapa es Tokio \\(Japón\\), donde Mate tendrá que convertirse en un espía secreto al verse envuelto inesperadamente en un caso de espionaje internacional, que lo llevará a París y a Londres. También vivirán una aventura de proporciones épicas al viajar a Porto Corsa \\(Italia\\), para disputar el Campeonato. Sin embargo, los dos tendrán que renunciar a los placeres de la Riviera italiana -yates, playas y pasta al pesto- ya que Mate está muy ocupado con su labor de espía, mientras que McQueen compite contra los mejores coches del mundo."
+    },
+    {
+      "input": "¿Cuánto dura?",
+      "status": 200,
+      "movie": {
+        "id": 49013,
+        "title": "Cars 2",
+        "year": 2011,
+        "overview": "Rayo McQueen y su amigo, la grúa Mate, viajan al extranjero para participar en el primer Campeonato Mundial en el que se decidirá cuál es el coche más rápido del planeta. La primera etapa es Tokio (Japón), donde Mate tendrá que convertirse en un espía secreto al verse envuelto inesperadamente en un caso de espionaje internacional, que lo llevará a París y a Londres. También vivirán una aventura de proporciones épicas al viajar a Porto Corsa (Italia), para disputar el Campeonato. Sin embargo, los dos tendrán que renunciar a los placeres de la Riviera italiana -yates, playas y pasta al pesto- ya que Mate está muy ocupado con su labor de espía, mientras que McQueen compite contra los mejores coches del mundo.",
+        "poster": "https://image.tmdb.org/t/p/w500/kxfxsxJJ8e3vCRRLSfcELHtgMLh.jpg",
+        "tmdb": "https://www.themoviedb.org/movie/49013",
+        "imdb": "https://www.imdb.com/title/tt1216475/",
+        "genres": ["Animación", "Familia", "Aventura", "Comedia"],
+        "runtime": 106,
+        "tmdbRating": 6.202,
+        "voteCount": 8847
+      },
+      "response": "**Cars 2 (2011)**\n\nGéneros: Animación, Familia, Aventura, Comedia\n\nDuración: 106 min\n\nPuntuación TMDB: 6.2/10 (8847 votos)\n\nSinopsis de TMDB: Rayo McQueen y su amigo, la grúa Mate, viajan al extranjero para participar en el primer Campeonato Mundial en el que se decidirá cuál es el coche más rápido del planeta. La primera etapa es Tokio \\(Japón\\), donde Mate tendrá que convertirse en un espía secreto al verse envuelto inesperadamente en un caso de espionaje internacional, que lo llevará a París y a Londres. También vivirán una aventura de proporciones épicas al viajar a Porto Corsa \\(Italia\\), para disputar el Campeonato. Sin embargo, los dos tendrán que renunciar a los placeres de la Riviera italiana -yates, playas y pasta al pesto- ya que Mate está muy ocupado con su labor de espía, mientras que McQueen compite contra los mejores coches del mundo."
+    },
+    {
+      "input": "¿Qué género tiene?",
+      "status": 200,
+      "movie": {
+        "id": 49013,
+        "title": "Cars 2",
+        "year": 2011,
+        "overview": "Rayo McQueen y su amigo, la grúa Mate, viajan al extranjero para participar en el primer Campeonato Mundial en el que se decidirá cuál es el coche más rápido del planeta. La primera etapa es Tokio (Japón), donde Mate tendrá que convertirse en un espía secreto al verse envuelto inesperadamente en un caso de espionaje internacional, que lo llevará a París y a Londres. También vivirán una aventura de proporciones épicas al viajar a Porto Corsa (Italia), para disputar el Campeonato. Sin embargo, los dos tendrán que renunciar a los placeres de la Riviera italiana -yates, playas y pasta al pesto- ya que Mate está muy ocupado con su labor de espía, mientras que McQueen compite contra los mejores coches del mundo.",
+        "poster": "https://image.tmdb.org/t/p/w500/kxfxsxJJ8e3vCRRLSfcELHtgMLh.jpg",
+        "tmdb": "https://www.themoviedb.org/movie/49013",
+        "imdb": "https://www.imdb.com/title/tt1216475/",
+        "genres": ["Animación", "Familia", "Aventura", "Comedia"],
+        "runtime": 106,
+        "tmdbRating": 6.202,
+        "voteCount": 8847
+      },
+      "response": "**Cars 2 (2011)**\n\nGéneros: Animación, Familia, Aventura, Comedia\n\nDuración: 106 min\n\nPuntuación TMDB: 6.2/10 (8847 votos)\n\nSinopsis de TMDB: Rayo McQueen y su amigo, la grúa Mate, viajan al extranjero para participar en el primer Campeonato Mundial en el que se decidirá cuál es el coche más rápido del planeta. La primera etapa es Tokio \\(Japón\\), donde Mate tendrá que convertirse en un espía secreto al verse envuelto inesperadamente en un caso de espionaje internacional, que lo llevará a París y a Londres. También vivirán una aventura de proporciones épicas al viajar a Porto Corsa \\(Italia\\), para disputar el Campeonato. Sin embargo, los dos tendrán que renunciar a los placeres de la Riviera italiana -yates, playas y pasta al pesto- ya que Mate está muy ocupado con su labor de espía, mientras que McQueen compite contra los mejores coches del mundo."
+    },
+    {
+      "input": "dame la puntuación de Interstellar",
+      "status": 200,
+      "movie": {
+        "id": 157336,
+        "title": "Interstellar",
+        "year": 2014,
+        "overview": "Un grupo de exploradores hacen uso de un agujero de gusano recientemente descubierto para superar las limitaciones de los viajes espaciales tripulados y vencer las inmensas distancias que tiene un viaje interestelar.",
+        "poster": "https://image.tmdb.org/t/p/w500/d1QKiYtceF3GDtxvTFXFAqwwah9.jpg",
+        "tmdb": "https://www.themoviedb.org/movie/157336",
+        "imdb": "https://www.imdb.com/title/tt0816692/",
+        "genres": ["Aventura", "Drama", "Ciencia ficción"],
+        "runtime": 169,
+        "tmdbRating": 8.493,
+        "voteCount": 41910
+      },
+      "response": "**Interstellar (2014)**\n\nGéneros: Aventura, Drama, Ciencia ficción\n\nDuración: 169 min\n\nPuntuación TMDB: 8.5/10 (41910 votos)\n\nSinopsis de TMDB: Un grupo de exploradores hacen uso de un agujero de gusano recientemente descubierto para superar las limitaciones de los viajes espaciales tripulados y vencer las inmensas distancias que tiene un viaje interestelar."
+    },
+    {
+      "input": "y su puntuación en IMDb?",
+      "status": 200,
+      "movie": {
+        "id": 157336,
+        "title": "Interstellar",
+        "year": 2014,
+        "overview": "Un grupo de exploradores hacen uso de un agujero de gusano recientemente descubierto para superar las limitaciones de los viajes espaciales tripulados y vencer las inmensas distancias que tiene un viaje interestelar.",
+        "poster": "https://image.tmdb.org/t/p/w500/d1QKiYtceF3GDtxvTFXFAqwwah9.jpg",
+        "tmdb": "https://www.themoviedb.org/movie/157336",
+        "imdb": "https://www.imdb.com/title/tt0816692/",
+        "genres": ["Aventura", "Drama", "Ciencia ficción"],
+        "runtime": 169,
+        "tmdbRating": 8.493,
+        "voteCount": 41910
+      },
+      "response": "**Interstellar (2014)**\n\nGéneros: Aventura, Drama, Ciencia ficción\n\nDuración: 169 min\n\nPuntuación TMDB: 8.5/10 (41910 votos)\n\nSinopsis de TMDB: Un grupo de exploradores hacen uso de un agujero de gusano recientemente descubierto para superar las limitaciones de los viajes espaciales tripulados y vencer las inmensas distancias que tiene un viaje interestelar.\n\nPuntuación IMDb: no disponible; TMDB no la proporciona."
+    },
+    {
+      "input": "Cars 2, ¿qué puntuación tiene?",
+      "status": 200,
+      "movie": {
+        "id": 49013,
+        "title": "Cars 2",
+        "year": 2011,
+        "overview": "Rayo McQueen y su amigo, la grúa Mate, viajan al extranjero para participar en el primer Campeonato Mundial en el que se decidirá cuál es el coche más rápido del planeta. La primera etapa es Tokio (Japón), donde Mate tendrá que convertirse en un espía secreto al verse envuelto inesperadamente en un caso de espionaje internacional, que lo llevará a París y a Londres. También vivirán una aventura de proporciones épicas al viajar a Porto Corsa (Italia), para disputar el Campeonato. Sin embargo, los dos tendrán que renunciar a los placeres de la Riviera italiana -yates, playas y pasta al pesto- ya que Mate está muy ocupado con su labor de espía, mientras que McQueen compite contra los mejores coches del mundo.",
+        "poster": "https://image.tmdb.org/t/p/w500/kxfxsxJJ8e3vCRRLSfcELHtgMLh.jpg",
+        "tmdb": "https://www.themoviedb.org/movie/49013",
+        "imdb": "https://www.imdb.com/title/tt1216475/",
+        "genres": ["Animación", "Familia", "Aventura", "Comedia"],
+        "runtime": 106,
+        "tmdbRating": 6.202,
+        "voteCount": 8847
+      },
+      "response": "**Cars 2 (2011)**\n\nGéneros: Animación, Familia, Aventura, Comedia\n\nDuración: 106 min\n\nPuntuación TMDB: 6.2/10 (8847 votos)\n\nSinopsis de TMDB: Rayo McQueen y su amigo, la grúa Mate, viajan al extranjero para participar en el primer Campeonato Mundial en el que se decidirá cuál es el coche más rápido del planeta. La primera etapa es Tokio \\(Japón\\), donde Mate tendrá que convertirse en un espía secreto al verse envuelto inesperadamente en un caso de espionaje internacional, que lo llevará a París y a Londres. También vivirán una aventura de proporciones épicas al viajar a Porto Corsa \\(Italia\\), para disputar el Campeonato. Sin embargo, los dos tendrán que renunciar a los placeres de la Riviera italiana -yates, playas y pasta al pesto- ya que Mate está muy ocupado con su labor de espía, mientras que McQueen compite contra los mejores coches del mundo."
+    }
+  ]
+}

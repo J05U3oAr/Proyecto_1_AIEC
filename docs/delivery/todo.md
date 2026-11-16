@@ -4,7 +4,7 @@ Estado inicial: planificación lista para revisión; implementación y evidencia
 
 Actualización M1 (15/11/2026): backend, contratos, sesiones Redis y cliente MCP
 implementados con pruebas locales; probe NVIDIA real con catálogo sintético.
-Ver [evidencia y pendientes](../server/IMPLEMENTACION.md). La aprobación del
+Ver [evidencia y pendientes](implementacion-m1.md). La aprobación del
 contrato por consumidores y la integración widget/proveedores/evals siguen
 pendientes; estos checks globales no se cierran con dobles.
 
@@ -52,4 +52,11 @@ pendientes; estos checks globales no se cierran con dobles.
 Actualización M2: herramientas TMDB reales, transporte MCP con token, caché/cuotas
 Redis y prueba entre procesos implementados; 184 tests Python y 60 frontend
 aprobados. Operación local/CI preparada; no se ejecutó CI remoto ni se completó
-la parte de libros/UI enriquecida. Ver [evidencia M2](../mcp/IMPLEMENTACION.md).
+la parte de libros/UI enriquecida. Ver [evidencia M2](implementacion-m2.md).
+
+Actualización de traspaso a M3 (15/11/2026): M2 amplió metadatos TMDB y corrigió
+continuidad conversacional; última verificación 248 tests Python y 70 frontend.
+Cambios subidos por Hugo; tracking local sincronizado al revisar. No se verificó
+el resultado remoto de CI ni revisión/protección de main. M3 recibe la
+[guía de integración](../integration/m3-libros-evals.md); sus herramientas, evals y checks de
+cierre siguen pendientes hasta demostrar su funcionamiento.

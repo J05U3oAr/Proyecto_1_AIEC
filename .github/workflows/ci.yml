@@ -66,7 +66,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - name: Build and start local services (no provider calls)
-        run: docker compose --env-file .env.example -p sofia-ci -f server/compose.yaml up --build -d --wait
+        run: docker compose --env-file .env.example -p sofia-ci -f infra/compose.yaml up --build -d --wait
       - name: Check health and authentication
         run: |
           curl --fail --silent http://127.0.0.1:8000/health/ready
@@ -74,4 +74,4 @@ jobs:
           test "$(curl --silent --output /dev/null --write-out '%{http_code}' -X POST http://127.0.0.1:8001/mcp)" = 401
       - name: Stop test services
         if: always()
-        run: docker compose --env-file .env.example -p sofia-ci -f server/compose.yaml down
+        run: docker compose --env-file .env.example -p sofia-ci -f infra/compose.yaml down

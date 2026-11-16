@@ -37,3 +37,16 @@ coverage/
 .env
 .env.local
 .env.production
+
+# Python (todos los módulos)
+__pycache__/
+*.py[cod]
+.venv/
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+.coverage
+coverage*.json
+coverage.xml
+htmlcov/
+coverage-*.json

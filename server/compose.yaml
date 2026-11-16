@@ -24,11 +24,24 @@ services:
     build:
       context: ..
       dockerfile: server/Dockerfile
-    env_file: ../.env
     environment:
+      NVIDIA_API_KEY: ${NVIDIA_API_KEY:-}
+      NVIDIA_BASE_URL: ${NVIDIA_BASE_URL:-https://integrate.api.nvidia.com/v1}
+      NVIDIA_MODEL: ${NVIDIA_MODEL:-nvidia/nemotron-3.5-lightning-30b-a3b}
+      MCP_TOKEN: ${MCP_TOKEN:-}
+      ALLOWED_ORIGINS: ${ALLOWED_ORIGINS:-["http://localhost:3000"]}
+      SESSION_TTL: ${SESSION_TTL:-1800}
+      MAX_HISTORY: ${MAX_HISTORY:-20}
+      MAX_LLM_CALLS: ${MAX_LLM_CALLS:-4}
+      MAX_TOOL_CALLS: ${MAX_TOOL_CALLS:-6}
+      MAX_OUTPUT_TOKENS: ${MAX_OUTPUT_TOKENS:-2048}
+      TURN_TIMEOUT: ${TURN_TIMEOUT:-60}
+      PROVIDER_TIMEOUT: ${PROVIDER_TIMEOUT:-15}
+      LLM_DAILY_BUDGET: ${LLM_DAILY_BUDGET:-1000}
+      REQUEST_BODY_LIMIT: ${REQUEST_BODY_LIMIT:-16384}
       REDIS_URL: redis://redis:6379/0
-      MOVIES_MCP_URL: ${MOVIES_MCP_URL:-http://movies:8001/mcp}
-      BOOKS_MCP_URL: ${BOOKS_MCP_URL:-http://books:8002/mcp}
+      MOVIES_MCP_URL: ${MOVIES_MCP_CONTAINER_URL:-http://movies:8001/mcp}
+      BOOKS_MCP_URL: ${BOOKS_MCP_CONTAINER_URL:-http://books:8002/mcp}
     ports:
       - '127.0.0.1:8000:8000'
     depends_on:
@@ -41,6 +54,34 @@ services:
           '.venv/bin/python',
           '-c',
           "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8000/health/ready')",
+        ]
+      interval: 10s
+      timeout: 3s
+      retries: 5
+  movies:
+    build:
+      context: ..
+      dockerfile: mcp/movies/Dockerfile
+    environment:
+      REDIS_URL: redis://redis:6379/0
+      MCP_TOKEN: ${MCP_TOKEN:-}
+      TMDB_READ_TOKEN: ${TMDB_READ_TOKEN:-}
+      TMDB_DAILY_BUDGET: ${TMDB_DAILY_BUDGET:-1000}
+      CATALOG_CACHE_TTL: ${CATALOG_CACHE_TTL:-3600}
+      TMDB_TIMEOUT: ${TMDB_TIMEOUT:-5}
+      TMDB_RETRIES: ${TMDB_RETRIES:-1}
+    ports:
+      - '127.0.0.1:8001:8001'
+    depends_on:
+      redis:
+        condition: service_healthy
+    healthcheck:
+      test:
+        [
+          'CMD',
+          '.venv/bin/python',
+          '-c',
+          "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8001/health/ready')",
         ]
       interval: 10s
       timeout: 3s

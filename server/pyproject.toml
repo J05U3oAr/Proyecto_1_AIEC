@@ -31,7 +31,7 @@ addopts = "-ra"
 
 [tool.coverage.run]
 branch = true
-source = ["sofia"]
+source = ["sofia", "scripts"]
 
 [tool.coverage.report]
 fail_under = 80
@@ -47,4 +47,5 @@ select = ["E", "F", "I", "UP", "B", "ASYNC"]
 [tool.mypy]
 python_version = "3.12"
 strict = true
-files = ["sofia"]
+files = ["sofia", "scripts"]
+plugins = ["pydantic.mypy"]

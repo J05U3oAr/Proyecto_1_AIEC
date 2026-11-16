@@ -3,6 +3,7 @@ import { useChatStore } from '@/store/useChatStore';
 
 describe('useChatStore', () => {
   beforeEach(() => {
+    vi.restoreAllMocks();
     localStorage.clear();
     useChatStore.setState({
       isOpen: false,
@@ -45,12 +46,16 @@ describe('useChatStore', () => {
 
   it('actualiza el estado de entrega o error del mensaje', () => {
     const messageId = useChatStore.getState().sendMessage('Mensaje');
+    const otherId = useChatStore.getState().sendMessage('Otro mensaje');
 
     useChatStore.getState().markMessageAsSent(messageId);
     expect(useChatStore.getState().messages[0].status).toBe('sent');
 
     useChatStore.getState().markMessageAsError(messageId);
     expect(useChatStore.getState().messages[0].status).toBe('error');
+    expect(useChatStore.getState().messages.find(message => message.id === otherId)?.status).toBe(
+      'sending'
+    );
   });
 
   it('limpia la conversación y el estado de escritura', () => {
@@ -69,5 +74,20 @@ describe('useChatStore', () => {
     expect(useChatStore.persist.getOptions().name).toBe('agichat-conversation');
     expect(localStorage.getItem('agichat-conversation')).toContain('Persistir este mensaje');
     expect(localStorage.getItem('agichat-conversation')).not.toContain('isTyping');
+  });
+
+  it('olvida la sesión al reiniciar y no deja que un error antiguo afecte un turno nuevo', () => {
+    const oldId = useChatStore.getState().sendMessage('Cars');
+    useChatStore
+      .getState()
+      .setSession({ id: 's', token: 'synthetic-token', endpoint: '/api/chat' });
+    const version = useChatStore.getState().conversationVersion;
+    useChatStore.getState().clearChat();
+    expect(useChatStore.getState().session).toBeNull();
+    expect(useChatStore.getState().conversationVersion).toBe(version + 1);
+    useChatStore.getState().sendMessage('Shrek');
+    useChatStore.getState().setTyping(true);
+    useChatStore.getState().markMessageAsError(oldId);
+    expect(useChatStore.getState().isTyping).toBe(true);
   });
 });

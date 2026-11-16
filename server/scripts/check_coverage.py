@@ -35,7 +35,8 @@ def metrics(path: Path, result: FileCoverage) -> dict[str, float]:
             body = [
                 statement
                 for statement in node.body
-                if not (
+                if not isinstance(statement, (ast.Global, ast.Nonlocal))
+                and not (
                     isinstance(statement, ast.Expr)
                     and isinstance(statement.value, ast.Constant)
                     and isinstance(statement.value.value, str)

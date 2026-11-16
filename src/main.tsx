@@ -2,6 +2,7 @@ import React from 'react';
 import ReactDOM from 'react-dom/client';
 import App from './App';
 import './index.css';
+import { shouldEnableMocking } from '@/services/runtimeMode';
 import { enableMocking } from '@/mocks/browser';
 
 const renderApplication = (): void => {
@@ -13,7 +14,7 @@ const renderApplication = (): void => {
 };
 
 const startApplication = async (): Promise<void> => {
-  if (import.meta.env.DEV) {
+  if (shouldEnableMocking(import.meta.env.DEV, import.meta.env.VITE_CHAT_MODE)) {
     await enableMocking();
   }
 

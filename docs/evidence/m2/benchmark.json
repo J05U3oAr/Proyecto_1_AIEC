@@ -1,0 +1,11 @@
+{
+  "mode": "synthetic_provider_real_redis",
+  "requests": 40,
+  "concurrency": 8,
+  "cacheClients": 2,
+  "processes": 1,
+  "providerRequests": 5,
+  "errors": 0,
+  "p50Ms": 0.384,
+  "p95Ms": 58.975
+}

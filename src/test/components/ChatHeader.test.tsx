@@ -1,9 +1,11 @@
-import { render, screen, fireEvent } from '@testing-library/react';
-import { describe, it, expect, beforeEach } from 'vitest';
+import { render, screen, fireEvent, waitFor, act } from '@testing-library/react';
+import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
+import { chatService } from '@/services/chatService';
 import { ChatHeader } from '../../components/widget/ChatHeader';
 import { useChatStore } from '../../store/useChatStore';
 
 describe('ChatHeader', () => {
+  afterEach(() => vi.restoreAllMocks());
   beforeEach(() => {
     useChatStore.setState({
       isOpen: true,
@@ -39,5 +41,35 @@ describe('ChatHeader', () => {
     const expandBtn = screen.getByRole('button', { name: /Expandir chat/i });
     fireEvent.click(expandBtn);
     expect(useChatStore.getState().isExpanded).toBe(true);
+  });
+
+  it('no interrumpe un mensaje nuevo por un fallo tardío del borrado anterior', async () => {
+    let failCleanup: (reason: Error) => void = () => {};
+    vi.spyOn(chatService, 'clearSession').mockImplementation(
+      () =>
+        new Promise<void>((_, reject) => {
+          failCleanup = reject;
+        })
+    );
+    render(<ChatHeader />);
+    fireEvent.click(screen.getByRole('button', { name: /reiniciar chat/i }));
+    await act(async () => {
+      useChatStore.getState().sendMessage('Cars');
+      useChatStore.getState().setTyping(true);
+      failCleanup(new Error('No disponible'));
+      await Promise.resolve();
+    });
+    expect(useChatStore.getState().isTyping).toBe(true);
+    expect(useChatStore.getState().messages).toHaveLength(1);
+  });
+
+  it('avisa si el borrado remoto falla sin restaurar la conversación anterior', async () => {
+    vi.spyOn(chatService, 'clearSession').mockRejectedValue(new Error('No disponible'));
+    render(<ChatHeader />);
+    fireEvent.click(screen.getByRole('button', { name: /reiniciar chat/i }));
+    await waitFor(() =>
+      expect(useChatStore.getState().messages[0]?.content).toContain('no pude borrar la sesión')
+    );
+    expect(useChatStore.getState().session).toBeNull();
   });
 });

@@ -4,7 +4,7 @@ Estado inicial: planificación lista para revisión; implementación y evidencia
 
 Actualización M1 (15/11/2026): backend, contratos, sesiones Redis y cliente MCP
 implementados con pruebas locales; probe NVIDIA real con catálogo sintético.
-Ver [evidencia y pendientes](../server/IMPLEMENTACION.md). La aprobación del
+Ver [evidencia y pendientes](implementacion-m1.md). La aprobación del
 contrato por consumidores y la integración widget/proveedores/evals siguen
 pendientes; estos checks globales no se cierran con dobles.
 
@@ -19,8 +19,8 @@ pendientes; estos checks globales no se cierran con dobles.
 ## Hito 1 — recomendación de extremo a extremo
 
 - [ ] M1.2: backend validado y sesión aislada, con tests; depende de M1.1.
-- [ ] M2.1: tools de películas invocables por cliente MCP independiente; depende del contrato.
-- [ ] M2.2: póster, detalles y referencia IMDb válidos, con tests; depende de M2.1.
+- [x] M2.1: tools de películas invocables por cliente MCP independiente; depende del contrato.
+- [x] M2.2: póster, detalles y referencia IMDb válidos, con tests; depende de M2.1.
 - [ ] M4.1: cliente/store/SDK con modo real y compatibilidad antigua; depende de fixtures de M1.1.
 - [ ] M4.2 (recomendación): ficha accesible y estados, con tests; depende del contrato TMDB.
 - [ ] Checkpoint: widget → backend → agente → MCP → TMDB con póster real; tests/checks de módulos incorporados y revisión cruzada.
@@ -37,7 +37,7 @@ pendientes; estos checks globales no se cierran con dobles.
 
 ## Hito 3 — robustez y entrega
 
-- [ ] M2.3: caché/cuota compartidas y concurrencia verificadas; iniciar utilidades antes de cerrar MCP libros.
+- [x] M2.3: caché/cuota compartidas y concurrencia verificadas; iniciar utilidades antes de cerrar MCP libros.
 - [ ] M1.4: defensas y diagramas alto/bajo nivel coherentes; depende de flujo implementado y evidencia de M2/M3/M4.
 - [ ] M3.4: harness y dataset funcional/LLM01/LLM07, con aportes de todos; runner puede iniciarse con fixtures desde hito 0 y adaptar [HDT6 según el análisis](reutilizacion-evals.md), sin duplicar el harness de HDT7.
 - [ ] M2.4: CI de todos los módulos, comandos y operación desde clon limpio; incorporar módulos progresivamente.
@@ -48,3 +48,15 @@ pendientes; estos checks globales no se cierran con dobles.
 - [ ] Protección de main y PRs con revisión por compañero comprobados por mantenedor; commits/merge solo humanos.
 - [ ] Matriz de 100 puntos revisada, guion de demo y ensayo de defensa de todos. [Rúbrica y contexto](contexto-curso-rubrica.md).
 - [ ] Revisión humana final: repo ejecutable, documentación final, evidencias sin secretos y requisitos de `INSTRUCTIONS.md` completos.
+
+Actualización M2: herramientas TMDB reales, transporte MCP con token, caché/cuotas
+Redis y prueba entre procesos implementados; 184 tests Python y 60 frontend
+aprobados. Operación local/CI preparada; no se ejecutó CI remoto ni se completó
+la parte de libros/UI enriquecida. Ver [evidencia M2](implementacion-m2.md).
+
+Actualización de traspaso a M3 (15/11/2026): M2 amplió metadatos TMDB y corrigió
+continuidad conversacional; última verificación 248 tests Python y 70 frontend.
+Cambios subidos por Hugo; tracking local sincronizado al revisar. No se verificó
+el resultado remoto de CI ni revisión/protección de main. M3 recibe la
+[guía de integración](../integration/m3-libros-evals.md); sus herramientas, evals y checks de
+cierre siguen pendientes hasta demostrar su funcionamiento.

@@ -89,9 +89,17 @@ class Movie(Model):
     poster: str | None = None
     tmdb: str
     imdb: str | None = None
+    genres: list[
+        Annotated[str, StringConstraints(strip_whitespace=True, min_length=1, max_length=100)]
+    ] = Field(default_factory=list, max_length=30)
+    runtime: int | None = Field(default=None, ge=1, le=10000)
+    tmdbRating: float | None = Field(default=None, ge=0, le=10, allow_inf_nan=False)
+    voteCount: int | None = Field(default=None, ge=0)
 
     @model_validator(mode="after")
     def validate_urls(self) -> "Movie":
+        if self.tmdbRating is not None and not self.voteCount:
+            raise ValueError("TMDB rating requires a positive vote count")
         safe_url(self.tmdb, "tmdb")
         if urlsplit(self.tmdb).path != f"/movie/{self.id}":
             raise ValueError("TMDB ID mismatch")

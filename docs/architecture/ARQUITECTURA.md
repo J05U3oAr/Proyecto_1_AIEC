@@ -72,7 +72,7 @@ Modelo inicial: Nemotron 3.5 Lightning 30B-A3B. Alternativa manual: Nemotron 3.5
 Super VL 120B-A12B. Ambos se eligieron del catálogo con endpoint gratuito;
 disponibilidad/cuotas deben verificarse antes de nuevas pruebas. No existe
 fallback automático ni registro de pagos. La clave se inyecta al arrancar y no
-se copia a la imagen. Ver [implementación M1](server/IMPLEMENTACION.md).
+se copia a la imagen. Ver [implementación M1](../delivery/implementacion-m1.md).
 
 ## Estado, concurrencia y escalabilidad
 
@@ -102,7 +102,7 @@ exclusión y contadores entre dos instancias, no capacidad ilimitada ni HA.
 
 ## Evidencia y pendientes
 
-Código y pruebas se ejecutan con [los comandos de M1](server/README.md). Se exige
+Código y pruebas se ejecutan con [los comandos de M1](../../server/README.md). Se exige
 ≥80% por archivo en las cuatro métricas, sin ocultar scripts o entrypoints. Evals
 reales funcionales, LLM01/LLM07, CI global y aceptación de contratos por consumidores
 siguen pendientes de integración; tests con dobles no los sustituyen.

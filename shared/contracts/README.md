@@ -1,6 +1,9 @@
 # Contratos v1 de Sofía
 
-Estado: propuesta implementada por M1; pendiente de revisión por M2/M3/M4.
+[Índice de documentación](../../docs/README.md).
+
+Estado: implementado por M1; M2 verificó las tools de películas sin cambiar los schemas.
+Pendiente de revisión por M3/M4.
 Los schemas JSON de `v1/` son el artefacto neutral para todos los consumidores.
 Los validadores Python que los publican están en `server/sofia/models.py`.
 No mantener tipos o schemas manuales divergentes: validar contra estos artefactos.
@@ -78,9 +81,12 @@ Los schemas expresan estructura; validadores runtime añaden políticas de URL,
 correspondencia entre IDs y evidencia requerida. Consumidores deben implementar
 esas invariantes y usar fixtures adversariales, no confiar solo en JSON Schema.
 
-M2/M3 deben usar errores MCP explícitos (`isError`), sin secretos ni excepciones
-internas. M1 los normaliza como fallo de proveedor; la distinción de cuota y
-timeout específica del MCP se coordinará en la revisión del contrato.
+M2/M3 usan errores MCP explícitos (`isError`), sin secretos ni excepciones
+internas. M2 devuelve `structuredContent` con `{ error: { code, retryable, retryAfter } }`
+cuando falla una tool. El consumidor M1 admite `quota_exhausted` y
+`provider_rate_limited` como HTTP 429, y `provider_timeout` como 504; ignora
+mensajes arbitrarios y normaliza los demás como fallo de proveedor. Esto no
+cambia el schema de resultados exitosos ni de la respuesta HTTP pública.
 
 ## URLs admitidas
 
@@ -91,3 +97,22 @@ timeout específica del MCP se coordinará en la revisión del contrato.
 
 Sin credenciales embebidas, fragmentos, hosts semejantes, esquemas alternativos,
 query adicional o redirecciones. Normalizar URLs del proveedor antes de publicar.
+
+## Metadatos de películas
+
+`Movie` incorpora campos opcionales: `genres` (lista de nombres, por defecto
+vacía), `runtime` (minutos positivos o null), `tmdbRating` (0–10 o null) y
+`voteCount` (entero no negativo o null). El validador exige votos positivos cuando
+hay puntuación. No es una puntuación IMDb. El proveedor puede omitir datos;
+no convertir ausencia de promedio en una nota cero. Las respuestas antiguas y
+sesiones sin estos campos siguen siendo entradas válidas del contrato actualizado.
+
+Se regeneraron `movie`, `chat-response` y `tool-result` desde `sofia.models`.
+Los consumidores con validadores estrictos deben actualizar esos schemas al
+integrar esta ampliación; versiones anteriores con `additionalProperties: false`
+rechazarán los campos nuevos. El cliente HTTP actual admite propiedades adicionales.
+La presentación del agente identifica TMDB y muestra cantidad de votos y un
+decimal, conservando la precisión original en `tmdbRating`.
+
+Fuentes: [búsqueda y votos de TMDB](https://developer.themoviedb.org/docs/search-and-query-for-details)
+y [detalles de película](https://developer.themoviedb.org/reference/movie-details).

@@ -9,7 +9,16 @@ export interface Message {
   status: MessageStatus;
 }
 
+export interface ChatSession {
+  id: string;
+  token: string;
+  endpoint: string;
+}
+
 export interface ChatState {
+  session: ChatSession | null;
+  conversationVersion: number;
+  setSession: (session: ChatSession | null) => void;
   isOpen: boolean;
   isExpanded: boolean;
   messages: Message[];

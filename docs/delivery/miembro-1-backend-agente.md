@@ -2,13 +2,13 @@
 
 ## Contexto y meta
 
-Leer `AGENTS.md`, `INSTRUCTIONS.md`, `DESIGN.md`, `tasks/plan.md` y `tasks/reutilizacion-a2a.md`. El widget ya consume `{ prompt }` → `{ response }`, pero no existe backend real. Tu meta es que Sofía converse desde el widget usando herramientas MCP reales, recomiende con fundamento y compare una adaptación sin inventar información. El backend aplica la seguridad aunque el modelo ignore sus instrucciones.
+Leer `AGENTS.md`, `INSTRUCTIONS.md`, `DESIGN.md`, `docs/delivery/plan.md` y `docs/delivery/reutilizacion-a2a.md`. El widget ya consume `{ prompt }` → `{ response }`, pero no existe backend real. Tu meta es que Sofía converse desde el widget usando herramientas MCP reales, recomiende con fundamento y compare una adaptación sin inventar información. El backend aplica la seguridad aunque el modelo ignore sus instrucciones.
 
-Carga estimada: 16 puntos. Carpetas propias: `server/`, `shared/contracts/`, pruebas asociadas y `ARQUITECTURA.md`. Coordinar scripts con M2; no editar el cliente/store de M4 para integrar a escondidas. Reutilizar patrones del A2A según el análisis; Python es una alternativa preferente si la prueba inicial reduce trabajo, manteniendo contratos neutrales al lenguaje.
+Carga estimada: 16 puntos. Carpetas propias: `server/`, `shared/contracts/`, pruebas asociadas y `docs/architecture/ARQUITECTURA.md`. Coordinar scripts con M2; no editar el cliente/store de M4 para integrar a escondidas. Reutilizar patrones del A2A según el análisis; Python es una alternativa preferente si la prueba inicial reduce trabajo, manteniendo contratos neutrales al lenguaje.
 
-Avance de implementación: [operación y pruebas](../server/README.md),
-[contratos](../shared/contracts/README.md) y
-[decisiones/evidencia/pendientes](../server/IMPLEMENTACION.md). Los criterios de
+Avance de implementación: [operación y pruebas](../../server/README.md),
+[contratos](../../shared/contracts/README.md) y
+[decisiones/evidencia/pendientes](implementacion-m1.md). Los criterios de
 aceptación integrados permanecen abiertos hasta disponer de consumidores y
 proveedores reales; no se marca completado por pruebas con dobles.
 
@@ -37,7 +37,7 @@ proveedores reales; no se marca completado por pruebas con dobles.
 
 - Aplicar least privilege, allowlist de herramientas/argumentos, presupuesto de tokens/pasos, timeouts, aislamiento de instrucciones/datos y validación de salidas. No confiar en un rechazo textual del LLM como barrera suficiente.
 - Cubrir LLM01 directo/indirecto y LLM07 con pruebas de efectos y canarios sintéticos; controles de acceso y secretos siempre fuera del prompt. Aportar al menos 4 casos de ataque al harness y corregir hallazgos.
-- Actualizar `ARQUITECTURA.md` con **dos diagramas obligatorios**: alto nivel y bajo nivel del flujo/organización del agente, incluso si es uno solo. Indicar clasificación centralizada o la topología real del MAS, fronteras de confianza, pasos y errores. Incorporar evidencia de escala de M2.
+- Actualizar `docs/architecture/ARQUITECTURA.md` con **dos diagramas obligatorios**: alto nivel y bajo nivel del flujo/organización del agente, incluso si es uno solo. Indicar clasificación centralizada o la topología real del MAS, fronteras de confianza, pasos y errores. Incorporar evidencia de escala de M2.
 
 ## Criterios de aceptación
 

@@ -164,3 +164,31 @@ async def test_mcp_transport_timeout(monkeypatch, settings):
     with pytest.raises(PublicError) as failure:
         await RemoteMCP(settings).call("search_movies", args)
     assert failure.value.code == "upstream_unavailable"
+
+
+@pytest.mark.parametrize(
+    "payload,code,status,retry",
+    [
+        ({"error": {"code": "quota_exhausted", "retryAfter": 30}}, "quota_exhausted", 429, 30),
+        (
+            {"error": {"code": "provider_rate_limited", "retryAfter": 999999}},
+            "provider_rate_limited",
+            429,
+            86400,
+        ),
+        ({"error": {"code": "provider_timeout"}}, "provider_timeout", 504, None),
+        (
+            {"error": {"code": "unknown-secret", "message": "private"}},
+            "upstream_unavailable",
+            503,
+            None,
+        ),
+        ({"error": None}, "upstream_unavailable", 503, None),
+    ],
+)
+def test_mcp_errors_preserve_safe_codes_only(payload, code, status, retry):
+    from sofia.adapters import catalog_error
+
+    result = catalog_error(payload)
+    assert (result.code, result.status, result.retry_after) == (code, status, retry)
+    assert "private" not in result.message and "unknown-secret" not in result.message

@@ -104,3 +104,21 @@ async def test_probe_never_prints_credentials_or_model_content(monkeypatch, sett
     assert "synthetic-secret" not in output
     assert code == (0 if mode == "ok" else 1)
     assert json.loads(output)["requests"] <= 2
+
+
+def test_function_coverage_uses_executable_entry_after_nonlocal(tmp_path):
+    source = tmp_path / "closure.py"
+    source.write_text(
+        "def outer():\n    count = 0\n    def inner():\n"
+        "        nonlocal count\n        count += 1\n    inner()\n"
+    )
+    result = {
+        "executed_lines": [1, 2, 3, 5, 6],
+        "summary": {
+            "covered_lines": 5,
+            "num_statements": 5,
+            "covered_branches": 0,
+            "num_branches": 0,
+        },
+    }
+    assert check_coverage.metrics(source, result)["functions"] == 100

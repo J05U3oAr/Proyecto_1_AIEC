@@ -5,8 +5,14 @@ import { useChatStore } from '@/store/useChatStore';
 
 export const ChatInput: React.FC = () => {
   const [text, setText] = useState('');
-  const { sendMessage, receiveMessage, markMessageAsSent, markMessageAsError, setTyping } =
-    useChatStore();
+  const {
+    sendMessage,
+    receiveMessage,
+    markMessageAsSent,
+    markMessageAsError,
+    setTyping,
+    isTyping,
+  } = useChatStore();
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
   // Auto-ajuste de altura del textarea
@@ -19,7 +25,7 @@ export const ChatInput: React.FC = () => {
 
   const handleSend = async (): Promise<void> => {
     const trimmed = text.trim();
-    if (!trimmed) return;
+    if (!trimmed || useChatStore.getState().isTyping) return;
 
     const messageId = sendMessage(trimmed);
     setText('');
@@ -35,7 +41,7 @@ export const ChatInput: React.FC = () => {
   };
 
   const handleKeyDown = (e: KeyboardEvent<HTMLTextAreaElement>) => {
-    if (e.key === 'Enter' && !e.shiftKey) {
+    if (e.key === 'Enter' && !e.shiftKey && !e.nativeEvent.isComposing) {
       e.preventDefault(); // Evitar el salto de línea
       void handleSend();
     }
@@ -55,7 +61,7 @@ export const ChatInput: React.FC = () => {
         />
         <button
           onClick={() => void handleSend()}
-          disabled={!text.trim()}
+          disabled={!text.trim() || isTyping}
           className="flex h-11 w-11 flex-shrink-0 items-center justify-center rounded-full bg-[var(--agichat-primary)] text-[var(--agichat-primary-contrast)] transition-opacity focus:outline-none focus:ring-2 focus:ring-[var(--agichat-primary)] focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
           aria-label="Enviar mensaje"
         >

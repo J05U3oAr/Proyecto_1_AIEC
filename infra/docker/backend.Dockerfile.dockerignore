@@ -1,7 +1,9 @@
 # Build from an allowlist: credentials and local development files never enter it.
 **
 !server/
-!server/Dockerfile
+!infra/
+!infra/docker/
+!infra/docker/backend.Dockerfile
 !server/pyproject.toml
 !server/uv.lock
 !server/sofia/

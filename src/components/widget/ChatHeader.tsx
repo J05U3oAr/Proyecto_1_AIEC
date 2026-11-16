@@ -1,5 +1,6 @@
 import React from 'react';
 import { Minus, RotateCcw, Maximize2, Minimize2 } from 'lucide-react';
+import { chatService } from '@/services/chatService';
 import { useChatStore } from '@/store/useChatStore';
 
 // Simple bear head SVG matching the minimalist wireframe
@@ -49,12 +50,29 @@ export const ChatHeader: React.FC<ChatHeaderProps> = ({
 }) => {
   const { toggleChat, clearChat, isExpanded, toggleExpand } = useChatStore();
 
+  const resetConversation = () => {
+    // Capture credentials before clearing the in-memory session.
+    const cleanup = chatService.clearSession?.();
+    clearChat();
+    const version = useChatStore.getState().conversationVersion;
+    void cleanup?.catch(() => {
+      const state = useChatStore.getState();
+      if (state.conversationVersion === version && state.messages.length === 0) {
+        useChatStore
+          .getState()
+          .receiveMessage(
+            'Se limpió el historial local, pero no pude borrar la sesión del servidor. Expirará automáticamente.'
+          );
+      }
+    });
+  };
+
   return (
     <div className="relative flex flex-col items-center bg-[var(--agichat-surface)] px-6 pb-4 pt-10 text-[var(--agichat-text)]">
       {/* Botones de acción minimalistas en la esquina superior derecha */}
       <div className="absolute top-4 right-4 flex gap-2">
         <button
-          onClick={clearChat}
+          onClick={resetConversation}
           className="rounded-full p-1 text-[var(--agichat-text-muted)] transition-colors hover:text-[var(--agichat-text)]"
           aria-label="Reiniciar chat"
           title="Reiniciar chat"

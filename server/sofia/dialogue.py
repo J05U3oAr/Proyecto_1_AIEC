@@ -39,7 +39,14 @@ def words(text: str) -> str:
 @dataclass(frozen=True)
 class Intent:
     kind: Literal[
-        "greeting", "capabilities", "social", "out_of_scope", "blocked", "catalog", "lookup"
+        "greeting",
+        "capabilities",
+        "social",
+        "out_of_scope",
+        "blocked",
+        "catalog",
+        "lookup",
+        "metadata",
     ]
     reply: str | None = None
     query: str | None = None
@@ -86,13 +93,22 @@ def route(prompt: str) -> Intent:
     ):
         return Intent("social", "¡Con gusto! Aquí estaré si quieres buscar otra película.")
     if re.search(
-        r"\b(?:puntuacion|puntuaciones|calificacion|calificaciones|rating|ratings)\b", text
-    ):
-        return Intent(
-            "social",
-            "Mi catálogo actual no incluye puntuaciones verificadas. "
-            "Puedo mostrarte el título, el año, la sinopsis y referencias de la película.",
+        r"\b(?:puntuacion(?:es)?|calificacion(?:es)?|ratings?|generos?|duracion|"
+        r"cuanto (?:tiempo )?dura)\b",
+        text,
+    ) and not re.search(r"\b(?:recomiend\w*|compara\w*|busca\w*)\b", text):
+        target = re.search(
+            r"(?:puntuacion(?:es)?|calificacion(?:es)?|ratings?|generos?|duracion)"
+            r"(?: en (?:tmdb|imdb))? (?:de|del|tiene|es) (.+)$|"
+            r"cuanto (?:tiempo )?dura (.+)$|"
+            r"^(.+?) (?:que (?:puntuacion|calificacion|generos?) tiene|cuanto dura)$",
+            text,
         )
+        query = next((part for part in target.groups() if part), "") if target else ""
+        query = re.sub(r" en (?:tmdb|imdb)$", "", query)
+        if query in {"esa", "esa pelicula", "la pelicula", "esta", "tiene"}:
+            query = ""
+        return Intent("metadata", query=query or None)
     if re.search(
         r"\b(?:peliculas?|pelis?|cine|films?|movies?|libros?|novelas?|adaptaci\w*|"
         r"tmdb|imdb|books|sinopsis|guion|generos?|duracion|recomiend\w*|recomendar|"
@@ -174,6 +190,17 @@ def plain_catalog_text(value: str) -> str:
     return re.sub(r"([\\`*_{}\[\]<>()#!|])", r"\\\1", value)
 
 
+def movie_metadata(movie: Movie) -> str:
+    genres = ", ".join(plain_catalog_text(genre) for genre in movie.genres) or "no disponibles"
+    runtime = f"{movie.runtime} min" if movie.runtime is not None else "no disponible"
+    rating = (
+        f"{movie.tmdbRating:.1f}/10 ({movie.voteCount} votos)"
+        if movie.tmdbRating is not None and movie.voteCount
+        else "no disponible (sin votos verificados)"
+    )
+    return f"Géneros: {genres}\n\nDuración: {runtime}\n\nPuntuación TMDB: {rating}"
+
+
 def movie_text(movies: list[Movie]) -> str:
     if not movies:
         return "No encontré una película con esos datos. Prueba con el título y el año de estreno."
@@ -184,19 +211,19 @@ def movie_text(movies: list[Movie]) -> str:
             + "; ".join(labels)
             + ". ¿Cuál prefieres? Indica título o año."
         )
-    text = f"**{labels[0]}**"
+    text = f"**{labels[0]}**\n\n" + movie_metadata(movies[0])
     if movies[0].overview:
         text += "\n\nSinopsis de TMDB: " + plain_catalog_text(movies[0].overview[:1600])
     return text
 
 
 def unsupported_output(text: str) -> bool:
-    # Ratings are not fields in the reviewed Movie contract. Never present invented scores.
+    # Ratings in model prose are replaced by the deterministic verified metadata renderer.
     return bool(
         re.search(
             r"\b\d{1,2}(?:[.,]\d+)?\s*(?:/\s*10|sobre\s*10|de\s*10|out of\s*10)\b|"
             r"\b(?:puntuacion(?:es)?|ratings?|calificacion(?:es)?|scores?|estrellas|stars)\b|"
-            r"\b\d{1,2}(?:[.,]\d+)?\s+puntos\b|\bnota (?:de|es)\b|"
+            r"\bimdb\b|\b\d{1,2}(?:[.,]\d+)?\s+puntos\b|\bnota (?:de|es)\b|"
             r"\b(?:imdb|tmdb)\b.{0,80}\bpuntos\b|\b\d{1,3}\s*%",
             normalized(text),
             re.S,

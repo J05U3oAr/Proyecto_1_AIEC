@@ -1,0 +1,68 @@
+{
+  "verifiedAt": "2026-11-15T23:07:14.128564-06:00",
+  "scope": "Comprobación local antes/después de reorganizar documentación e infraestructura; no acredita CI remoto ni módulos futuros.",
+  "before": {
+    "pythonTestsPassed": 248,
+    "frontendTestsPassed": 70,
+    "jsdomE2EPassed": 1,
+    "applicationBuild": "passed",
+    "sdkBuild": "passed"
+  },
+  "after": {
+    "pythonTestsPassed": 248,
+    "frontendTestsPassed": 70,
+    "jsdomE2EPassed": 1,
+    "applicationBuild": "passed",
+    "sdkBuild": "passed",
+    "lint": "passed",
+    "format": "passed",
+    "mypy": "passed",
+    "contractDriftCheck": "passed",
+    "perPythonFileCoverageThresholds": "passed >=80% in four metrics",
+    "pythonStatementsPercent": 97.98611111111111,
+    "pythonBranchesPercent": 93.43434343434343
+  },
+  "compose": {
+    "baseEquivalentExceptDockerfileLocation": true,
+    "tlsEquivalentExceptDockerfileLocation": true,
+    "testEquivalent": true,
+    "imagesBuilt": true,
+    "npmStartServices": "passed",
+    "testRedisStart": "passed",
+    "caddyConfigValidation": "passed; no HTTPS request or trust-store installation"
+  },
+  "images": {
+    "backend": {
+      "uid": 10001,
+      "embeddedCredentials": false,
+      "environmentFileCopied": false
+    },
+    "movies": {
+      "uid": 10001,
+      "embeddedCredentials": false,
+      "environmentFileCopied": false
+    }
+  },
+  "httpMigration": {
+    "executedAt": "2026-11-16T05:02:45.467050+00:00",
+    "checks": [
+      "Sesión con Cars 2 creada antes de reconstruir",
+      "Sesión y metadatos conservados tras recrear backend y MCP con rutas nuevas",
+      "Saludo y rechazo de código preservados",
+      "Contexto conservado después de saludo/rechazo",
+      "Readiness backend/MCP 200 y MCP sin token 401"
+    ],
+    "testSessionDeleted": true
+  },
+  "browser": {
+    "real": "Cars 2 and followup duration displayed verified metadata",
+    "mock": "MSW table scenario completed",
+    "screenshots": ["widget-real.jpg", "widget-mock.jpg"]
+  },
+  "limitations": [
+    "Vite application chunk >500 kB warning persists",
+    "No remote CI run or branch-protection verification",
+    "Books and evals directories are README-only placeholders; no functionality claimed",
+    "Live lookup/session smoke checks use production MCP and cached TMDB data; no new LLM inference in these paths"
+  ]
+}

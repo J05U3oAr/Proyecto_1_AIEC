@@ -142,3 +142,32 @@ def test_book_and_adaptation_tool_shapes():
     )
     with pytest.raises(PublicError):
         validate_result("adaptation_evidence", args, ToolResult())
+
+
+def test_movie_metadata_is_optional_and_validated():
+    legacy = fixture("movie-result")["movies"][0]
+    movie = Movie.model_validate(legacy)
+    assert movie.genres == [] and movie.runtime is None and movie.tmdbRating is None
+    enriched = Movie.model_validate(
+        {
+            **legacy,
+            "genres": ["Ciencia ficción"],
+            "runtime": 169,
+            "tmdbRating": 8.6,
+            "voteCount": 1200,
+        }
+    )
+    assert enriched.runtime == 169 and enriched.voteCount == 1200
+    for changes in [
+        {"tmdbRating": 10.1},
+        {"tmdbRating": float("nan")},
+        {"runtime": 0},
+        {"runtime": "169"},
+        {"voteCount": -1},
+        {"genres": [""]},
+        {"genres": ["x"] * 31},
+        {"tmdbRating": 8.6, "voteCount": 0},
+        {"tmdbRating": 8.6},
+    ]:
+        with pytest.raises(ValidationError):
+            Movie.model_validate({**legacy, **changes})

@@ -1,0 +1,10 @@
+# Optional local TLS gateway. Operator must explicitly trust the local CA.
+# MCP remains private by default; backend authenticates to it with MCP_TOKEN.
+https://localhost:8443 {
+    tls internal
+    reverse_proxy backend:8000
+    header {
+        X-Content-Type-Options nosniff
+        Referrer-Policy no-referrer
+    }
+}

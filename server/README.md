@@ -2,8 +2,8 @@
 
 Python 3.12+, `uv`, Docker y Compose. Frontend conservado; no se instalaron
 dependencias servidor en el SDK. Los contratos neutrales están en
-[`shared/contracts`](../shared/contracts/README.md); su aceptación por consumidores
-M2/M3/M4 sigue pendiente. Ver [decisiones y evidencia](IMPLEMENTACION.md).
+[`shared/contracts`](../shared/contracts/README.md); M2 ya verificó compatibilidad de las tools de películas;
+la aceptación de M3/M4 sigue pendiente. Ver [decisiones y evidencia](IMPLEMENTACION.md).
 
 ## Configuración y arranque
 
@@ -11,10 +11,10 @@ Desde la raíz, si aún no existe `.env`, copiar `.env.example` y colocar la cla
 NVIDIA solo en `.env`. No sobrescribir un `.env` existente. Nunca prefijar secretos
 con `VITE_`. El ejemplo contiene todas las opciones, con credenciales vacías.
 
-Backend + Redis:
+Backend + Redis + MCP películas (M2):
 
 ```bash
-docker compose -p sofia-m1 -f server/compose.yaml up --build -d
+docker compose --env-file .env -p sofia -f server/compose.yaml up --build -d
 ```
 
 API: `http://localhost:8000`, documentación: `/docs`, checks: `/health/live` y
@@ -22,18 +22,19 @@ API: `http://localhost:8000`, documentación: `/docs`, checks: `/health/live` y
 Apagar con el mismo comando Compose seguido de `stop`; conserva sesiones en el
 volumen. No eliminar volúmenes salvo que se quiera borrar contexto.
 
-Compose lee la clave de `../.env` **al arrancar**, nunca en el build. Redis tiene
+Compose recibe variables de `.env` **al arrancar**, nunca en el build; cada servicio
+recibe solo sus opciones explícitas. `MCP_TOKEN` autentica backend y MCP. Redis tiene
 una dirección interna sin credenciales para esta red local. Puertos publicados
 solo en loopback, imagen sin root, contexto de build por allowlist. Un operador
 con acceso a Docker puede inspeccionar variables de contenedores: no compartir
 `docker inspect` ni `docker compose config` expandido. Antes de publicar a red,
 M2 debe configurar TLS, autenticación y aislamiento de infraestructura.
 
-Los MCP todavía deben incorporarse a la misma red Compose como `movies:8001` y
-`books:8002`, con ruta `/mcp`, o configurar destinos accesibles. Para overrides
-de Compose, exportar `MOVIES_MCP_URL`/`BOOKS_MCP_URL` o usar
-`docker compose --env-file .env ...`. Las variables del ejemplo `localhost`
-corresponden al desarrollo fuera del contenedor, no al loopback de otro servicio.
+El MCP de películas ya está en Compose como `movies:8001/mcp`. El de libros
+`books:8002/mcp` sigue pendiente de M3. Para destinos de contenedores diferentes,
+exportar `MOVIES_MCP_CONTAINER_URL`/`BOOKS_MCP_CONTAINER_URL`; las variables
+`MOVIES_MCP_URL`/`BOOKS_MCP_URL` son del host y no reemplazan la red interna.
+Ver [operación M2](../mcp/README.md) e [infraestructura](../infra/README.md).
 
 Desarrollo Python local, después de levantar solo Redis:
 
@@ -74,7 +75,8 @@ Las pruebas borran solo claves creadas durante cada caso. Reservar esa instancia
 para pruebas, sin tráfico concurrente ajeno. El servidor MCP sintético usa
 `127.0.0.1:18081`, se inicia y termina dentro del test.
 
-Cobertura incluye **todo** `sofia/` y los scripts operativos. coverage.py mide
+Cobertura incluye **todo** `sofia/`, los scripts operativos y los módulos actuales
+de películas/caché en `mcp/`. coverage.py mide
 sentencias ejecutables por línea, por lo que líneas/sentencias coinciden; ramas
 se miden por arcos. El script adicional cuenta entrada al primer statement
 ejecutable de cada función, incluidas funciones anidadas; omite únicamente
@@ -96,15 +98,16 @@ No ejecutarla repetidamente para medir cobertura.
 
 ## Integración y evals
 
-- M2 integra estos comandos, cobertura y contenedor en CI/arranque global;
-  `package.json` y `.github/` no se modificaron desde M1.
+- M2 integró estos comandos, cobertura por archivo, SDK y contenedores en CI;
+  ver [evidencia y limitaciones de M2](../mcp/IMPLEMENTACION.md).
 - M3 invoca `Agent.run` con los mismos adaptadores de producción. Recibe
   `TurnResult.response`, `trace` y `usage`; los errores `PublicError` también
   conservan observaciones sanitizadas. No enviar trazas al navegador.
 - [`evaluation_cases.json`](evaluation_cases.json) aporta funcionalidad y cuatro
   ataques LLM01/LLM07 para su harness; no es evidencia de eval real ejecutada.
-- M4 desactiva MSW en modo real, adapta sesión/servicio y ejecuta acciones con
-  validación y deduplicación. El SDK actual aún no implementa esa integración.
+- M2 añadió `npm run dev:real` para evitar MSW. El cliente ya conserva la sesión
+  HTTP en memoria y la elimina al reiniciar; ver [flujo conversacional](CONVERSACION.md).
+  M4 completa las tarjetas y acciones enriquecidas con validación y deduplicación.
 
 Datos de catálogo, sinopsis e historial son no confiables. Herramientas acotadas,
 schemas y URLs se validan en código. Ningún control requiere secretos dentro del

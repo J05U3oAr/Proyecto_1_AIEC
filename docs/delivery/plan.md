@@ -2,17 +2,17 @@
 
 ## Contexto y diagnóstico del repositorio
 
-Revisión del 15 de noviembre de 2026. Fuente académica: [INSTRUCTIONS.md](../INSTRUCTIONS.md). Reglas obligatorias: [AGENTS.md](../AGENTS.md). Diseño común: [DESIGN.md](../DESIGN.md). La [rúbrica y el material del curso](contexto-curso-rubrica.md) complementan la trazabilidad; el [análisis A2A](reutilizacion-a2a.md) orienta la reutilización de MCP/agente; el [análisis de HDT6](reutilizacion-evals.md) concreta la base del harness de evals.
+Revisión del 15 de noviembre de 2026. Fuente académica: [INSTRUCTIONS.md](../../INSTRUCTIONS.md). Reglas obligatorias: [AGENTS.md](../../AGENTS.md). Diseño común: [DESIGN.md](../../DESIGN.md). La [rúbrica y el material del curso](contexto-curso-rubrica.md) complementan la trazabilidad; el [análisis A2A](reutilizacion-a2a.md) orienta la reutilización de MCP/agente; el [análisis de HDT6](reutilizacion-evals.md) concreta la base del harness de evals.
 
-Existe un frontend React 18/TypeScript con widget, Markdown, SDK configurable, Zustand persistido, MSW, tests y CI. `HttpChatService` ya envía `POST /api/chat` con `{ prompt }` y valida `{ response }`. `ChatInput` orquesta hoy la llamada. El store persiste mensajes, pero no contiene aún una sesión de backend. MSW se activa automáticamente en desarrollo en `src/main.tsx`. No hay backend, integración LLM, MCP ni evals. El script `test:e2e` usa JSDOM. `ARQUITECTURA.md` documenta la fase 1 y contiene nombres/flujo conceptuales que deben reconciliarse con el código final.
+Existe un frontend React 18/TypeScript con widget, Markdown, SDK configurable, Zustand persistido, MSW, tests y CI. `HttpChatService` ya envía `POST /api/chat` con `{ prompt }` y valida `{ response }`. `ChatInput` orquesta hoy la llamada. El store persiste mensajes, pero no contiene aún una sesión de backend. MSW se activa automáticamente en desarrollo en `src/main.tsx`. No hay backend, integración LLM, MCP ni evals. El script `test:e2e` usa JSDOM. `docs/architecture/ARQUITECTURA.md` documenta la fase 1 y contiene nombres/flujo conceptuales que deben reconciliarse con el código final.
 
 Este cambio entrega instrucciones y planificación; no implementa esas piezas ni acredita que las pruebas del producto pasen.
 
 Actualización posterior de M1 (15/11/2026): el diagnóstico anterior describe el
 punto de partida. Ahora existen backend Python, contratos JSON, sesiones Redis,
 adaptadores y pruebas. La integración de producto con M2/M3/M4 sigue pendiente;
-ver [decisiones y evidencia](../server/IMPLEMENTACION.md) y la
-[arquitectura simplificada actualizada](../ARQUITECTURA.md).
+ver [decisiones y evidencia](implementacion-m1.md) y la
+[arquitectura simplificada actualizada](../architecture/ARQUITECTURA.md).
 
 ## Reparto equilibrado
 
@@ -55,7 +55,7 @@ Tras revisar el repo A2A del equipo, se recomienda probar primero backend/MCP Py
 
 | Responsable | Archivos actuales                                                                                                                                  | Rutas nuevas propuestas                                           |
 | ----------- | -------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------- |
-| 1           | `ARQUITECTURA.md`                                                                                                                                  | `server/`, `shared/contracts/`, tests correspondientes            |
+| 1           | `docs/architecture/ARQUITECTURA.md`                                                                                                                | `server/`, `shared/contracts/`, tests correspondientes            |
 | 2           | `.github/`, configs raíz y scripts, `README.md` operativo                                                                                          | `mcp/movies/`, `infra/`, `.env.example`, pruebas correspondientes |
 | 3           | Sin propietario exclusivo previo que conservar                                                                                                     | `mcp/books/`, `evals/`, pruebas correspondientes                  |
 | 4           | `src/services/`, `src/store/`, `src/components/`, `src/hooks/`, `src/sdk/`, `src/demo/`, `src/mocks/`, CSS, Tailwind, tests frontend y `DESIGN.md` | Tests de navegador real y recursos oficiales de atribución        |

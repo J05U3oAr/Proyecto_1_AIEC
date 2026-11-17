@@ -51,6 +51,13 @@ jobs:
           cache-dependency-glob: server/uv.lock
       - run: uv sync --frozen
       - run: make check
+      - name: Offline agent evaluations (no credentials or provider requests)
+        run: uv run --frozen python ../evals/run_evals.py --repetitions 3 --output ../docs/evidence/m3/evals-ci.json
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: m34-offline-evaluations
+          path: docs/evidence/m3/evals-ci.*
       - name: Offline scale check with two cache clients
         run: uv run --frozen python -m movies.benchmark --requests 40 --concurrency 8
         env:

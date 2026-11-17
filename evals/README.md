@@ -61,9 +61,10 @@ uv run --frozen python ../evals/run_evals.py --mode real-model --repetitions 3 -
 
 El runner **no carga `.env` automáticamente**. No pegar claves en argumentos,
 reportes ni Git. Este modo está implementado pero no se ha ejecutado como evidencia
-de M3.4. Quedan pendientes tres repeticiones reales y la validación conjunta
-TMDB → HTTP → widget cuando esté el token de M2. El modo real-model tampoco
-sustituye esa última validación: sus datos y póster siguen siendo sintéticos.
+de M3.4. Quedan pendientes tres repeticiones reales y efectos de navegación de M4.
+El recorrido textual TMDB → HTTP → widget ya se verificó por separado; ver
+[prueba manual y evidencia](../docs/integration/prueba-manual-m3.md). El modo
+real-model conserva datos/póster sintéticos y no sustituye esa comprobación.
 
 Se reutilizan los límites del agente y el presupuesto diario Redis de NVIDIA.
 Máximo 8 solicitudes por caso, 1–3 repeticiones, ejecución serial y sin reintentos

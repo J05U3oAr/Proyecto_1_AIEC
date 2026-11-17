@@ -1,9 +1,10 @@
-﻿# MCP de Google Books — M3.1
+# MCP de Google Books — M3.1 y M3.2
 
 Servidor MCP Streamable HTTP en `/mcp`, puerto local 8002. Expone
-`search_books(query, limit=3)` y `book_details(bookId)` usando los modelos de
-`sofia.models`, schemas canónicos y `validate_result`. `adaptation_evidence`
-corresponde a M3.2 y todavía no se implementa.
+`search_books(query, limit=3)`, `book_details(bookId)` y
+`adaptation_evidence(movieId)` usando los modelos de `sofia.models`, schemas
+canónicos y `validate_result`. Comparación/veredicto y evals siguen pendientes
+de M3.3/M3.4 y su integración con M1/M4.
 
 ## Configurar la clave sin compartirla
 
@@ -65,6 +66,65 @@ cada intento consume presupuesto. Imprime estado, ID y código público de error
 No confirma adaptaciones ni equivale a una eval. La confirmación es una declaración
 del operador; el probe no comprueba automáticamente la facturación de Google.
 
+## M3.2: evidencia de adaptación
+
+`adaptation_evidence(movieId)` usa IDs exactos y una colección revisada en
+`adaptations.json`: versión, fecha de revisión, título original/año de película,
+título/autores/año original de novela, afirmación parafraseada y fuente verificable.
+La colección inicial contiene cuatro películas y tres obras:
+
+| Película                                 | ID TMDB | Novela                                 | Fuente editorial revisada                                                                   |
+| ---------------------------------------- | ------- | -------------------------------------- | ------------------------------------------------------------------------------------------- |
+| Dune (2021)                              | 438631  | Dune, Frank Herbert (1965)             | [Hachette/Orion](https://books.google.com/books?id=rXYdGATpigsC)                            |
+| Dune: Part Two (2024)                    | 693134  | Dune, Frank Herbert (1965)             | [Misma descripción; nombra ambas películas](https://books.google.com/books?id=rXYdGATpigsC) |
+| Jurassic Park (1993)                     | 329     | Jurassic Park, Michael Crichton (1990) | [Arrow Books](https://books.google.com/books?id=5cbLswEACAAJ)                               |
+| The Hobbit: An Unexpected Journey (2012) | 49051   | The Hobbit, J. R. R. Tolkien (1937)    | [HarperCollins](https://books.google.com/books?id=lBxrjgEACAAJ)                             |
+
+Las descripciones identifican expresamente esas relaciones. La fuente de Tolkien
+es un estuche que documenta la adaptación; no se selecciona como novela individual.
+Las fechas originales se contrastaron con [Abrams, Dune](https://www.abramsbooks.com/pdfs/press-releases/DUNEGraphicNovelACA.pdf),
+[Knopf, Jurassic Park (1990)](https://books.google.com/books?id=4VzhAAAAMAAJ) y
+[The Tolkien Estate](https://www.tolkienestate.com/writing/john-d-rateliff-the-hobbit/).
+Estas son referencias bibliográficas; las fuentes emitidas por la tool conservan
+los proveedores del contrato existente, sin ampliar schemas ni allowlists.
+
+Se consulta Google Books por título/autor con hasta cinco candidatos y caché/cuota
+M3.1. Se exige título entre alias revisados, autores compatibles y año de edición
+no anterior a la obra. No se confirma mediante LLM ni texto recibido de la red.
+
+| Resultado   | Significado                                                                 |
+| ----------- | --------------------------------------------------------------------------- |
+| `confirmed` | Evidencia revisada y edición compatible recuperada de Google Books.         |
+| `uncertain` | La relación tiene evidencia, pero no se verificó una edición compatible.    |
+| `not_found` | ID sin evidencia en la colección; no demuestra ausencia universal de libro. |
+| Error MCP   | Falló proveedor/Redis/cuota/contrato; no se transforma en ausencia.         |
+
+Se rechazan homónimos, otras obras y guías/estuches con títulos o autores distintos.
+Entre ediciones válidas se elige por año conocido y luego ID, sin depender del orden
+del proveedor. Las reediciones posteriores al estreno son válidas. Si falta el año
+se conserva `null` y se informa; la fecha de edición no sustituye a la original.
+
+La cobertura es finita: otras películas requieren añadir evidencia explícita revisada.
+No añadir secuelas por suposición ni disfrazar fuentes externas como Google Books.
+Al ampliar, conservar procedencia/fecha y actualizar pruebas. No hay scraping en
+runtime ni copias de libros completos. Confirmar el vínculo no prueba diferencias
+de escenas ni equivale a haber leído la obra.
+
+### Prueba manual de M3.2
+
+Reconstruir primero el servicio con el comando de arranque si estaba usando M3.1.
+Desde raíz:
+
+```bash
+docker compose --env-file .env -p sofia -f infra/compose.yaml exec books .venv/bin/python -m books.probe --confirm-no-billing --movie-id 438631
+```
+
+Devuelve `ok`, `status`, libro, fuentes y limitaciones. `ok: true` significa consulta
+completada; comprobar `status: confirmed` para una relación confirmada. Los otros IDs
+de la tabla funcionan igual. `841` (Dune de 1984, fuera de la colección) devuelve
+`not_found` limitado sin llamar a Google. Hasta un cache miss/dos intentos HTTP por
+película revisada; ambas Dune comparten búsqueda. No equivale a una eval del LLM.
+
 ## Datos, errores y límites
 
 - IDs y contratos validados; URL Google Books construida desde el ID. Se ignoran
@@ -99,7 +159,7 @@ No leen `.env` ni llaman Google. Cobertura, tipos y CI incluyen `mcp/books/`.
 El job de contenedores usa claves sintéticas sin consultar proveedores.
 La prueba real de búsqueda y detalle ya fue ejecutada; ver resultado al final.
 
-## Verificación local del 17/11/2026
+## Historial de verificación M3.1 del 17/11/2026
 
 - Suite Python completa: **291 pruebas aprobadas**, incluyendo cliente MCP HTTP
   independiente y consumidor `RemoteMCP` del backend. Ejecutada en una imagen
@@ -136,6 +196,26 @@ Resultado del probe: `{"ok":true,"mode":"live_mcp_google_books","bookId":"JhJ7cg
 Esto acredita búsqueda y detalles por el cliente MCP de producción usando Google
 Books real. No acredita evidencia de adaptación, comparación ni integración del
 widget. La clave y el token permanecen en `.env`, fuera de Git y de este reporte.
+
+## Verificación M3.2 del 17/11/2026
+
+- **326 tests Python aprobados** (35 casos nuevos), incluidos cliente MCP HTTP
+  independiente y consumidor `RemoteMCP`. Cubren homónimos, autores ausentes,
+  varias ediciones, incertidumbre, cronología, fuentes inválidas y fallos de API.
+- Ruff lint/formato, mypy (30 archivos), contratos sin divergencia y las cuatro
+  métricas por archivo aprobados. Resolver, transporte y probe: **100%** en las
+  cuatro métricas. Adaptador Google: 96.55% líneas/sentencias, 95.24% ramas y
+  100% funciones, sin bajar umbrales.
+- Imagen reconstruida y servicio `books` Healthy. MCP/Google reales devolvieron
+  cuatro adaptaciones `confirmed` y Dune (1984) `not_found` por cobertura limitada.
+  Ver [resultados sanitizados](../../docs/evidence/m3/adaptation-check.json) y
+  [resumen de calidad y hash de la colección](../../docs/evidence/m3/quality-summary.json).
+- Libros recuperados: Dune `deRpPwAACAAJ`, Jurassic Park `V5s14nks9I8C`, The Hobbit
+  `vnOIzwEACAAJ`. La fuente del vínculo puede ser otra edición o un estuche; el
+  recurso seleccionado como libro es una edición compatible de la obra individual.
+- No se ejecutó LLM ni se acredita comparación, diferencias de escenas, seguridad
+  adversarial, integración visual o CI remoto. No se modificó `src/`; los fallos
+  frontend del historial M3.1 no se declaran resueltos.
 
 Ver [asignación](../../docs/delivery/miembro-3-libros-evals.md) y
 [guía de integración](../../docs/integration/m3-libros-evals.md).

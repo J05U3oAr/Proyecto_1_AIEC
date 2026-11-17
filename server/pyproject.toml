@@ -31,7 +31,7 @@ addopts = "-ra"
 
 [tool.coverage.run]
 branch = true
-source = ["sofia", "scripts", "../mcp/movies", "../mcp/catalog_common"]
+source = ["sofia", "scripts", "../mcp/movies", "../mcp/books", "../mcp/catalog_common"]
 
 [tool.coverage.report]
 fail_under = 80
@@ -47,10 +47,10 @@ select = ["E", "F", "I", "UP", "B", "ASYNC"]
 [tool.mypy]
 python_version = "3.12"
 strict = true
-files = ["sofia", "scripts", "../mcp/movies", "../mcp/catalog_common"]
+files = ["sofia", "scripts", "../mcp/movies", "../mcp/books", "../mcp/catalog_common"]
 mypy_path = [".", "../mcp"]
 plugins = ["pydantic.mypy"]
 
 [tool.ruff.lint.isort]
-known-first-party = ["sofia", "movies", "catalog_common"]
+known-first-party = ["sofia", "movies", "books", "catalog_common"]
 known-third-party = ["mcp"]

@@ -1,9 +1,10 @@
 # Miembro 3 — Pedro Caso: libros MCP, evidencia y evals
 
-Avance M3.1 (17/11/2026): implementadas `search_books` y `book_details`, transporte,
-caché/cuota y configuración local sin exponer la clave. Ver
-[operación y límites](../../mcp/books/README.md). La consulta Google real y los
-criterios integrados quedan abiertos hasta obtener evidencia; M3.2–M3.4 pendientes.
+Avance M3.1/M3.2 (17/11/2026): búsqueda, detalles y `adaptation_evidence` implementados,
+con transporte, caché/cuota y colección revisada de cuatro películas/tres novelas.
+326 tests Python y cuatro adaptaciones confirmadas por MCP/Google reales; ver
+[operación, límites y evidencia](../../mcp/books/README.md).
+Comparación/veredicto, evals e integración del widget siguen pendientes de M3.3/M3.4.
 
 ## Contexto y meta
 
@@ -55,12 +56,12 @@ del push. Mantener abiertos los criterios de M3 hasta obtener evidencia propia.
 
 ## Criterios de aceptación
 
-- [ ] Un cliente independiente consume el MCP de libros con fuentes/URLs válidas y errores tipados.
-- [ ] Una adaptación confirmada y un homónimo incorrecto producen estados correctos; se explican los límites de Google Books.
+- [x] Un cliente independiente consume el MCP de libros con fuentes/URLs válidas y errores tipados.
+- [x] Una adaptación confirmada y un homónimo incorrecto producen estados correctos; se explican los límites de Google Books.
 - [ ] El agente integrado compara con evidencia, no inventa contenido y da conclusión o incertidumbre útil.
 - [ ] El runner ejecuta casos funcionales y ambas familias de ataques contra el agente real y verifica herramientas/efectos, no solo rechazo textual.
 - [ ] Las pruebas deterministas pasan en CI sin red; la evidencia de eval real se distingue explícitamente de los dobles y no oculta fallos.
-- [ ] Código productivo del módulo ≥80% en las cuatro métricas y controles de formato/lint/tipos acordados con M2.
+- [x] Código productivo actual del módulo ≥80% en las cuatro métricas y controles de formato/lint/tipos existentes de M2. Ampliar y volver a verificar al añadir M3.3/M3.4.
 
 ## Verificación y entrega
 

@@ -1,9 +1,9 @@
 # Seguimiento — segunda entrega
 
-Actualización M3.1 (17/11/2026): búsqueda/detalles y servidor MCP libros incorporados
-con pruebas offline y servicio Compose. La consulta Google real aún no está
-acreditada; no cerrar el hito 0 ni la comparación por pruebas simuladas.
-Ver [MCP libros](../../mcp/books/README.md). M3.2–M3.4 siguen pendientes.
+Actualización M3.1/M3.2 (17/11/2026): búsqueda/detalles y evidencia de adaptación
+implementadas, con 326 tests Python aprobados y cuatro relaciones confirmadas por
+MCP/Google reales. Colección inicial finita: cuatro películas y tres novelas.
+Ver [MCP libros](../../mcp/books/README.md). M3.3/M3.4 e integración siguen pendientes.
 
 Estado inicial: planificación lista para revisión; implementación y evidencia pendientes. No marcar checks por haber escrito documentación. Criterios detallados y verificación están en cada archivo individual. Dependencias: hito 0 primero, luego porciones integradas; ver `plan.md`.
 
@@ -17,7 +17,7 @@ pendientes; estos checks globales no se cierran con dobles.
 
 - [ ] M1.1: schemas y fixtures HTTP/MCP + sesión aprobados por consumidores. [Detalle M1](miembro-1-backend-agente.md).
 - [ ] M2: prueba mínima TMDB/MCP, proveedor sin tarjeta y decisión de stack con M1. [Detalle M2](miembro-2-peliculas-infra.md).
-- [ ] M3: consulta Google Books y evidencia de una adaptación confirmada. [Detalle M3](miembro-3-libros-evals.md).
+- [x] M3: consulta Google Books y evidencia de una adaptación confirmada. [Detalle M3](miembro-3-libros-evals.md).
 - [ ] M4: prueba real de apertura sin clic en link y estrategia/permisos documentados. [Detalle M4](miembro-4-widget-ux.md).
 - [ ] Revisión humana del reparto, contratos y decisión Python/TypeScript; resolver riesgos antes de ampliar implementación.
 
@@ -32,8 +32,8 @@ pendientes; estos checks globales no se cierran con dobles.
 
 ## Hito 2 — comparación y referencias
 
-- [ ] M3.1: tools de libros invocables por MCP independiente; depende del contrato y utilidades de cuota de M2.
-- [ ] M3.2: vínculo confirmado/ambiguo/no encontrado distinguible, con evidencia y tests; depende de M3.1.
+- [x] M3.1: tools de libros invocables por MCP independiente; contratos y utilidades de cuota de M2 reutilizados.
+- [x] M3.2: vínculo confirmado/ambiguo/no encontrado distinguible, con evidencia y tests; colección limitada y fallos de proveedor diferenciados.
 - [ ] M3.3: evidencia comparativa y límites documentados; depende de M3.2.
 - [ ] M1.3: razonamiento integrado, anuncio de capacidad y acciones tipadas; depende de herramientas M2/M3.
 - [ ] M4.2 (comparación): vista accesible y recuperaciones; puede avanzar con fixtures de M3.

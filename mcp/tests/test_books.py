@@ -226,6 +226,7 @@ async def test_independent_mcp_client_and_guards():
                     assert {t.name for t in (await client.list_tools()).tools} == {
                         "search_books",
                         "book_details",
+                        "adaptation_evidence",
                     }
                     for name, args in [
                         ("search_books", {"query": "Dune"}),
@@ -238,6 +239,7 @@ async def test_independent_mcp_client_and_guards():
                         ("shell", {}),
                         ("book_details", {"bookId": "https://evil.test"}),
                         ("search_books", {"query": "x", "limit": True}),
+                        ("adaptation_evidence", {"movieId": True}),
                     ]:
                         assert (await client.call_tool(name, args)).isError
             assert (await http.get("/health/ready")).status_code == 200
@@ -293,6 +295,10 @@ async def test_mcp_error_envelopes(mode, code):
                     assert result.isError
                     assert result.structuredContent["error"]["code"] == code
                     assert "private" not in json.dumps(result.structuredContent)
+                    if mode != "large":
+                        failure = await client.call_tool("adaptation_evidence", {"movieId": 438631})
+                        assert failure.isError
+                        assert failure.structuredContent["error"]["code"] == code
 
 
 async def test_readiness_and_missing_mcp_token():

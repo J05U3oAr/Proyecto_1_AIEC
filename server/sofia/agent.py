@@ -10,6 +10,7 @@ from uuid import uuid4
 from pydantic import ValidationError
 
 from sofia.adapters import LLM, MCP
+from sofia.comparison import build_comparison, comparison_followup, comparison_sources
 from sofia.config import Settings
 from sofia.dialogue import (
     CAPABILITY,
@@ -27,7 +28,6 @@ from sofia.models import (
     Book,
     ChatRequest,
     ChatResponse,
-    Comparison,
     Movie,
     MovieId,
     SearchMovies,
@@ -51,6 +51,7 @@ Solo las herramientas publicadas están permitidas. No puedes ejecutar comandos 
 Para comparar, consulta adaptation_evidence. Una coincidencia de título no confirma una adaptación.
 Si el vínculo es incierto o faltan datos, dilo; no finjas haber leído el libro completo.
 Distingue hechos con evidencia y tu veredicto subjetivo de si vale la pena verla.
+Las premisas revisadas no prueban fidelidad, escenas, finales ni diferencias no documentadas.
 No incluyas URLs en tu texto: la aplicación presenta las fuentes verificadas por separado.
 Responde con hasta 4000 caracteres; no incluyas razonamiento interno ni bloques think.
 """
@@ -114,10 +115,82 @@ class Agent:
                             "\n\nPuntuación IMDb: no disponible; TMDB no la proporciona."
                         )
                     return routed
+                if comparison_followup(request.prompt):
+                    return await self._compare(request, context, request_id, trace, usage)
                 return await self._run(request, history, context, request_id, trace, usage)
         except PublicError as exc:
             exc.trace, exc.usage = trace, usage
             raise
+
+    async def _compare(
+        self,
+        request: ChatRequest,
+        context: dict[str, object],
+        request_id: str,
+        trace: list[dict[str, object]],
+        usage: dict[str, int],
+    ) -> TurnResult:
+        movies = [
+            Movie.model_validate(item) for item in cast(list[object], context.get("movies", []))
+        ]
+        clean: dict[str, object] = {
+            "movies": [movie.model_dump() for movie in movies],
+            "books": [],
+            "adaptation": None,
+        }
+        if len(movies) != 1:
+            text = (
+                movie_text(movies) if movies else "Primero indica el título y año de la película."
+            )
+            return TurnResult(
+                ChatResponse(response=text, requestId=request_id, movies=movies),
+                clean,
+                trace,
+                usage,
+            )
+        args = MovieId(movieId=movies[0].id)
+        try:
+            result = await self.mcp.call("adaptation_evidence", args)
+            validate_result("adaptation_evidence", args, result)
+        except PublicError as error:
+            trace.append({"tool": "adaptation_evidence", "status": "failed", "code": error.code})
+            return TurnResult(
+                ChatResponse(
+                    response="Conservo la película, pero no pude consultar los libros. "
+                    "Eso no significa que no exista una adaptación. " + CAPABILITY,
+                    requestId=request_id,
+                    movies=movies,
+                    sources=[Source(provider="tmdb", url=movies[0].tmdb, label=movies[0].title)],
+                ),
+                clean,
+                trace,
+                usage,
+            )
+        trace.append(
+            {"tool": "adaptation_evidence", "status": "ok", "arguments": args.model_dump()}
+        )
+        # validate_result above requires a matching, non-null adaptation.
+        adaptation = cast(Adaptation, result.adaptation)
+        comparison = build_comparison(movies[0], adaptation)
+        clean.update(
+            {
+                "adaptation": adaptation.model_dump(),
+                "books": [adaptation.book.model_dump()] if adaptation.book else [],
+            }
+        )
+        return TurnResult(
+            ChatResponse(
+                response=comparison.verdict + "\n\n" + CAPABILITY,
+                requestId=request_id,
+                movies=movies,
+                comparison=comparison,
+                sources=comparison_sources(movies[0], adaptation),
+                actions=self.actions(request, request_id, movies, adaptation),
+            ),
+            clean,
+            trace,
+            usage,
+        )
 
     async def _dialogue(
         self,
@@ -298,6 +371,11 @@ class Agent:
         adaptation = (
             Adaptation.model_validate(context["adaptation"]) if context.get("adaptation") else None
         )
+        if adaptation and (len(movies) != 1 or adaptation.movieId != movies[0].id):
+            adaptation, books = None, []
+        if re.search(r"\b(?:compara\w*|comparacion|diferencias?)\b", words(request.prompt)):
+            # A new comparative request must obtain evidence in this turn, not reuse a verdict.
+            adaptation, books = None, []
         tool_count = 0
         observed_catalog = bool(movies)
         for step in range(self.settings.max_llm_calls):
@@ -355,14 +433,17 @@ class Agent:
                         )
                         + ". ¿Cuál prefieres para continuar?"
                     )
-                if adaptation is not None and adaptation.status != "confirmed":
-                    text = (
-                        "No pude confirmar que esta película adapte un libro. "
-                        "No hay evidencia suficiente para comparar sus diferencias."
-                    )
                 comparison = None
-                if adaptation is not None:
-                    comparison = Comparison(adaptation=adaptation, verdict=text)
+                if adaptation is not None and len(movies) == 1:
+                    comparison = build_comparison(movies[0], adaptation)
+                    text = comparison.verdict
+                elif len(movies) == 1 and re.search(
+                    r"\b(?:compara\w*|comparacion|diferencias?)\b", words(request.prompt)
+                ):
+                    text = (
+                        "Todavía no tengo evidencia verificada para comparar esta película "
+                        "con su libro. No puedo emitir un veredicto comparativo con estos datos."
+                    )
                 sources = [
                     Source(provider="tmdb", url=movie.tmdb, label=movie.title) for movie in movies
                 ]

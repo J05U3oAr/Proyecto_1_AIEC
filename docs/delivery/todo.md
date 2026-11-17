@@ -4,7 +4,10 @@ Actualización M3.1–M3.3 (17/11/2026): búsqueda/detalles, relación y compara
 premisas implementadas. Colección finita: cinco películas/cuatro novelas, incluida
 Blade Runner. Agent/MCP/Google reales verificados con identidad de película revisada;
 selección TMDB/HTTP completa pendiente de token M2. Ver
-[MCP libros](../../mcp/books/README.md). M3.4 e integración visual siguen pendientes.
+[MCP libros](../../mcp/books/README.md). M3.4 dispone de runner y 22 casos con
+catálogo/modelo sintéticos, reportes JSON/HTML y configuración CI offline;
+quedan pendientes las tres corridas del modelo real y la integración visual.
+Ver [operación de evals](../../evals/README.md).
 
 Estado inicial: planificación lista para revisión; implementación y evidencia pendientes. No marcar checks por haber escrito documentación. Criterios detallados y verificación están en cada archivo individual. Dependencias: hito 0 primero, luego porciones integradas; ver `plan.md`.
 
@@ -45,7 +48,7 @@ pendientes; estos checks globales no se cierran con dobles.
 
 - [x] M2.3: caché/cuota compartidas y concurrencia verificadas; iniciar utilidades antes de cerrar MCP libros.
 - [ ] M1.4: defensas y diagramas alto/bajo nivel coherentes; depende de flujo implementado y evidencia de M2/M3/M4.
-- [ ] M3.4: harness y dataset funcional/LLM01/LLM07, con aportes de todos; runner puede iniciarse con fixtures desde hito 0 y adaptar [HDT6 según el análisis](reutilizacion-evals.md), sin duplicar el harness de HDT7.
+- [ ] M3.4: runner y dataset de 22 casos funcional/LLM01/LLM07 implementados sobre Agent.run, con adaptador Promptfoo y CI offline. Cierre pendiente de corridas reales repetidas y efectos de navegador con M4; [comandos y límites](../../evals/README.md).
 - [ ] M2.4: CI de todos los módulos, comandos y operación desde clon limpio; incorporar módulos progresivamente.
 - [ ] M4.4: créditos oficiales, demo y evidencia de navegador/E2E; depende de funcionalidades integradas.
 - [ ] Suite real repetida y reportada, invariantes de seguridad correctas y fallos funcionales resueltos según umbrales del equipo.

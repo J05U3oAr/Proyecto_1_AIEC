@@ -1,9 +1,11 @@
 # Integración para M3 — Pedro: libros, evidencia y evals
 
-Actualización M3.1/M3.2 (17/11/2026): búsqueda, detalles y `adaptation_evidence`
-implementados en `mcp/books/`; 326 tests Python y cuatro relaciones confirmadas
-por MCP/Google reales. Se reutiliza el contrato sin cambios y una colección finita
-revisada. Comparación, harness e integración visual siguen pendientes.
+Actualización M3.1–M3.3 (17/11/2026): búsqueda, detalles, vínculo y premisas
+implementados en `mcp/books/`; cinco películas/cuatro novelas. `Agent.run` integra
+comparación acotada a evidencia mediante `sofia/comparison.py`. Se conserva el
+contrato; M4 dispone de [cuatro fixtures](fixtures/) validados. El probe permite
+Books real con identidad de película revisada sin LLM/TMDB; no acredita selección
+TMDB ni widget, pendientes de integración. Harness M3.4 sigue pendiente.
 La descripción del traspaso M2 de abajo es histórica; consultar
 [operación y evidencia actuales](../../mcp/books/README.md).
 

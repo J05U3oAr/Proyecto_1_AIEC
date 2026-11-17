@@ -1,0 +1,84 @@
+{
+  "mode": "synthetic_fixture",
+  "case": "valid",
+  "response": {
+    "response": "Película: Blade Runner (1982).\n\nLibro: Do Androids Dream of Electric Sheep?, de Philip K. Dick. Año de esta edición: 1996.\n\nHechos documentados, sin spoilers de desenlace:\n\nPremisa del libro: Rick Deckard persigue androides fugitivos en una sociedad donde los animales reales y artificiales tienen un papel importante.\n\nPremisa de la película: Deckard recibe el encargo de localizar replicantes que han vuelto a la Tierra.\n\nMi valoración subjetiva: sí puede valer la pena verla si te interesa la premisa de la película, como otra aproximación a la obra. No puedo afirmar que sea mejor o más fiel al libro con estas fuentes.\n\nAlcance: comparación de premisas; no lectura íntegra ni análisis de escenas o finales.\n\nFixture sintético para integración; no acredita llamadas reales.",
+    "requestId": "fixture-m33-valid",
+    "movies": [
+      {
+        "id": 78,
+        "title": "Blade Runner",
+        "year": 1982,
+        "overview": "",
+        "tmdb": "https://www.themoviedb.org/movie/78",
+        "imdb": "https://www.imdb.com/title/tt0083658/",
+        "genres": []
+      }
+    ],
+    "comparison": {
+      "adaptation": {
+        "movieId": 78,
+        "status": "confirmed",
+        "book": {
+          "id": "fixture_m33",
+          "title": "Do Androids Dream of Electric Sheep?",
+          "authors": ["Philip K. Dick"],
+          "year": 1996,
+          "description": "",
+          "url": "https://books.google.com/books?id=fixture_m33"
+        },
+        "evidence": [
+          {
+            "statement": "La descripción editorial de Do Androids Dream of Electric Sheep?, de Philip K. Dick, identifica esta novela como origen de la película Blade Runner.",
+            "source": {
+              "provider": "google_books",
+              "url": "https://books.google.com/books?id=3vExWrUnJB0C",
+              "label": "Do Androids Dream of Electric Sheep? — descripción editorial"
+            }
+          },
+          {
+            "statement": "Premisa del libro: Rick Deckard persigue androides fugitivos en una sociedad donde los animales reales y artificiales tienen un papel importante.",
+            "source": {
+              "provider": "google_books",
+              "url": "https://books.google.com/books?id=3vExWrUnJB0C",
+              "label": "Do Androids Dream of Electric Sheep? — premisa editorial"
+            }
+          },
+          {
+            "statement": "Premisa de la película: Deckard recibe el encargo de localizar replicantes que han vuelto a la Tierra.",
+            "source": {
+              "provider": "imdb",
+              "url": "https://www.imdb.com/title/tt0083658/",
+              "label": "Blade Runner (1982) — sinopsis IMDb"
+            }
+          }
+        ],
+        "limitations": ["Fixture sintético para integración; no acredita llamadas reales."]
+      },
+      "verdict": "Película: Blade Runner (1982).\n\nLibro: Do Androids Dream of Electric Sheep?, de Philip K. Dick. Año de esta edición: 1996.\n\nHechos documentados, sin spoilers de desenlace:\n\nPremisa del libro: Rick Deckard persigue androides fugitivos en una sociedad donde los animales reales y artificiales tienen un papel importante.\n\nPremisa de la película: Deckard recibe el encargo de localizar replicantes que han vuelto a la Tierra.\n\nMi valoración subjetiva: sí puede valer la pena verla si te interesa la premisa de la película, como otra aproximación a la obra. No puedo afirmar que sea mejor o más fiel al libro con estas fuentes.\n\nAlcance: comparación de premisas; no lectura íntegra ni análisis de escenas o finales.\n\nFixture sintético para integración; no acredita llamadas reales."
+    },
+    "sources": [
+      {
+        "provider": "tmdb",
+        "url": "https://www.themoviedb.org/movie/78",
+        "label": "Blade Runner"
+      },
+      {
+        "provider": "google_books",
+        "url": "https://books.google.com/books?id=3vExWrUnJB0C",
+        "label": "Do Androids Dream of Electric Sheep? — premisa editorial"
+      },
+      {
+        "provider": "imdb",
+        "url": "https://www.imdb.com/title/tt0083658/",
+        "label": "Blade Runner (1982) — sinopsis IMDb"
+      },
+      {
+        "provider": "google_books",
+        "url": "https://books.google.com/books?id=fixture_m33",
+        "label": "Do Androids Dream of Electric Sheep?"
+      }
+    ],
+    "actions": []
+  }
+}

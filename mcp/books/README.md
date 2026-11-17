@@ -1,10 +1,10 @@
-# MCP de Google Books — M3.1 y M3.2
+# MCP de Google Books — M3.1 a M3.3
 
 Servidor MCP Streamable HTTP en `/mcp`, puerto local 8002. Expone
 `search_books(query, limit=3)`, `book_details(bookId)` y
 `adaptation_evidence(movieId)` usando los modelos de `sofia.models`, schemas
-canónicos y `validate_result`. Comparación/veredicto y evals siguen pendientes
-de M3.3/M3.4 y su integración con M1/M4.
+canónicos y `validate_result`. M3.3 aporta premisas revisadas y comparación acotada
+en el agente central existente; evals M3.4 y presentación enriquecida M4 pendientes.
 
 ## Configurar la clave sin compartirla
 
@@ -71,14 +71,15 @@ del operador; el probe no comprueba automáticamente la facturación de Google.
 `adaptation_evidence(movieId)` usa IDs exactos y una colección revisada en
 `adaptations.json`: versión, fecha de revisión, título original/año de película,
 título/autores/año original de novela, afirmación parafraseada y fuente verificable.
-La colección inicial contiene cuatro películas y tres obras:
+La colección contiene cinco películas y cuatro obras:
 
-| Película                                 | ID TMDB | Novela                                 | Fuente editorial revisada                                                                   |
-| ---------------------------------------- | ------- | -------------------------------------- | ------------------------------------------------------------------------------------------- |
-| Dune (2021)                              | 438631  | Dune, Frank Herbert (1965)             | [Hachette/Orion](https://books.google.com/books?id=rXYdGATpigsC)                            |
-| Dune: Part Two (2024)                    | 693134  | Dune, Frank Herbert (1965)             | [Misma descripción; nombra ambas películas](https://books.google.com/books?id=rXYdGATpigsC) |
-| Jurassic Park (1993)                     | 329     | Jurassic Park, Michael Crichton (1990) | [Arrow Books](https://books.google.com/books?id=5cbLswEACAAJ)                               |
-| The Hobbit: An Unexpected Journey (2012) | 49051   | The Hobbit, J. R. R. Tolkien (1937)    | [HarperCollins](https://books.google.com/books?id=lBxrjgEACAAJ)                             |
+| Película                                 | ID TMDB | Novela                                                      | Fuente editorial revisada                                                                   |
+| ---------------------------------------- | ------- | ----------------------------------------------------------- | ------------------------------------------------------------------------------------------- |
+| Dune (2021)                              | 438631  | Dune, Frank Herbert (1965)                                  | [Hachette/Orion](https://books.google.com/books?id=rXYdGATpigsC)                            |
+| Dune: Part Two (2024)                    | 693134  | Dune, Frank Herbert (1965)                                  | [Misma descripción; nombra ambas películas](https://books.google.com/books?id=rXYdGATpigsC) |
+| Jurassic Park (1993)                     | 329     | Jurassic Park, Michael Crichton (1990)                      | [Arrow Books](https://books.google.com/books?id=5cbLswEACAAJ)                               |
+| The Hobbit: An Unexpected Journey (2012) | 49051   | The Hobbit, J. R. R. Tolkien (1937)                         | [HarperCollins](https://books.google.com/books?id=lBxrjgEACAAJ)                             |
+| Blade Runner (1982)                      | 78      | Do Androids Dream of Electric Sheep?, Philip K. Dick (1968) | [Random House/Google Books](https://books.google.com/books?id=3vExWrUnJB0C)                 |
 
 Las descripciones identifican expresamente esas relaciones. La fuente de Tolkien
 es un estuche que documenta la adaptación; no se selecciona como novela individual.
@@ -124,6 +125,83 @@ completada; comprobar `status: confirmed` para una relación confirmada. Los otr
 de la tabla funcionan igual. `841` (Dune de 1984, fuera de la colección) devuelve
 `not_found` limitado sin llamar a Google. Hasta un cache miss/dos intentos HTTP por
 película revisada; ambas Dune comparten búsqueda. No equivale a una eval del LLM.
+
+## M3.3: cómo se comparan las obras
+
+Incluir una película significa añadir un registro revisado al JSON, no copiar una
+respuesta de chatbot. `originalTitle` identifica la película y `bookTitle` la novela;
+pueden ser distintos. El ID exacto selecciona ese vínculo y Google Books se consulta
+por el título **del libro** y su autor. Los alias permiten traducciones y reediciones
+retituladas; un homónimo de otro autor se rechaza. Blade Runner usa precisamente
+esta ruta para buscar Do Androids Dream of Electric Sheep?, de Philip K. Dick.
+
+Cada registro añade como máximo dos `comparisonEvidence`: `Premisa del libro: ...`
+y `Premisa de la película: ...`, parafraseadas de una descripción editorial de Google
+Books y una sinopsis IMDb, respectivamente. Se revisaron las fichas IMDb de
+[Dune](https://www.imdb.com/title/tt1160419/), [Dune: Part Two](https://www.imdb.com/title/tt15239678/),
+[Jurassic Park](https://www.imdb.com/title/tt0107290/), [The Hobbit](https://www.imdb.com/title/tt0903624/)
+y [Blade Runner](https://www.imdb.com/title/tt0083658/). La novela individual The Hobbit
+usa [su descripción editorial](https://books.google.com/books?id=fMn8ugAACAAJ),
+separada del estuche que documenta el vínculo. No se consultan ni extraen notas IMDb.
+
+La tool añade esas premisas a `Adaptation.evidence` solo cuando verifica el libro.
+Se conserva el contrato existente: `Evidence.statement`, `Evidence.source`,
+`Adaptation.limitations` y `Comparison.verdict`; no hay campos nuevos que rompan
+consumidores estrictos. Los prefijos identifican el medio, no son instrucciones.
+
+`server/sofia/comparison.py` presenta identidad, premisas, fuentes y alcance. Con
+ambas premisas emite una orientación subjetiva condicional: puede valer la pena si
+interesa esa premisa, sin afirmar fidelidad ni superioridad. Si solo se conoce el
+vínculo o falta una premisa, declara datos parciales y no inventa un juicio.
+Incertidumbre, ausencia de cobertura y error del proveedor siguen siendo distintos.
+No se comparan escenas, finales, calidad de actuación ni diferencias no documentadas;
+no se usa una sinopsis como sustituto de lectura íntegra.
+
+El agente central de M1 usa esa presentación. El seguimiento «Compara esa película
+con su libro sin spoilers» exige una película seleccionada y hace una llamada MCP,
+sin inferencia LLM. Las peticiones con un título nuevo conservan la selección de
+herramientas del agente; su prosa libre tampoco sustituye las premisas verificadas.
+No se crea un segundo agente. Esta ruta determinista no acredita seguridad del
+modelo: las evals funcionales/adversariales reales siguen pendientes de M3.4.
+
+### Probar sin el token TMDB de M2
+
+Con `books`, `backend` y Redis reconstruidos/arrancados:
+
+```bash
+docker compose --env-file .env -p sofia -f infra/compose.yaml up --build -d --wait redis books backend
+docker compose --env-file .env -p sofia -f infra/compose.yaml exec backend .venv/bin/python -m scripts.probe_comparison --confirm-no-billing --reviewed-movie
+```
+
+Este modo usa la identidad revisada Blade Runner (1982), ID 78, y el agente/MCP de
+producción con Google Books real. Informa `mode: reviewed_movie_live_books`, el
+origen de los metadatos y consumo LLM cero. No consulta TMDB ni crea una sesión HTTP,
+y deshabilita el LLM para impedir llamadas accidentales. No representa el flujo
+completo del widget. Con `--title "Dune 2021" --movie-id 438631` se prueba otro caso.
+
+### Probar el recorrido HTTP completo
+
+Requiere `TMDB_READ_TOKEN` configurado por el operador y el servicio `movies`
+funcionando, además de Books/backend/Redis. No compartir credenciales en el chat.
+Desde raíz:
+
+```bash
+docker compose --env-file .env -p sofia -f infra/compose.yaml exec backend .venv/bin/python -m scripts.probe_comparison --confirm-no-billing
+```
+
+Crea su propia sesión, selecciona Blade Runner por el chat HTTP, pide comparar,
+imprime solo resultado público y elimina esa sesión con su token. En el widget el
+equivalente es «Blade Runner 1982» y luego «Compara esa película con su libro sin
+spoilers», en modo real y con el backend actualizado. La presentación de tarjetas
+enriquecidas y apertura de referencias sigue a cargo de M4.
+
+### Fixtures para M4
+
+`docs/integration/fixtures/m3-comparison-*.json` contiene cuatro ejemplos marcados
+`synthetic_fixture`: válido, parcial, incierto y sin evidencia. El cuerpo HTTP está
+en `response`; todos validan contra el schema y runtime existentes. M4 puede probar
+estados antes de tener servicios/proveedores disponibles. `confirmed` confirma el
+vínculo, no garantiza que haya evidencia suficiente para recomendar frente al libro.
 
 ## Datos, errores y límites
 
@@ -216,6 +294,34 @@ widget. La clave y el token permanecen en `.env`, fuera de Git y de este reporte
 - No se ejecutó LLM ni se acredita comparación, diferencias de escenas, seguridad
   adversarial, integración visual o CI remoto. No se modificó `src/`; los fallos
   frontend del historial M3.1 no se declaran resueltos.
+
+## Verificación M3.3 del 17/11/2026
+
+- **375 tests Python aprobados**, 49 nuevos frente a M3.2. Ruff lint/formato,
+  mypy (32 archivos), contratos sin divergencia y cuatro métricas por archivo
+  aprobados. `sofia/comparison.py` y resolver alcanzan 100% en las cuatro;
+  `agent.py` conserva 96.08% líneas/sentencias, 89.81% ramas y 100% funciones.
+- Cuatro fixtures para M4 validados con JSON Schema y Pydantic. Cubren relación
+  confirmada con datos suficientes, relación confirmada con datos parciales,
+  edición incierta y ausencia de cobertura. Las peticiones comparativas reconocidas
+  exigen evidencia obtenida en el turno; no se reutiliza un veredicto anterior.
+  La cobertura de paráfrasis y resistencia del modelo se medirá en M3.4.
+- Books y backend reconstruidos. Prueba real del agente/Books con identidad de
+  película revisada: Blade Runner y Dune (2021) confirmadas con ambas premisas;
+  Dune (1984) devuelve insuficiencia limitada a la colección. Google Books devuelve
+  la novela Do Androids Dream of Electric Sheep? para Blade Runner, demostrando
+  títulos distintos. Consumo LLM cero. No se consultó TMDB ni se creó sesión HTTP.
+- Evidencia: [comparación](../../docs/evidence/m3/comparison-check.json),
+  [calidad y hash](../../docs/evidence/m3/quality-m33-summary.json),
+  [checks frontend](../../docs/evidence/m3/frontend-m33-check.json).
+- El entorno no tiene `TMDB_READ_TOKEN`: no se acredita todavía selección TMDB,
+  recorrido completo por HTTP o presentación en navegador. El probe HTTP está
+  preparado para cuando M2 configure ese proveedor. Evals M3.4 siguen pendientes.
+- Se ejecutaron los checks generales exigidos: npm lint pasa; formato global
+  reporta archivos ajenos a M3.3; tests frontend 60 pasan/10 fallan por AbortSignal
+  y timeout; E2E JSDOM falla por timeout; app/SDK fallan por TS2339 en
+  `ChatHeader.test.tsx` líneas 48/67. Node local 24.22.1 frente al 22 documentado.
+  No se modificó `src/`, no se rebajaron checks ni se afirma CI remoto verde.
 
 Ver [asignación](../../docs/delivery/miembro-3-libros-evals.md) y
 [guía de integración](../../docs/integration/m3-libros-evals.md).

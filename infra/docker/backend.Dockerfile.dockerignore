@@ -8,6 +8,8 @@
 !server/uv.lock
 !server/sofia/
 !server/sofia/*.py
+!server/scripts/
+!server/scripts/probe_comparison.py
 !shared/
 !shared/contracts/
 !shared/contracts/**

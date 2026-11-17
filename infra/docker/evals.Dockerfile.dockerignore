@@ -7,5 +7,6 @@
 !evals/
 !evals/run_evals.py
 !evals/cases.json
+!evals/functional-cases.json
 !evals/sofia_evals/
 !evals/sofia_evals/*.py

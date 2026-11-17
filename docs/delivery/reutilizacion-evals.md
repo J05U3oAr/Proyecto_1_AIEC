@@ -38,4 +38,11 @@ Comparación con HDT7 al commit `41fb4dd72516e5495728ff6056d768c0e5e94dc7`: `age
 
 ## Criterio de cierre de la reutilización
 
-El patrón se considera adaptado cuando la suite evalúa al agente real de Sofía a través del flujo acordado, cubre requisitos funcionales y ambas categorías de ataque, distingue mocks de ejecución real y produce reportes reproducibles sin secretos. La inspección del repo externo ya está hecha; la adaptación del harness sigue pendiente en M3.4. No se rebaja la carga ni se marca implementación completada por disponer de esta referencia.
+El patrón se considera adaptado cuando la suite evalúa al agente real de Sofía a través del flujo acordado, cubre requisitos funcionales y ambas categorías de ataque, distingue mocks de ejecución real y produce reportes reproducibles sin secretos.
+
+M3.4 adapta ahora el patrón en `evals/agent_provider.py` y
+`evals/promptfooconfig.yaml`, sobre un ejecutor común del agente productivo.
+La CLI Python permite uso sin instalar Promptfoo; su provider se prueba
+directamente, sin acreditar una corrida del CLI Promptfoo. Ver
+[operación y límites](../../evals/README.md). El cierre con modelo/servicios
+reales y navegador sigue pendiente; no se acredita por aprobar fixtures.

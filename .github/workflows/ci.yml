@@ -63,6 +63,7 @@ jobs:
     env:
       MCP_TOKEN: synthetic-ci-token-not-a-secret
       TMDB_READ_TOKEN: synthetic-ci-token-not-a-provider-credential
+      GOOGLE_BOOKS_API_KEY: synthetic-ci-books-not-a-provider-credential
     steps:
       - uses: actions/checkout@v4
       - name: Build and start local services (no provider calls)
@@ -71,6 +72,7 @@ jobs:
         run: |
           curl --fail --silent http://127.0.0.1:8000/health/ready
           curl --fail --silent http://127.0.0.1:8001/health/ready
+          curl --fail --silent http://127.0.0.1:8002/health/ready
           test "$(curl --silent --output /dev/null --write-out '%{http_code}' -X POST http://127.0.0.1:8001/mcp)" = 401
       - name: Stop test services
         if: always()

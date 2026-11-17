@@ -64,7 +64,13 @@ Implementación en [evals](../../evals/README.md): ejecutor Python serial sobre
 `Agent.run`, 10 casos funcionales/6 LLM01/6 LLM07, JSON/HTML y adaptador opcional
 Promptfoo sin duplicar el agente. Modo offline sin claves; modo `real-model`
 con `NvidiaLLM` y presupuesto Redis pero catálogo MCP sintético para inyecciones.
-Ese segundo modo aún no se ha corrido como evidencia. El recorrido textual del
+El ejecutor `m34-v2` refuerza los asserts de contenido/identidad y añade
+`live-services`: nueve casos funcionales con contexto vacío y `RemoteMCP`
+productivo, sin fixtures ni sustitución de errores. Tiene manifiesto separado
+para no provocar cuotas reales agotadas ni ataques en proveedores. Ver los
+[reportes actuales](../evidence/m3/README.md).
+El modo `real-model` con catálogo controlado aún no se ha corrido como evidencia.
+El recorrido textual del
 widget con servicios reales ya se verificó; los efectos de navegación siguen
 pendientes con M4.
 No marcar cerrado este apartado por aprobar fixtures ni por configurar CI.

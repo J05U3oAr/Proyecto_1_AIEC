@@ -4,8 +4,10 @@ Actualización M3.1–M3.3 (17/11/2026): búsqueda, detalles, vínculo y premisa
 implementados en `mcp/books/`; cinco películas/cuatro novelas. `Agent.run` integra
 comparación acotada a evidencia mediante `sofia/comparison.py`. Se conserva el
 contrato; M4 dispone de [cuatro fixtures](fixtures/) validados. El probe permite
-Books real con identidad de película revisada sin LLM/TMDB; no acredita selección
-TMDB ni widget, pendientes de integración. Harness M3.4 sigue pendiente.
+Books real con identidad revisada y recorrido HTTP/widget con selección TMDB
+ya verificado. M3.4 dispone de 22 casos controlados y, en `m34-v2`, nueve casos
+funcionales mediante `RemoteMCP` real; ver [operación de evals](../../evals/README.md).
+Las corridas OWASP del modelo real y los efectos de navegador siguen pendientes.
 La descripción del traspaso M2 de abajo es histórica; consultar
 [operación y evidencia actuales](../../mcp/books/README.md).
 

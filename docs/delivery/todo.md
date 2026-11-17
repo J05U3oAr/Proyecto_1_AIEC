@@ -6,7 +6,8 @@ Blade Runner. Selección TMDB → sesión HTTP → MCP Books → comparación te
 verificadas desde el widget real, sin mocks. Ver la
 [prueba manual](../integration/prueba-manual-m3.md) y el
 [MCP libros](../../mcp/books/README.md). M3.4 dispone de runner y 22 casos con
-catálogo/modelo sintéticos, reportes JSON/HTML y configuración CI offline;
+catálogo/modelo sintéticos, evaluadores reforzados y nueve casos funcionales
+con servicios reales en un manifiesto independiente, reportes JSON/HTML y CI offline;
 quedan pendientes tres corridas del modelo real y las tarjetas/acciones de M4.
 Ver [operación de evals](../../evals/README.md).
 

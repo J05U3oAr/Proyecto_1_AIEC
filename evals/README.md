@@ -7,6 +7,10 @@ No mantiene otro agente. Hay 22 casos versionados: 10 funcionales, 6 LLM01
 La edición OWASP acordada es 2025. Los casos iniciales de M1 permanecen en
 `server/evaluation_cases.json`; sus objetivos se amplían en `cases.json`.
 
+Actualización del ejecutor `m34-v2`: evaluadores reforzados y modo `live-services`
+con el adaptador productivo `RemoteMCP`. Los reportes `m34-v1` son históricos;
+no prueban los nuevos asserts aunque compartan el mismo dataset controlado.
+
 ## Ejecutar sin claves y sin consumo
 
 Desde la raíz del repositorio, con Docker Desktop iniciado:
@@ -84,6 +88,13 @@ El detector cubre literal, espacios/puntuación, base64, hexadecimal, ROT13 e
 inversión del canario, además de líneas literales largas del sistema. No es
 un detector universal de filtraciones semánticas ni usa un juez LLM.
 
+Los asserts reforzados rechazan estados correctos acompañados de afirmaciones
+incorrectas (por ejemplo, `not_found` más «no existe un libro»), incertidumbre
+sin texto cauteloso, comparaciones de otra película, fuentes ausentes y acciones
+dirigidas a otra ficha/solicitud aunque su dominio sea permitido. Los tests
+introducen esas mutaciones deliberadamente. Son comprobaciones deterministas
+acotadas, no una garantía de detectar cualquier redacción posible.
+
 JSON/HTML incluyen versión/hash del dataset, fecha UTC, modo, modelo/parámetros,
 semilla no disponible, límites, cada resultado/fallo, latencia, solicitudes,
 tokens devueltos por el proveedor, trazas y acciones. No se guardan mensajes
@@ -96,6 +107,60 @@ Si una petición falla antes de devolver usage, esos tokens pueden ser desconoci
 Generar una acción de referencia no demuestra apertura de pestaña. Cada resultado
 declara `browserEffects: not_measured_requires_M4`. La imagen sintética tampoco
 demuestra descarga ni renderizado del póster. M4 debe aportar evidencia del navegador.
+
+## Conexión funcional con servicios reales
+
+`--mode live-services` usa `Agent.run`, `NvidiaLLM`, presupuesto Redis y
+`RemoteMCP` productivos. Cada caso comienza con historial y contexto vacíos.
+No utiliza `initial_context("selected")`, no inyecta resultados y no sustituye
+errores con fixtures. Las herramientas observadas incluyen argumentos sanitizados,
+IDs devueltos, códigos públicos de error y latencia de cada llamada MCP.
+Los proveedores pueden servir datos desde sus cachés productivas.
+
+El manifiesto independiente `functional-cases.json` tiene nueve casos: recomendación
+por preferencias, selección por título, póster estructurado, anuncio de capacidad, comparación confirmada,
+ausencia de cobertura, ambigüedad, acción IMDb y acción Google Books. Seleccionar
+un título no mide descubrimiento de recomendaciones por preferencias. La
+ausencia de cobertura usa Dune (1984), aunque sí procede de una novela.
+
+Se separa del dataset controlado porque no se debe provocar cuota real agotada
+ni asumir que una API producirá incertidumbre o datos adversariales a voluntad.
+LLM01/LLM07 no se ejecutan en este modo y sus denominadores son cero; no se
+cuentan como aprobados. Los nueve casos funcionales mantienen ≥90% y las
+invariantes deterministas de seguridad exigen 100%. No demuestra efectos del
+navegador. Las referencias pueden necesitar inferencia NVIDIA; los turnos
+deterministas pueden tener cero solicitudes al modelo.
+
+Con los servicios `sofia` iniciados, claves en el `.env` privado y la cuenta/endpoint
+ya verificados sin cargos, desde PowerShell en la raíz:
+
+```powershell
+docker build -f infra/docker/evals.Dockerfile -t sofia-evals .
+docker run --rm --user 0:0 --network sofia_default --env-file .env -e REDIS_URL=redis://redis:6379/0 -e MOVIES_MCP_URL=http://movies:8001/mcp -e BOOKS_MCP_URL=http://books:8002/mcp --mount "type=bind,source=$($PWD.Path)\docs\evidence\m3,target=/reports" sofia-evals --mode live-services --repetitions 1 --confirm-no-billing --output /reports/evals-live-services.json
+```
+
+No usar `--network none` en esta corrida. Se empieza con una repetición acotada;
+los fallos reales permanecen en el reporte y producen salida 1. No confundir
+estas pruebas funcionales con las tres repeticiones OWASP de `real-model`.
+Si cambia el ranking real de TMDB y la búsqueda `Dune` deja de ser ambigua, el
+caso debe investigarse y revisarse explícitamente; no convertirlo en fixture
+silenciosamente ni bajar el umbral.
+
+## Por qué una película como Frozen puede quedar fuera
+
+TMDB busca películas reales; Google Books busca volúmenes reales. La herramienta
+`adaptation_evidence` actual solo busca una edición cuando ya dispone del vínculo
+en `mcp/books/adaptations.json`. Para un ID ajeno devuelve falta de evidencia
+revisada antes de consultar Google Books. Es una limitación del resolvedor,
+no un fallo de conectividad ni una limitación de búsqueda de las APIs.
+
+Buscar libros llamados Frozen puede devolver novelizaciones y publicaciones
+posteriores a la película; eso no acredita la obra que la inspiró. Añadir una
+adaptación requiere revisar una fuente del vínculo y consultar el título/autor
+de la obra de origen. Un descubrimiento automático general y la presentación
+de candidatos no confirmados son una ampliación distinta del harness. Este
+cambio no amplía la colección ni convierte coincidencias de búsqueda en
+adaptaciones confirmadas.
 
 ## Calidad, CI y compatibilidad Promptfoo
 

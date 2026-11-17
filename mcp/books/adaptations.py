@@ -26,11 +26,27 @@ class ReviewedAdaptation(Model):
     titles: list[Text] = Field(min_length=1, max_length=20)
     authors: list[Text] = Field(min_length=1, max_length=20)
     evidence: Evidence
+    comparisonEvidence: list[Evidence] = Field(default_factory=list, max_length=2)
 
     @model_validator(mode="after")
     def chronology(self) -> "ReviewedAdaptation":
         if self.originalBookYear > self.movieYear:
             raise ValueError("Source novel cannot postdate the movie")
+        seen: set[str] = set()
+        for fact in self.comparisonEvidence:
+            side = fact.statement.split(":", 1)[0]
+            expected = {
+                "Premisa del libro": {"google_books"},
+                "Premisa de la película": {"imdb", "tmdb"},
+            }
+            if (
+                side not in expected
+                or side in seen
+                or fact.source.provider not in expected[side]
+                or len(fact.statement) > 600
+            ):
+                raise ValueError("Invalid or duplicate comparison premise")
+            seen.add(side)
         return self
 
 
@@ -130,7 +146,7 @@ class AdaptationResolver:
                 movieId=args.movieId,
                 status="confirmed",
                 book=book,
-                evidence=[entry.evidence],
+                evidence=[entry.evidence, *entry.comparisonEvidence],
                 limitations=limitations,
             )
         )

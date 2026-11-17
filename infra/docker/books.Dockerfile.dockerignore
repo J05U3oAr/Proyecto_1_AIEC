@@ -1,0 +1,21 @@
+# Only reviewed source enters the image; never environment files or test fixtures.
+**
+!server/
+!server/pyproject.toml
+!server/uv.lock
+!server/sofia/
+!server/sofia/__init__.py
+!server/sofia/models.py
+!server/sofia/tools.py
+!server/sofia/errors.py
+!server/sofia/config.py
+!server/sofia/adapters.py
+!mcp/
+!mcp/books/
+!mcp/books/*.py
+!mcp/catalog_common/
+!mcp/catalog_common/*.py
+**/.env
+**/.env.*
+**/__pycache__/
+**/*.pyc

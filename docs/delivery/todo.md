@@ -1,5 +1,10 @@
 # Seguimiento — segunda entrega
 
+Actualización M3.1 (17/11/2026): búsqueda/detalles y servidor MCP libros incorporados
+con pruebas offline y servicio Compose. La consulta Google real aún no está
+acreditada; no cerrar el hito 0 ni la comparación por pruebas simuladas.
+Ver [MCP libros](../../mcp/books/README.md). M3.2–M3.4 siguen pendientes.
+
 Estado inicial: planificación lista para revisión; implementación y evidencia pendientes. No marcar checks por haber escrito documentación. Criterios detallados y verificación están en cada archivo individual. Dependencias: hito 0 primero, luego porciones integradas; ver `plan.md`.
 
 Actualización M1 (15/11/2026): backend, contratos, sesiones Redis y cliente MCP

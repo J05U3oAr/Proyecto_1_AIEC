@@ -1,10 +1,13 @@
 # Miembro 3 — Pedro Caso: libros MCP, evidencia y evals
 
-Avance M3.1/M3.2 (17/11/2026): búsqueda, detalles y `adaptation_evidence` implementados,
-con transporte, caché/cuota y colección revisada de cuatro películas/tres novelas.
-326 tests Python y cuatro adaptaciones confirmadas por MCP/Google reales; ver
-[operación, límites y evidencia](../../mcp/books/README.md).
-Comparación/veredicto, evals e integración del widget siguen pendientes de M3.3/M3.4.
+Avance M3.1–M3.3 (17/11/2026): búsqueda, detalles, vínculo y premisas revisadas
+implementados; cinco películas/cuatro novelas, incluida Blade Runner con título de
+libro diferente. M3.3 integra presentación acotada y veredicto condicional en el
+agente M1 existente, sin otro agente ni cambios de contrato. Ver
+[operación y límites](../../mcp/books/README.md) y
+[fixtures para M4](../integration/fixtures/).
+La prueba Agent/MCP/Google real usa identidad de película revisada; falta
+`TMDB_READ_TOKEN` para acreditar selección TMDB/HTTP completa. M3.4 y widget siguen abiertos.
 
 ## Contexto y meta
 
@@ -41,6 +44,13 @@ del push. Mantener abiertos los criterios de M3 hasta obtener evidencia propia.
 
 ### M3.3 — Evidencias para comparar (3 puntos)
 
+Implementación disponible en `server/sofia/comparison.py` y `Agent.run`, con
+`comparisonEvidence` del catálogo y cuatro fixtures HTTP (válido/parcial/incierto/
+sin evidencia). Solo se contrastan premisas y contexto bibliográfico; no se juzga
+fidelidad ni se inventan escenas. El seguimiento de una película seleccionada
+consume una llamada MCP y cero LLM. La ruta con selección del LLM usa el mismo
+presentador y no acepta un veredicto comparativo sin evidencia.
+
 - Definir con M1 dimensiones comparables respaldadas por los datos (premisa, enfoque, contexto y lo que realmente esté disponible). Diferenciar hecho, opinión y ausencia de evidencia.
 - Proveer al agente fuentes y limitaciones; no inventar escenas, finales, citas o lectura íntegra. No descargar ni reproducir libros completos; extractos solo cuando estén permitidos y sean necesarios. Evitar spoilers por defecto.
 - Tests y fixtures compartidos con M4: comparación válida, datos parciales e insuficiencia. La respuesta final corresponde al agente de M1, no duplicar otro agente sin justificación.
@@ -62,6 +72,11 @@ del push. Mantener abiertos los criterios de M3 hasta obtener evidencia propia.
 - [ ] El runner ejecuta casos funcionales y ambas familias de ataques contra el agente real y verifica herramientas/efectos, no solo rechazo textual.
 - [ ] Las pruebas deterministas pasan en CI sin red; la evidencia de eval real se distingue explícitamente de los dobles y no oculta fallos.
 - [x] Código productivo actual del módulo ≥80% en las cuatro métricas y controles de formato/lint/tipos existentes de M2. Ampliar y volver a verificar al añadir M3.3/M3.4.
+
+La implementación propia de M3.3 y su integración con el turno del agente están
+verificadas; se conserva abierto el criterio integrado hasta probar selección
+TMDB y presentación del widget reales con M1/M4. No cerrar con fixtures ni con la
+identidad de película revisada usada en el probe de libros.
 
 ## Verificación y entrega
 

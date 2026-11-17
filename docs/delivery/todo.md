@@ -1,9 +1,10 @@
 # Seguimiento — segunda entrega
 
-Actualización M3.1/M3.2 (17/11/2026): búsqueda/detalles y evidencia de adaptación
-implementadas, con 326 tests Python aprobados y cuatro relaciones confirmadas por
-MCP/Google reales. Colección inicial finita: cuatro películas y tres novelas.
-Ver [MCP libros](../../mcp/books/README.md). M3.3/M3.4 e integración siguen pendientes.
+Actualización M3.1–M3.3 (17/11/2026): búsqueda/detalles, relación y comparación de
+premisas implementadas. Colección finita: cinco películas/cuatro novelas, incluida
+Blade Runner. Agent/MCP/Google reales verificados con identidad de película revisada;
+selección TMDB/HTTP completa pendiente de token M2. Ver
+[MCP libros](../../mcp/books/README.md). M3.4 e integración visual siguen pendientes.
 
 Estado inicial: planificación lista para revisión; implementación y evidencia pendientes. No marcar checks por haber escrito documentación. Criterios detallados y verificación están en cada archivo individual. Dependencias: hito 0 primero, luego porciones integradas; ver `plan.md`.
 
@@ -34,7 +35,7 @@ pendientes; estos checks globales no se cierran con dobles.
 
 - [x] M3.1: tools de libros invocables por MCP independiente; contratos y utilidades de cuota de M2 reutilizados.
 - [x] M3.2: vínculo confirmado/ambiguo/no encontrado distinguible, con evidencia y tests; colección limitada y fallos de proveedor diferenciados.
-- [ ] M3.3: evidencia comparativa y límites documentados; depende de M3.2.
+- [x] M3.3: premisas con fuentes, veredicto condicional acotado, límites y fixtures documentados; integrado al turno M1 existente. Selección TMDB y widget reales no acreditados todavía.
 - [ ] M1.3: razonamiento integrado, anuncio de capacidad y acciones tipadas; depende de herramientas M2/M3.
 - [ ] M4.2 (comparación): vista accesible y recuperaciones; puede avanzar con fixtures de M3.
 - [ ] M4.3: navegación segura a ambos destinos, deduplicación, bloqueo e historial probados; depende de M1.3 y prueba temprana.

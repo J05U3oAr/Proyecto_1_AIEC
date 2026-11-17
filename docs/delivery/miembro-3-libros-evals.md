@@ -1,5 +1,10 @@
 # Miembro 3 — Pedro Caso: libros MCP, evidencia y evals
 
+Avance M3.1 (17/11/2026): implementadas `search_books` y `book_details`, transporte,
+caché/cuota y configuración local sin exponer la clave. Ver
+[operación y límites](../../mcp/books/README.md). La consulta Google real y los
+criterios integrados quedan abiertos hasta obtener evidencia; M3.2–M3.4 pendientes.
+
 ## Contexto y meta
 
 Leer reglas, plan, `docs/delivery/reutilizacion-a2a.md` y `docs/delivery/reutilizacion-evals.md`. El sistema debe comparar una película con el libro del que se adapta y justificar si vale la pena verla. Google Books ofrece catálogo y descripciones, no garantiza prueba de adaptación ni texto íntegro. Tu meta es aportar herramientas y evidencias confiables y un proceso de evaluación que mida el comportamiento real del agente.

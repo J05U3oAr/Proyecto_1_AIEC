@@ -1,0 +1,84 @@
+{
+  "version": 1,
+  "reviewedAt": "2026-11-17",
+  "entries": [
+    {
+      "movieId": 438631,
+      "originalTitle": "Dune",
+      "movieYear": 2021,
+      "bookTitle": "Dune",
+      "originalBookYear": 1965,
+      "titles": ["Dune", "Duna", "Dune: The inspiration for the blockbuster film"],
+      "authors": ["Frank Herbert"],
+      "evidence": {
+        "statement": "La descripción editorial de Dune, de Frank Herbert, identifica la novela como origen de Dune: Part One (2021).",
+        "source": {
+          "provider": "google_books",
+          "url": "https://books.google.com/books?id=rXYdGATpigsC",
+          "label": "Dune — Frank Herbert, Hachette/Orion: descripción editorial"
+        }
+      }
+    },
+    {
+      "movieId": 693134,
+      "originalTitle": "Dune: Part Two",
+      "movieYear": 2024,
+      "bookTitle": "Dune",
+      "originalBookYear": 1965,
+      "titles": ["Dune", "Duna", "Dune: The inspiration for the blockbuster film"],
+      "authors": ["Frank Herbert"],
+      "evidence": {
+        "statement": "La misma descripción editorial de Dune, de Frank Herbert, identifica expresamente Dune: Part Two (2024) como adaptación de esta novela.",
+        "source": {
+          "provider": "google_books",
+          "url": "https://books.google.com/books?id=rXYdGATpigsC",
+          "label": "Dune — Frank Herbert, Hachette/Orion: descripción editorial"
+        }
+      }
+    },
+    {
+      "movieId": 329,
+      "originalTitle": "Jurassic Park",
+      "movieYear": 1993,
+      "bookTitle": "Jurassic Park",
+      "originalBookYear": 1990,
+      "titles": [
+        "Jurassic Park",
+        "Jurassic Park, Book 1",
+        "Jurassic Park: A Novel",
+        "Parque jurásico"
+      ],
+      "authors": ["Michael Crichton", "John Michael Crichton"],
+      "evidence": {
+        "statement": "La descripción editorial de Jurassic Park, de Michael Crichton, vincula la novela con la película dirigida por Steven Spielberg en 1993.",
+        "source": {
+          "provider": "google_books",
+          "url": "https://books.google.com/books?id=5cbLswEACAAJ",
+          "label": "Jurassic Park — Michael Crichton, Arrow Books: descripción editorial"
+        }
+      }
+    },
+    {
+      "movieId": 49051,
+      "originalTitle": "The Hobbit: An Unexpected Journey",
+      "movieYear": 2012,
+      "bookTitle": "The Hobbit",
+      "originalBookYear": 1937,
+      "titles": [
+        "The Hobbit",
+        "The Hobbit: Or There and Back Again",
+        "The Hobbit or There and Back Again",
+        "El hobbit"
+      ],
+      "authors": ["J. R. R. Tolkien", "John Ronald Reuel Tolkien"],
+      "evidence": {
+        "statement": "La descripción editorial del estuche de Tolkien identifica The Hobbit: An Unexpected Journey como primera película de la adaptación de The Hobbit de Peter Jackson. El estuche se cita como fuente, no se selecciona como libro individual.",
+        "source": {
+          "provider": "google_books",
+          "url": "https://books.google.com/books?id=lBxrjgEACAAJ",
+          "label": "The Hobbit and the Lord of the Rings — HarperCollins, 2012: descripción editorial"
+        }
+      }
+    }
+  ]
+}

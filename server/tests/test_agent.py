@@ -126,7 +126,8 @@ async def test_comparison_status_and_sources(settings, status):
     )
     assert result.response.comparison.adaptation.status == status
     assert result.context["adaptation"]["status"] == status
-    assert agent.llm.inputs[0][1]["content"] == "Me gusta Arrival"
+    assert agent.llm.inputs == []
+    assert result.usage["llmRequests"] == 0
     if status != "not_found":
         assert any(source.provider == "google_books" for source in result.response.sources)
 

@@ -13,6 +13,7 @@
 !mcp/
 !mcp/books/
 !mcp/books/*.py
+!mcp/books/adaptations.json
 !mcp/catalog_common/
 !mcp/catalog_common/*.py
 **/.env

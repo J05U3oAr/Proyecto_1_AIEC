@@ -1,0 +1,13 @@
+{
+  "date": "2026-11-17",
+  "nodeVersion": "v24.22.1",
+  "scope": "General frontend checks; src unchanged by M3.3",
+  "exitCodes": {
+    "lint": 0,
+    "format:check": 1,
+    "test:coverage": 1,
+    "test:e2e": 1,
+    "build": 1,
+    "build:sdk": 1
+  }
+}

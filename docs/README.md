@@ -27,6 +27,7 @@ vigentes para agentes están en `AGENTS.md`.
 - [Conversación, sesiones y metadatos TMDB](integration/conversacion.md).
 - [Guía para M3: libros, evidencia y evals](integration/m3-libros-evals.md).
 - [Operación de libros y comparación M3.1–M3.3](../mcp/books/README.md).
+- [Evaluaciones M3.4: casos, comandos y límites](../evals/README.md).
 - [Fixtures de comparación para M4](integration/fixtures/): ejemplos sintéticos validados.
 
 ## Segunda entrega

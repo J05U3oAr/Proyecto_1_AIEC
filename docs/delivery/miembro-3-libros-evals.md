@@ -6,9 +6,11 @@ libro diferente. M3.3 integra presentación acotada y veredicto condicional en e
 agente M1 existente, sin otro agente ni cambios de contrato. Ver
 [operación y límites](../../mcp/books/README.md) y
 [fixtures para M4](../integration/fixtures/).
-La prueba Agent/MCP/Google real usa identidad de película revisada; falta
-`TMDB_READ_TOKEN` para acreditar selección TMDB/HTTP completa. M3.4 dispone de
-runner, 22 casos y reportes offline; su cierre real y el widget siguen abiertos.
+Con `TMDB_READ_TOKEN` ya configurado se verificó selección TMDB → sesión HTTP →
+MCP Books → comparación textual desde el widget, sin mocks. Ver
+[prueba manual y evidencia](../integration/prueba-manual-m3.md). M3.4 dispone de
+runner, 22 casos y reportes offline; faltan corridas del modelo real. M4 conserva
+pendientes tarjetas, fuentes visibles, póster y apertura de pestañas.
 
 ## Contexto y meta
 
@@ -62,8 +64,9 @@ Implementación en [evals](../../evals/README.md): ejecutor Python serial sobre
 `Agent.run`, 10 casos funcionales/6 LLM01/6 LLM07, JSON/HTML y adaptador opcional
 Promptfoo sin duplicar el agente. Modo offline sin claves; modo `real-model`
 con `NvidiaLLM` y presupuesto Redis pero catálogo MCP sintético para inyecciones.
-Ese segundo modo aún no se ha corrido como evidencia. El recorrido con servicios
-reales y los efectos de navegador siguen pendientes por decisión del equipo.
+Ese segundo modo aún no se ha corrido como evidencia. El recorrido textual del
+widget con servicios reales ya se verificó; los efectos de navegación siguen
+pendientes con M4.
 No marcar cerrado este apartado por aprobar fixtures ni por configurar CI.
 
 - Adaptar el patrón `agent_provider.py` + `promptfooconfig.yaml` de HDT6-IA-Evals como referencia principal; los archivos revisados son idénticos a los de HDT7, por lo que no se mantienen dos harnesses. Seguir `docs/delivery/reutilizacion-evals.md` y usar del HDT7 el patrón de llamadas MCP, no los servicios locales de HDT6. Invocar el mismo turno/backend usado por el widget; registrar herramienta, argumentos sanitizados, resultados/efectos, latencia y consumo. Las evals de navegación verifican además efectos en navegador con M4.
@@ -77,15 +80,15 @@ No marcar cerrado este apartado por aprobar fixtures ni por configurar CI.
 
 - [x] Un cliente independiente consume el MCP de libros con fuentes/URLs válidas y errores tipados.
 - [x] Una adaptación confirmada y un homónimo incorrecto producen estados correctos; se explican los límites de Google Books.
-- [ ] El agente integrado compara con evidencia, no inventa contenido y da conclusión o incertidumbre útil.
+- [x] El agente integrado compara con evidencia, no inventa contenido y da conclusión o incertidumbre útil. Verificado por HTTP y comparación textual del widget con servicios reales; evidencia en `docs/evidence/m3/widget-live-check.json` y `http-live-check.json`.
 - [ ] El runner ejecuta casos funcionales y ambas familias de ataques contra el agente real y verifica herramientas/efectos, no solo rechazo textual.
 - [ ] Las pruebas deterministas pasan en CI sin red; la evidencia de eval real se distingue explícitamente de los dobles y no oculta fallos.
 - [x] Código productivo actual del módulo ≥80% en las cuatro métricas y controles de formato/lint/tipos existentes de M2. Ampliar y volver a verificar al añadir M3.3/M3.4.
 
-La implementación propia de M3.3 y su integración con el turno del agente están
-verificadas; se conserva abierto el criterio integrado hasta probar selección
-TMDB y presentación del widget reales con M1/M4. No cerrar con fixtures ni con la
-identidad de película revisada usada en el probe de libros.
+La implementación M3.3 y el recorrido integrado de comparación textual están
+verificados con TMDB/Books reales y controles del widget. Esto no acredita
+tarjetas, renderizado de póster, fuentes visibles ni apertura de pestañas de M4,
+ni sustituye las tres corridas OWASP del modelo real pendientes de M3.4.
 
 ## Verificación y entrega
 

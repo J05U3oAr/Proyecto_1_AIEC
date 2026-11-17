@@ -11,7 +11,7 @@ from mcp.client.streamable_http import streamable_http_client
 
 from sofia.adapters import RemoteMCP
 from sofia.config import Settings
-from sofia.models import BookId
+from sofia.models import BookId, MovieId
 
 SERVER_DIR = str(Path(__file__).resolve().parents[2] / "server")
 
@@ -61,12 +61,22 @@ async def test_independent_client_and_m1_consumer(books_endpoint):
             async with ClientSession(read, write) as client:
                 await client.initialize()
                 tools = (await client.list_tools()).tools
-                assert {t.name for t in tools} == {"search_books", "book_details"}
+                assert {t.name for t in tools} == {
+                    "search_books",
+                    "book_details",
+                    "adaptation_evidence",
+                }
                 for tool in tools:
                     assert tool.inputSchema["additionalProperties"] is False
                 good = await client.call_tool("search_books", {"query": "Dune"})
                 assert not good.isError
                 assert good.structuredContent["books"][0]["id"] == "dune_1"
+                adaptation = await client.call_tool("adaptation_evidence", {"movieId": 438631})
+                assert not adaptation.isError
+                assert adaptation.structuredContent["adaptation"]["status"] == "confirmed"
+                unknown = await client.call_tool("adaptation_evidence", {"movieId": 12})
+                assert unknown.structuredContent["adaptation"]["status"] == "not_found"
+                assert (await client.call_tool("adaptation_evidence", {"movieId": True})).isError
                 bad = await client.call_tool("book_details", {"bookId": True})
                 assert bad.isError
                 for args in [{"bookId": 0}, {"bookId": 1, "url": "https://evil.test"}]:
@@ -74,6 +84,8 @@ async def test_independent_client_and_m1_consumer(books_endpoint):
     settings = Settings(books_mcp_url=books_endpoint, mcp_token="synthetic-mcp-token")
     result = await RemoteMCP(settings).call("book_details", BookId(bookId="dune_1"))
     assert result.books[0].title == "Dune"
+    result = await RemoteMCP(settings).call("adaptation_evidence", MovieId(movieId=438631))
+    assert result.adaptation.status == "confirmed"
 
 
 async def test_auth_origin_body_limit_and_health(books_endpoint):

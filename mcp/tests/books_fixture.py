@@ -15,6 +15,8 @@ class Catalog:
                 Book(
                     id=args.bookId,
                     title="Dune",
+                    authors=["Frank Herbert"],
+                    year=1965,
                     url=f"https://books.google.com/books?id={args.bookId}",
                 )
             ]

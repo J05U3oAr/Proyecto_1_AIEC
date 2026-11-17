@@ -2,11 +2,12 @@
 
 Actualización M3.1–M3.3 (17/11/2026): búsqueda/detalles, relación y comparación de
 premisas implementadas. Colección finita: cinco películas/cuatro novelas, incluida
-Blade Runner. Agent/MCP/Google reales verificados con identidad de película revisada;
-selección TMDB/HTTP completa pendiente de token M2. Ver
+Blade Runner. Selección TMDB → sesión HTTP → MCP Books → comparación textual
+verificadas desde el widget real, sin mocks. Ver la
+[prueba manual](../integration/prueba-manual-m3.md) y el
 [MCP libros](../../mcp/books/README.md). M3.4 dispone de runner y 22 casos con
 catálogo/modelo sintéticos, reportes JSON/HTML y configuración CI offline;
-quedan pendientes las tres corridas del modelo real y la integración visual.
+quedan pendientes tres corridas del modelo real y las tarjetas/acciones de M4.
 Ver [operación de evals](../../evals/README.md).
 
 Estado inicial: planificación lista para revisión; implementación y evidencia pendientes. No marcar checks por haber escrito documentación. Criterios detallados y verificación están en cada archivo individual. Dependencias: hito 0 primero, luego porciones integradas; ver `plan.md`.
@@ -38,7 +39,7 @@ pendientes; estos checks globales no se cierran con dobles.
 
 - [x] M3.1: tools de libros invocables por MCP independiente; contratos y utilidades de cuota de M2 reutilizados.
 - [x] M3.2: vínculo confirmado/ambiguo/no encontrado distinguible, con evidencia y tests; colección limitada y fallos de proveedor diferenciados.
-- [x] M3.3: premisas con fuentes, veredicto condicional acotado, límites y fixtures documentados; integrado al turno M1 existente. Selección TMDB y widget reales no acreditados todavía.
+- [x] M3.3: premisas con fuentes, veredicto condicional acotado, límites y fixtures documentados; integrado al turno M1 existente. Selección TMDB y comparación textual del widget verificadas con servicios reales; tarjetas y navegación de M4 pendientes.
 - [ ] M1.3: razonamiento integrado, anuncio de capacidad y acciones tipadas; depende de herramientas M2/M3.
 - [ ] M4.2 (comparación): vista accesible y recuperaciones; puede avanzar con fixtures de M3.
 - [ ] M4.3: navegación segura a ambos destinos, deduplicación, bloqueo e historial probados; depende de M1.3 y prueba temprana.

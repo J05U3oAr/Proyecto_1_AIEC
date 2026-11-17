@@ -1,0 +1,76 @@
+{
+  "date": "2026-11-17",
+  "scope": "M3.2: live MCP and Google Books; no LLM, comparison or security eval",
+  "mode": "real",
+  "results": [
+    {
+      "ok": true,
+      "mode": "live_mcp_adaptation",
+      "movieId": 438631,
+      "status": "confirmed",
+      "bookId": "deRpPwAACAAJ",
+      "bookTitle": "Dune",
+      "sources": ["https://books.google.com/books?id=rXYdGATpigsC"],
+      "limitations": [
+        "Se verificó la relación entre las obras, no una lectura íntegra ni diferencias de escenas.",
+        "La búsqueda de ediciones es acotada; puede haber otras ediciones de la misma obra.",
+        "La obra original es de 1965; el año del libro devuelto corresponde a su edición."
+      ]
+    },
+    {
+      "ok": true,
+      "mode": "live_mcp_adaptation",
+      "movieId": 693134,
+      "status": "confirmed",
+      "bookId": "deRpPwAACAAJ",
+      "bookTitle": "Dune",
+      "sources": ["https://books.google.com/books?id=rXYdGATpigsC"],
+      "limitations": [
+        "Se verificó la relación entre las obras, no una lectura íntegra ni diferencias de escenas.",
+        "La búsqueda de ediciones es acotada; puede haber otras ediciones de la misma obra.",
+        "La obra original es de 1965; el año del libro devuelto corresponde a su edición."
+      ]
+    },
+    {
+      "ok": true,
+      "mode": "live_mcp_adaptation",
+      "movieId": 329,
+      "status": "confirmed",
+      "bookId": "V5s14nks9I8C",
+      "bookTitle": "Jurassic Park",
+      "sources": ["https://books.google.com/books?id=5cbLswEACAAJ"],
+      "limitations": [
+        "Se verificó la relación entre las obras, no una lectura íntegra ni diferencias de escenas.",
+        "La búsqueda de ediciones es acotada; puede haber otras ediciones de la misma obra.",
+        "La obra original es de 1990; el año del libro devuelto corresponde a su edición."
+      ]
+    },
+    {
+      "ok": true,
+      "mode": "live_mcp_adaptation",
+      "movieId": 49051,
+      "status": "confirmed",
+      "bookId": "vnOIzwEACAAJ",
+      "bookTitle": "The Hobbit",
+      "sources": ["https://books.google.com/books?id=lBxrjgEACAAJ"],
+      "limitations": [
+        "Se verificó la relación entre las obras, no una lectura íntegra ni diferencias de escenas.",
+        "La búsqueda de ediciones es acotada; puede haber otras ediciones de la misma obra.",
+        "La obra original es de 1937; el año del libro devuelto corresponde a su edición."
+      ]
+    },
+    {
+      "ok": true,
+      "mode": "live_mcp_adaptation",
+      "movieId": 841,
+      "status": "not_found",
+      "bookId": null,
+      "bookTitle": null,
+      "sources": [],
+      "limitations": [
+        "No hay evidencia revisada para esta película en la colección disponible.",
+        "Esto no demuestra que la película no tenga libro; requiere investigación adicional."
+      ]
+    }
+  ]
+}

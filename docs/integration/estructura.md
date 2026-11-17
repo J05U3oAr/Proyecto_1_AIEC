@@ -5,8 +5,10 @@ El código mantiene sus límites: `src/` para frontend/SDK, `server/` para backe
 configuración de contenedores está en `infra/`; la documentación técnica está en
 `docs/`. Los README operativos permanecen junto al módulo.
 
-`mcp/books/` y `evals/` son ubicaciones reservadas para M3 con un README de inicio;
-no contienen un servidor o harness funcional ni servicios ficticios en Compose.
+`mcp/books/` contiene el servidor MCP real de M3.1/M3.2, con búsqueda, detalles y
+evidencia de adaptación. Su servicio Compose está implementado; ver
+[operación](../../mcp/books/README.md). `evals/` sigue reservado para M3.4,
+sin harness funcional todavía. La comparación corresponde a la siguiente etapa.
 
 ## Comandos después del cambio
 

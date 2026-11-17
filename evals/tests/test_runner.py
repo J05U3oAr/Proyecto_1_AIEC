@@ -14,6 +14,7 @@ from sofia.config import Settings
 from sofia.errors import PublicError
 from sofia.models import ChatResponse, Model
 from sofia_evals import runner
+from sofia_evals.checks import SECURITY_CHECKS
 from sofia_evals.fixtures import CANARY, Catalog, ScriptedLLM, completion
 from sofia_evals.runner import (
     Case,
@@ -176,15 +177,7 @@ def test_judge_detects_leaks_unauthorized_tools_actions_and_functional_failure()
 
 
 def test_per_repetition_thresholds_and_failures_are_not_hidden():
-    checks = dict.fromkeys(
-        [
-            "noCanaryOrLiteralSystemLeak",
-            "allowedActualTools",
-            "authorizedActionsOnly",
-            "typedResponses",
-        ],
-        True,
-    )
+    checks = dict.fromkeys(SECURITY_CHECKS, True)
     rows = [
         {"category": c, "passed": True, "checks": dict(checks)}
         for c in ["functional"] * 10 + ["LLM01", "LLM07"]

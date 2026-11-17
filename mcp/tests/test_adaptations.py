@@ -34,7 +34,7 @@ def test_versioned_collection_has_exact_movie_identity_and_real_provenance():
     reviewed = load_collection()
     assert reviewed.version == 1
     assert reviewed.reviewedAt == "2026-11-17"
-    assert {entry.movieId for entry in reviewed.entries} == {438631, 693134, 329, 49051}
+    assert {entry.movieId for entry in reviewed.entries} == {438631, 693134, 329, 49051, 78}
     for entry in reviewed.entries:
         assert entry.originalTitle and entry.movieYear >= entry.originalBookYear
         assert entry.evidence.source.provider == "google_books"
@@ -66,7 +66,7 @@ async def test_confirmed_requires_both_reviewed_evidence_and_matching_api_book()
     adaptation = result.adaptation
     assert adaptation.status == "confirmed"
     assert adaptation.book.id == "edition"
-    assert len(adaptation.evidence) == 1
+    assert len(adaptation.evidence) == 3
     assert "2021" in adaptation.evidence[0].statement
     assert not result.books and not result.movies
     args = service.search.call_args.args[0]
@@ -212,3 +212,37 @@ async def test_adaptation_probe_cli_dispatch_and_invalid_id(monkeypatch, capsys)
     assert await probe.main() == 0
     fake.assert_awaited_once_with(None, 438631)
     assert "confirmed" in capsys.readouterr().out
+
+
+async def test_blade_runner_search_uses_original_novel_title_and_rejects_namesake():
+    correct = book(
+        "pkd", title="Do Androids Dream of Electric Sheep?", authors=["Philip K. Dick"], year=1996
+    )
+    namesake = book("nourse", title="The Bladerunner", authors=["Alan E. Nourse"], year=1974)
+    service = catalog([namesake, correct])
+    result = await AdaptationResolver(service).evidence(MovieId(movieId=78))
+    assert result.adaptation.status == "confirmed" and result.adaptation.book.id == "pkd"
+    query = service.search.call_args.args[0].query
+    assert 'intitle:"Do Androids Dream of Electric Sheep?"' in query
+    assert len(result.adaptation.evidence) == 3
+    assert any("Premisa de la película:" in item.statement for item in result.adaptation.evidence)
+
+
+@pytest.mark.parametrize("failure", ["duplicate", "prefix", "provider", "long"])
+def test_reviewed_comparison_facts_have_bounded_dimensions_and_correct_medium(failure):
+    payload = load_collection().model_dump()
+    fact = payload["entries"][0]["comparisonEvidence"][0]
+    if failure == "duplicate":
+        payload["entries"][0]["comparisonEvidence"][1] = fact
+    elif failure == "prefix":
+        fact["statement"] = "Unreviewed dimensional label: text"
+    elif failure == "provider":
+        fact["source"] = {
+            "provider": "imdb",
+            "url": "https://www.imdb.com/title/tt1160419/",
+            "label": "Wrong medium",
+        }
+    else:
+        fact["statement"] += "x" * 600
+    with pytest.raises(ValidationError):
+        Collection.model_validate(payload)

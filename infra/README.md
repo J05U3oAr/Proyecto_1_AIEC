@@ -28,7 +28,8 @@ La ubicación nueva no requiere borrar contenedores ni volúmenes con `down -v`.
 M3.1 incorpora `infra/docker/books.Dockerfile` y el servicio `books`, con clave
 privada `GOOGLE_BOOKS_API_KEY`, MCP autenticado y health checks sin consultas a Google.
 Ver [configuración y prueba explícita](../mcp/books/README.md).
-`evals/` continúa pendiente de M3.4; evidencia de adaptación corresponde a M3.2.
+M3.2 añade evidencia de adaptación con colección JSON revisada incluida en la
+imagen. `evals/` continúa pendiente de M3.4; comparación/veredicto corresponde a M3.3.
 
 ## Límites de red y TLS
 

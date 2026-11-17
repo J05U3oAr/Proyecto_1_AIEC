@@ -314,14 +314,25 @@ widget. La clave y el token permanecen en `.env`, fuera de Git y de este reporte
 - Evidencia: [comparación](../../docs/evidence/m3/comparison-check.json),
   [calidad y hash](../../docs/evidence/m3/quality-m33-summary.json),
   [checks frontend](../../docs/evidence/m3/frontend-m33-check.json).
-- El entorno no tiene `TMDB_READ_TOKEN`: no se acredita todavía selección TMDB,
-  recorrido completo por HTTP o presentación en navegador. El probe HTTP está
-  preparado para cuando M2 configure ese proveedor. Evals M3.4 siguen pendientes.
+- En esa verificación aún faltaba `TMDB_READ_TOKEN`: no se acreditó selección
+  TMDB, recorrido HTTP ni navegador. Ver la actualización integrada posterior.
 - Se ejecutaron los checks generales exigidos: npm lint pasa; formato global
   reporta archivos ajenos a M3.3; tests frontend 60 pasan/10 fallan por AbortSignal
   y timeout; E2E JSDOM falla por timeout; app/SDK fallan por TS2339 en
   `ChatHeader.test.tsx` líneas 48/67. Node local 24.22.1 frente al 22 documentado.
   No se modificó `src/`, no se rebajaron checks ni se afirma CI remoto verde.
+
+### Actualización: recorrido integrado real
+
+Con TMDB configurado, el widget real permitió seleccionar Blade Runner (1982)
+y compararla con Do Androids Dream of Electric Sheep?, sin MSW ni fixtures.
+También se verificaron por HTTP Dune (2021), confirmada, y Dune (1984), fuera
+de cobertura de la colección. El backend devuelve el póster y fuentes; el
+cliente actual presenta solo texto y aún no ejecuta acciones de navegación.
+Este recorrido no requiere inferencia LLM y no cierra las evals OWASP reales.
+Ver [pasos manuales](../../docs/integration/prueba-manual-m3.md),
+[resultado del widget](../../docs/evidence/m3/widget-live-check.json) y
+[captura](../../docs/evidence/m3/widget-live-comparison.png).
 
 Ver [asignación](../../docs/delivery/miembro-3-libros-evals.md) y
 [guía de integración](../../docs/integration/m3-libros-evals.md).

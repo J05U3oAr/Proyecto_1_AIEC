@@ -29,7 +29,9 @@ M3.1 incorpora `infra/docker/books.Dockerfile` y el servicio `books`, con clave
 privada `GOOGLE_BOOKS_API_KEY`, MCP autenticado y health checks sin consultas a Google.
 Ver [configuración y prueba explícita](../mcp/books/README.md).
 M3.2 añade evidencia de adaptación con colección JSON revisada incluida en la
-imagen. `evals/` continúa pendiente de M3.4; comparación/veredicto corresponde a M3.3.
+imagen. M3.3 incorpora premisas revisadas y comparación acotada en el agente M1.
+La imagen backend incluye `scripts.probe_comparison`, con modo HTTP y modo de
+identidad revisada sin TMDB/LLM; ver el README de libros. `evals/` continúa pendiente.
 
 ## Límites de red y TLS
 

@@ -33,8 +33,10 @@ con acceso a Docker puede inspeccionar variables de contenedores: no compartir
 M2 debe configurar TLS, autenticación y aislamiento de infraestructura.
 
 El MCP de películas ya está en Compose como `movies:8001/mcp`. El de libros
-`books:8002/mcp` incluye búsqueda/detalles de M3.1 y evidencia de adaptación de M3.2;
-comparación y evals siguen pendientes. Ver [configuración](../mcp/books/README.md).
+`books:8002/mcp` incluye búsqueda/detalles, vínculo y premisas revisadas de M3.1–M3.3.
+El agente central presenta comparación de premisas con veredicto condicional o
+insuficiencia útil; no analiza escenas/finales. Evals y vista enriquecida pendientes.
+Ver [configuración y pruebas de comparación](../mcp/books/README.md).
 Para destinos de contenedores diferentes,
 exportar `MOVIES_MCP_CONTAINER_URL`/`BOOKS_MCP_CONTAINER_URL`; las variables
 `MOVIES_MCP_URL`/`BOOKS_MCP_URL` son del host y no reemplazan la red interna.

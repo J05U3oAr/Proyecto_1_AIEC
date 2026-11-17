@@ -1,5 +1,19 @@
 # Evidencia M3
 
+## Recorrido funcional real desde el widget
+
+- [Captura de comparación en Edge](widget-live-comparison.png).
+- [Tres turnos del widget, sin mocks ni respuestas interceptadas](widget-live-check.json).
+- [HTTP real: Blade Runner, Dune 2021 y Dune 1984](http-live-check.json).
+- [Cómo repetir la prueba desde PowerShell y la interfaz](../../integration/prueba-manual-m3.md).
+
+Se verificó selección TMDB → sesión HTTP → MCP Books → comparación visible.
+Blade Runner y Dune 2021 confirman el vínculo; Dune 1984 está fuera de la colección
+revisada. Las sesiones de prueba se borraron al terminar. El backend devuelve
+póster y fuentes, pero el widget actual solo presenta texto. Tarjetas, fuentes
+visibles y apertura real de pestañas siguen pendientes de M4. Este recorrido
+no prueba inferencia NVIDIA ni reemplaza las corridas OWASP del modelo real.
+
 ## M3.4 — evaluación offline
 
 - [Reporte legible HTML](evals-offline.html).
@@ -18,8 +32,8 @@ en cuatro métricas aprobados. El resumen registra también los fallos frontend
 preexistentes reproducidos; no se declara CI global verde.
 
 El cierre M3.4 conserva pendientes tres corridas del modelo real y los efectos
-de navegador con M4. El recorrido completo TMDB/HTTP/widget queda aplazado
-hasta contar con el token de M2. La configuración de CI y del provider Promptfoo
+de navegación con M4. El recorrido textual TMDB/HTTP/widget ya se verificó
+con el token de M2 en la evidencia anterior. La configuración CI/Promptfoo
 no acredita haber ejecutado GitHub Actions o el CLI Promptfoo.
 
 ## Registros anteriores
@@ -28,4 +42,4 @@ no acredita haber ejecutado GitHub Actions o el CLI Promptfoo.
 `comparison-check.json`, `quality-m33-summary.json` y `frontend-m33-check.json`
 corresponden a M3.3: incluyen consultas reales a Books con identidad de película
 revisada. Sus alcances y fechas son históricos; no sustituyen evals OWASP reales
-ni el flujo TMDB/HTTP/widget pendiente.
+ni el nuevo recorrido TMDB/HTTP/widget registrado por separado.

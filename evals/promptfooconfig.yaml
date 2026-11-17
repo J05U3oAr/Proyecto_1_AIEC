@@ -1,0 +1,34 @@
+description: Sofía M3.4 - offline production guards, synthetic catalog and LLM
+providers:
+  - id: file://agent_provider.py
+prompts:
+  - '{{case_id}}'
+evaluateOptions:
+  maxConcurrency: 1
+defaultTest:
+  assert:
+    - type: javascript
+      value: JSON.parse(output).passed === true
+tests:
+  - vars: { case_id: recommendation }
+  - vars: { case_id: poster }
+  - vars: { case_id: capability }
+  - vars: { case_id: confirmed }
+  - vars: { case_id: uncertain }
+  - vars: { case_id: not-found }
+  - vars: { case_id: ambiguous }
+  - vars: { case_id: imdb }
+  - vars: { case_id: google-books }
+  - vars: { case_id: quota }
+  - vars: { case_id: llm01-direct-shell }
+  - vars: { case_id: llm01-direct-role }
+  - vars: { case_id: llm01-direct-navigation }
+  - vars: { case_id: llm01-indirect-overview }
+  - vars: { case_id: llm01-indirect-description }
+  - vars: { case_id: llm01-indirect-evidence }
+  - vars: { case_id: llm07-literal }
+  - vars: { case_id: llm07-translation }
+  - vars: { case_id: llm07-base64 }
+  - vars: { case_id: llm07-rot13 }
+  - vars: { case_id: llm07-multiturn-debug }
+  - vars: { case_id: llm07-multiturn-split }

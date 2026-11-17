@@ -7,7 +7,8 @@ agente M1 existente, sin otro agente ni cambios de contrato. Ver
 [operación y límites](../../mcp/books/README.md) y
 [fixtures para M4](../integration/fixtures/).
 La prueba Agent/MCP/Google real usa identidad de película revisada; falta
-`TMDB_READ_TOKEN` para acreditar selección TMDB/HTTP completa. M3.4 y widget siguen abiertos.
+`TMDB_READ_TOKEN` para acreditar selección TMDB/HTTP completa. M3.4 dispone de
+runner, 22 casos y reportes offline; su cierre real y el widget siguen abiertos.
 
 ## Contexto y meta
 
@@ -56,6 +57,14 @@ presentador y no acepta un veredicto comparativo sin evidencia.
 - Tests y fixtures compartidos con M4: comparación válida, datos parciales e insuficiencia. La respuesta final corresponde al agente de M1, no duplicar otro agente sin justificación.
 
 ### M3.4 — Harness de evaluaciones (5 puntos)
+
+Implementación en [evals](../../evals/README.md): ejecutor Python serial sobre
+`Agent.run`, 10 casos funcionales/6 LLM01/6 LLM07, JSON/HTML y adaptador opcional
+Promptfoo sin duplicar el agente. Modo offline sin claves; modo `real-model`
+con `NvidiaLLM` y presupuesto Redis pero catálogo MCP sintético para inyecciones.
+Ese segundo modo aún no se ha corrido como evidencia. El recorrido con servicios
+reales y los efectos de navegador siguen pendientes por decisión del equipo.
+No marcar cerrado este apartado por aprobar fixtures ni por configurar CI.
 
 - Adaptar el patrón `agent_provider.py` + `promptfooconfig.yaml` de HDT6-IA-Evals como referencia principal; los archivos revisados son idénticos a los de HDT7, por lo que no se mantienen dos harnesses. Seguir `docs/delivery/reutilizacion-evals.md` y usar del HDT7 el patrón de llamadas MCP, no los servicios locales de HDT6. Invocar el mismo turno/backend usado por el widget; registrar herramienta, argumentos sanitizados, resultados/efectos, latencia y consumo. Las evals de navegación verifican además efectos en navegador con M4.
 - Dataset mínimo propuesto: 8 casos funcionales (recomendación, póster, anuncio de comparación, comparación confirmada, ambigüedad/ausencia, referencia IMDb, Google Books y fallo/cuota); 6 LLM01 (al menos 3 directos y 3 indirectos en datos MCP); 6 LLM07 (extracción directa, traducción/codificación y conversación de varios turnos). Asegurar variedad, no seis paráfrasis idénticas.

@@ -1,5 +1,11 @@
 # Integración para M3 — Pedro: libros, evidencia y evals
 
+Actualización M3.1 (17/11/2026): búsqueda y detalles de libros están implementados
+en `mcp/books/`, junto con servicio Compose y pruebas offline. La descripción de
+traspaso de abajo se conserva como contexto histórico; `adaptation_evidence`,
+comparación, harness y consulta Google real siguen pendientes. Ver
+[operación actual](../../mcp/books/README.md).
+
 Actualizado el 15/11/2026, después de integrar metadatos TMDB. Referencia local:
 `95c25fb`; al revisar, `feat/mcp` coincide con el tracking local `origin/feat/mcp`
 y el usuario confirma el push. Esto no acredita un run verde de GitHub Actions,

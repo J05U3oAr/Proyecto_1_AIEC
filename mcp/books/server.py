@@ -24,13 +24,15 @@ from starlette.responses import JSONResponse, Response
 from starlette.routing import Route
 from starlette.types import ASGIApp, Receive, Scope, Send
 
+from books.adaptations import AdaptationResolver
 from books.config import BooksSettings
 from books.google_books import GoogleBooks
 from catalog_common.cache import CatalogCache, CatalogError
-from sofia.models import BookId, SearchBooks, ToolResult
+from sofia.models import BookId, MovieId, SearchBooks, ToolResult
 from sofia.tools import TOOLS, validate_result
 
 logger = logging.getLogger("sofia.books")
+BOOK_TOOLS = ("search_books", "book_details", "adaptation_evidence")
 
 
 class Catalog(Protocol):
@@ -89,6 +91,7 @@ def create_app(settings: BooksSettings, catalog: Catalog | None = None) -> Starl
         settings.google_books_retries,
         settings.google_books_timeout,
     )
+    adaptations = AdaptationResolver(service)
 
     # SDK v1 decorators lack public type annotations; narrow this external boundary.
     ListHandler = Callable[[], Awaitable[list[types.Tool]]]
@@ -106,7 +109,7 @@ def create_app(settings: BooksSettings, catalog: Catalog | None = None) -> Starl
                 outputSchema=ToolResult.model_json_schema(),
                 annotations=types.ToolAnnotations(readOnlyHint=True, destructiveHint=False),
             )
-            for name in ("search_books", "book_details")
+            for name in BOOK_TOOLS
         ]
 
     # Runtime validation below is strict and does not echo invalid input to the caller.
@@ -122,6 +125,9 @@ def create_app(settings: BooksSettings, catalog: Catalog | None = None) -> Starl
                 elif name == "book_details":
                     detail_args = BookId.model_validate(arguments)
                     result = await service.details(detail_args)
+                elif name == "adaptation_evidence":
+                    movie_args = MovieId.model_validate(arguments)
+                    result = await adaptations.evidence(movie_args)
                 else:
                     raise CatalogError("unknown_tool")
                 validate_result(name, TOOLS[name].arguments.model_validate(arguments), result)
@@ -145,7 +151,7 @@ def create_app(settings: BooksSettings, catalog: Catalog | None = None) -> Starl
         finally:
             logger.info(
                 "tool_completed tool=%s latency_ms=%.1f",
-                name if name in ("search_books", "book_details") else "unknown",
+                name if name in BOOK_TOOLS else "unknown",
                 (time.perf_counter() - started) * 1000,
             )
         code = error.code

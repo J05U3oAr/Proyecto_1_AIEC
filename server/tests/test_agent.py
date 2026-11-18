@@ -288,6 +288,71 @@ async def test_opening_verified_book_uses_session_without_inference(settings):
 
 
 @pytest.mark.parametrize(
+    "prompt", ["El libro de Dorian Gray tiene película", "¿Dorian Gray tiene película?"]
+)
+async def test_named_work_replaces_previous_comparison_with_catalog_candidates(settings, prompt):
+    dorian = {
+        **MOVIE,
+        "id": 18,
+        "title": "El retrato de Dorian Gray",
+        "tmdb": "https://www.themoviedb.org/movie/18",
+    }
+    context = {"movies": [MOVIE], "books": [BOOK], "adaptation": ADAPTATION}
+    agent = make_agent(settings, [final()], [{"movies": [MOVIE, dorian]}])
+    result = await agent.run(ChatRequest(prompt=prompt), [], context, "new-work")
+
+    assert [movie.id for movie in result.response.movies] == [18]
+    assert result.response.comparison is None
+    assert result.context["adaptation"] is None
+    assert "no confirma" in result.response.response
+    assert "Arrival" not in result.response.response
+    assert [name for name, _ in agent.mcp.calls] == ["search_movies"]
+    assert agent.mcp.calls[0][1]["query"] == "dorian gray"
+
+
+async def test_no_matching_work_asks_for_clarification_without_an_old_card(settings):
+    context = {"movies": [MOVIE], "books": [BOOK], "adaptation": ADAPTATION}
+    agent = make_agent(settings, [], [{"movies": [MOVIE]}])
+    result = await agent.run(
+        ChatRequest(prompt="¿Dorian Gray tiene película?"), [], context, "clarify"
+    )
+    assert "título completo" in result.response.response
+    assert result.response.movies == []
+    assert result.context["movies"] == []
+    assert result.response.comparison is None
+
+
+async def test_book_followup_checks_the_selected_movie(settings):
+    agent = make_agent(settings, [], [{"adaptation": ADAPTATION}])
+    result = await agent.run(
+        ChatRequest(prompt="¿Tiene libro?"), [], {"movies": [MOVIE]}, "follow-up"
+    )
+    assert agent.mcp.calls == [("adaptation_evidence", {"movieId": MOVIE["id"]})]
+    assert result.response.comparison.adaptation.movieId == MOVIE["id"]
+
+
+async def test_unspecified_book_does_not_reuse_the_previous_movie(settings):
+    context = {"movies": [MOVIE], "books": [BOOK], "adaptation": ADAPTATION}
+    agent = make_agent(settings, [])
+    result = await agent.run(
+        ChatRequest(prompt="¿El libro tiene película?"), [], context, "unspecified-book"
+    )
+    assert result.response.response == "¿Cuál es el título del libro o la novela?"
+    assert result.response.movies == []
+    assert agent.mcp.calls == []
+
+
+async def test_a_prior_comparison_does_not_overwrite_a_new_reply(settings):
+    context = {"movies": [MOVIE], "books": [BOOK], "adaptation": ADAPTATION}
+    agent = make_agent(settings, [final("Prefiero la ciencia ficción reflexiva.")])
+    result = await agent.run(ChatRequest(prompt="¿Qué tipo de cine te gusta?"), [], context, "r")
+    assert "ciencia ficción reflexiva" in result.response.response
+    assert result.response.comparison is None
+    assert all(source.provider != "google_books" for source in result.response.sources)
+    assert result.context["adaptation"] == Adaptation.model_validate(ADAPTATION).model_dump()
+
+
+@pytest.mark.parametrize(
     "prompt,intent,allowed",
     [
         ("Abre IMDb", "imdb", True),

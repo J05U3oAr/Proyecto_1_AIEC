@@ -1,16 +1,8 @@
-export interface ChatRequest {
-  prompt: string;
-  sessionId?: string;
-  requestId?: string;
-}
-
-export interface ChatResponse {
-  response: string;
-  sessionId?: string;
-  requestId?: string;
-}
+import type { ChatResponse } from '@/services/contracts.generated';
+export type { ChatRequest, ChatResponse } from '@/services/contracts.generated';
 
 export interface IChatService {
   sendMessage(prompt: string): Promise<ChatResponse>;
   clearSession?(): Promise<void>;
+  cancelPending?(): void;
 }

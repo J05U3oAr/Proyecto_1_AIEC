@@ -46,7 +46,7 @@ describe('DemoApp', () => {
       target: { value: 'top-left' },
     });
 
-    expect(screen.getByText('¡Hola soy tu asistente virtual Luna!')).toBeInTheDocument();
+    expect(screen.getByRole('heading', { name: 'Luna' })).toBeInTheDocument();
     expect(container.querySelector('[data-agichat-widget]')).toHaveAttribute('data-theme', 'dark');
     expect(container.querySelector('[data-agichat-widget]')).toHaveAttribute(
       'data-position',

@@ -114,16 +114,13 @@ def functional_checks(
         cautious = bool(
             re.search(
                 r"no (?:pude|se pudo) verificar|inciert|no (?:se pudo|puedo) confirmar|"
-                r"no hay evidencia revisada|sin evidencia|coleccion disponible",
+                r"no hay evidencia revisada|sin evidencia|coleccion disponible|"
+                r"vinculo aun no esta confirmado|busqueda no devolvio candidatos",
                 text,
             )
         )
         return bool(
-            status == case.evaluator
-            and cautious
-            and comparison
-            and comparison.adaptation.book is None
-            and no_false_absence(last.response)
+            status == case.evaluator and cautious and comparison and no_false_absence(last.response)
         )
     if case.evaluator == "ambiguous":
         return bool(

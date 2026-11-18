@@ -203,7 +203,7 @@ async def test_stale_adaptation_is_dropped_when_movie_changes(settings):
 
     stale = adaptation().model_copy(update={"movieId": 329})
     result = await Agent(settings, StubLLM([final()]), StubMCP([]), StubBudget()).run(
-        ChatRequest(prompt="Recomienda una película de ciencia ficción"),
+        ChatRequest(prompt="Recomienda ciencia ficción"),
         [],
         {
             "movies": [MOVIE.model_dump()],

@@ -14,6 +14,7 @@ from sofia.comparison import build_comparison, comparison_followup, comparison_s
 from sofia.config import Settings
 from sofia.dialogue import (
     CAPABILITY,
+    RECOMMENDATION_GENRES,
     movie_metadata,
     movie_text,
     route,
@@ -246,6 +247,41 @@ class Agent:
         movies = [
             Movie.model_validate(item) for item in cast(list[object], context.get("movies", []))
         ]
+        if intent.kind in {
+            "genre_recommendation",
+            "similar_recommendation",
+            "alternative_recommendation",
+        }:
+            seed = None
+            genre = intent.query if intent.kind == "genre_recommendation" else None
+            if intent.kind == "similar_recommendation" and len(movies) == 1:
+                seed = movies[0]
+            if intent.kind == "alternative_recommendation" and intent.query:
+                candidates = movies
+                if previous := context.get("recommendation_seed"):
+                    candidates = [Movie.model_validate(previous), *movies]
+                matches = select_candidates(intent.query, candidates) or []
+                if len(matches) == 1:
+                    seed = matches[0]
+            if seed:
+                genre = next(
+                    (
+                        RECOMMENDATION_GENRES[words(name)]
+                        for name in seed.genres
+                        if words(name) in RECOMMENDATION_GENRES
+                    ),
+                    None,
+                )
+            return await self._recommend_by_genre(
+                genre,
+                seed,
+                history,
+                context,
+                request_id,
+                trace,
+                usage,
+                single=intent.kind == "alternative_recommendation",
+            )
         selected = select_candidates(intent.query or request.prompt, movies)
         if intent.kind == "metadata" and (not intent.query or selected):
             movies = selected if intent.query and selected else movies
@@ -333,6 +369,50 @@ class Agent:
             exact = select_candidates(query, found)
             return self._verified_reply(exact or found, history, context, request_id, trace, usage)
         return None
+
+    async def _recommend_by_genre(
+        self,
+        genre: str | None,
+        seed: Movie | None,
+        history: list[dict[str, str]],
+        context: dict[str, object],
+        request_id: str,
+        trace: list[dict[str, object]],
+        usage: dict[str, int],
+        *,
+        single: bool,
+    ) -> TurnResult:
+        if genre:
+            args = SearchMovies(query=genre, genre=genre, limit=5)
+            try:
+                result = await self.mcp.call("search_movies", args)
+                validate_result("search_movies", args, result)
+            except PublicError as error:
+                trace.append({"tool": "search_movies", "status": "failed", "code": error.code})
+                raise
+            trace.append({"tool": "search_movies", "status": "ok", "arguments": {"limit": 5}})
+            movies = [movie for movie in result.movies if seed is None or movie.id != seed.id]
+            if movies:
+                reply = self._verified_reply(
+                    movies[: 1 if single else 3], history, context, request_id, trace, usage
+                )
+                if seed:
+                    reply.context["recommendation_seed"] = seed.model_dump()
+                    reply.response.response = (
+                        f"Mismo género: **{genre}**.\n\n" + reply.response.response
+                    )
+                return reply
+            text = f"No encontré alternativas en el género {genre}. ¿Quieres probar otro género?"
+        elif seed:
+            text = "No tengo un género verificado para esa película. ¿Qué género prefieres?"
+        else:
+            text = "¿A qué película debe parecerse? Indícame un título o elige una ficha."
+        return TurnResult(
+            ChatResponse(response=text, requestId=request_id),
+            dict(context),
+            trace,
+            usage,
+        )
 
     async def _recommend_book_adaptation(
         self,

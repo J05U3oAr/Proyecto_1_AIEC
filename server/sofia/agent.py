@@ -21,6 +21,7 @@ from sofia.dialogue import (
     unsupported_output,
     words,
 )
+from sofia.discovery import discover
 from sofia.errors import PublicError
 from sofia.models import (
     Action,
@@ -28,6 +29,7 @@ from sofia.models import (
     Book,
     ChatRequest,
     ChatResponse,
+    Comparison,
     Movie,
     MovieId,
     SearchMovies,
@@ -149,9 +151,22 @@ class Agent:
                 usage,
             )
         args = MovieId(movieId=movies[0].id)
+        discovery_text = None
+        candidate_books: list[Book] = []
         try:
             result = await self.mcp.call("adaptation_evidence", args)
             validate_result("adaptation_evidence", args, result)
+            if result.adaptation and result.adaptation.status == "not_found":
+                result.adaptation, candidate_books, discovery_text = await discover(
+                    movies[0],
+                    self.mcp,
+                    self.llm,
+                    self.budget,
+                    trace,
+                    usage,
+                    self.settings.max_llm_calls,
+                    max_searches=min(2, self.settings.max_tool_calls - 1),
+                )
         except PublicError as error:
             trace.append({"tool": "adaptation_evidence", "status": "failed", "code": error.code})
             return TurnResult(
@@ -172,10 +187,16 @@ class Agent:
         # validate_result above requires a matching, non-null adaptation.
         adaptation = cast(Adaptation, result.adaptation)
         comparison = build_comparison(movies[0], adaptation)
+        if discovery_text:
+            comparison = Comparison(adaptation=adaptation, verdict=discovery_text)
         clean.update(
             {
                 "adaptation": adaptation.model_dump(),
-                "books": [adaptation.book.model_dump()] if adaptation.book else [],
+                "books": [book.model_dump() for book in candidate_books]
+                if candidate_books
+                else [adaptation.book.model_dump()]
+                if adaptation.book
+                else [],
             }
         )
         return TurnResult(
@@ -434,8 +455,24 @@ class Agent:
                         + ". ¿Cuál prefieres para continuar?"
                     )
                 comparison = None
+                if (
+                    adaptation is not None
+                    and adaptation.status == "not_found"
+                    and len(movies) == 1
+                    and tool_count <= self.settings.max_tool_calls - 2
+                ):
+                    adaptation, books, discovery_text = await discover(
+                        movies[0],
+                        self.mcp,
+                        self.llm,
+                        self.budget,
+                        trace,
+                        usage,
+                        self.settings.max_llm_calls,
+                    )
+                    comparison = Comparison(adaptation=adaptation, verdict=discovery_text)
                 if adaptation is not None and len(movies) == 1:
-                    comparison = build_comparison(movies[0], adaptation)
+                    comparison = comparison or build_comparison(movies[0], adaptation)
                     text = comparison.verdict
                 elif len(movies) == 1 and re.search(
                     r"\b(?:compara\w*|comparacion|diferencias?)\b", words(request.prompt)

@@ -4,7 +4,8 @@ import googleBooksLogo from '@/assets/attribution/google-books-poweredby.png';
 /** Static attribution: opening credits never calls a provider or changes the conversation. */
 export function ProviderCredits() {
   return (
-    <footer
+    <div
+      role="group"
       aria-label="Créditos y fuentes"
       className="shrink-0 border-t border-[var(--agichat-border)] px-4 pb-3 text-sm leading-relaxed text-[var(--agichat-text)]"
     >
@@ -53,6 +54,6 @@ export function ProviderCredits() {
       <p className="text-[13px] leading-normal" lang="en">
         This product uses the TMDB API but is not endorsed or certified by TMDB.
       </p>
-    </footer>
+    </div>
   );
 }

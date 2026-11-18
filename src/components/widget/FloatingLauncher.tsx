@@ -8,6 +8,7 @@ import { WidgetPosition } from '@/sdk/types';
 interface FloatingLauncherProps {
   position?: WidgetPosition;
   buttonRef?: React.Ref<HTMLButtonElement>;
+  panelId?: string;
 }
 
 const launcherPositionClasses: Record<WidgetPosition, string> = {
@@ -20,6 +21,7 @@ const launcherPositionClasses: Record<WidgetPosition, string> = {
 export const FloatingLauncher: React.FC<FloatingLauncherProps> = ({
   position = 'bottom-right',
   buttonRef,
+  panelId,
 }) => {
   const { isOpen, toggleChat } = useChatStore();
   const reduced = useReducedMotion();
@@ -36,6 +38,8 @@ export const FloatingLauncher: React.FC<FloatingLauncherProps> = ({
       whileHover={reduced ? undefined : { scale: 1.05 }}
       whileTap={reduced ? undefined : { scale: 0.95 }}
       aria-label={isOpen ? 'Cerrar chat' : 'Abrir chat'}
+      aria-expanded={isOpen}
+      aria-controls={isOpen ? panelId : undefined}
     >
       <AnimatePresence mode="wait" initial={false}>
         {isOpen ? (

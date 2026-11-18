@@ -7,6 +7,7 @@ import { useChatStore } from '@/store/useChatStore';
 describe('ProviderCredits', () => {
   it('mantiene el aviso requerido visible aunque los detalles estén cerrados', () => {
     render(<ProviderCredits />);
+    expect(screen.getByRole('group', { name: 'Créditos y fuentes' })).toBeVisible();
     expect(
       screen.getByText('This product uses the TMDB API but is not endorsed or certified by TMDB.')
     ).toBeVisible();

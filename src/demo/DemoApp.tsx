@@ -19,7 +19,7 @@ const themeOptions: Record<ThemeOption, AGIChatTheme> = {
     surfaceMuted: '#ede9fe',
     text: '#2e1065',
     textMuted: '#6b21a8',
-    border: '#c4b5fd',
+    border: '#7c3aed',
   },
 };
 
@@ -121,8 +121,12 @@ export function DemoApp() {
                 <p className="mt-1 text-sm text-slate-400">Markdown enriquecido</p>
               </div>
               <div className="rounded-2xl border border-white/10 bg-white/5 p-4">
-                <p className="text-2xl font-bold text-white">MSW</p>
-                <p className="mt-1 text-sm text-slate-400">API simulada</p>
+                <p className="text-2xl font-bold text-white">
+                  {mode === 'mock' ? 'Simulación' : 'Agente'}
+                </p>
+                <p className="mt-1 text-sm text-slate-400">
+                  {mode === 'mock' ? 'API simulada' : 'Consultas en modo real'}
+                </p>
               </div>
             </div>
           </section>
@@ -222,7 +226,6 @@ export function DemoApp() {
 
         <AGIChatWidget
           agentName={agentName || 'Sofía'}
-          welcomeMessage="Explora las respuestas de muestra o hazme una pregunta."
           position={position}
           theme={themeOptions[themeOption]}
         />

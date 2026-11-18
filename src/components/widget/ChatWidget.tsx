@@ -1,4 +1,4 @@
-import React, { CSSProperties, useContext, useEffect, useRef } from 'react';
+import React, { CSSProperties, useContext, useEffect, useId, useRef } from 'react';
 import { motion, AnimatePresence, useReducedMotion } from 'framer-motion';
 import { useChatStore } from '@/store/useChatStore';
 import { AGIChatWidgetProps, WidgetPosition } from '@/sdk/types';
@@ -37,6 +37,7 @@ export const ChatWidget: React.FC<AGIChatWidgetProps> = ({
   const { isOpen, isExpanded } = useChatStore();
   const mode = useContext(ChatModeContext);
   const reducedMotion = useReducedMotion();
+  const panelId = useId();
   const panelRef = useRef<HTMLDivElement>(null);
   const launcherRef = useRef<HTMLButtonElement>(null);
   const wasOpen = useRef(false);
@@ -74,6 +75,7 @@ export const ChatWidget: React.FC<AGIChatWidgetProps> = ({
       <AnimatePresence>
         {isOpen && (
           <motion.div
+            id={panelId}
             ref={panelRef}
             role="region"
             aria-label={`Chat de ${agentName}`}
@@ -114,7 +116,7 @@ export const ChatWidget: React.FC<AGIChatWidgetProps> = ({
           </motion.div>
         )}
       </AnimatePresence>
-      <FloatingLauncher position={position} buttonRef={launcherRef} />
+      <FloatingLauncher position={position} buttonRef={launcherRef} panelId={panelId} />
     </div>
   );
 };

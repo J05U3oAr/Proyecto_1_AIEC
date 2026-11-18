@@ -37,7 +37,7 @@ describe('MessageList', () => {
   it('muestra el indicador de tipeo cuando isTyping es true', () => {
     useChatStore.setState({ isTyping: true });
     render(<MessageList />);
-    expect(screen.getByLabelText(/escribiendo/i)).toBeInTheDocument();
+    expect(screen.getByRole('status')).toHaveTextContent('El asistente está escribiendo');
   });
   it('permite leer arriba sin forzar scroll y ofrece ir a una respuesta nueva', () => {
     render(<MessageList />);

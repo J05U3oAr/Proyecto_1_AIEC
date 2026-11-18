@@ -11,11 +11,16 @@ describe('nonmodal widget keyboard lifecycle', () => {
   });
   it('focuses the input on opening and returns to the launcher on Escape', async () => {
     render(<ChatWidget />);
-    fireEvent.click(screen.getByRole('button', { name: 'Abrir chat' }));
+    const launcher = screen.getByRole('button', { name: 'Abrir chat' });
+    expect(launcher).toHaveAttribute('aria-expanded', 'false');
+    fireEvent.click(launcher);
     await waitFor(() => expect(screen.getByRole('textbox')).toHaveFocus());
-    expect(screen.getByRole('region', { name: 'Chat de Sofía' })).toBeInTheDocument();
+    const panel = screen.getByRole('region', { name: 'Chat de Sofía' });
+    expect(launcher).toHaveAttribute('aria-expanded', 'true');
+    expect(launcher).toHaveAttribute('aria-controls', panel.id);
     fireEvent.keyDown(screen.getByRole('textbox'), { key: 'Escape' });
     expect(useChatStore.getState().isOpen).toBe(false);
+    expect(launcher).toHaveAttribute('aria-expanded', 'false');
     expect(screen.getByRole('button', { name: 'Abrir chat' })).toHaveFocus();
   });
 });

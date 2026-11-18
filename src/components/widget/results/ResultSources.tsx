@@ -37,10 +37,7 @@ export function ResultSources({ sources }: { sources: Source[] }) {
   const books = sources.filter(source => source.provider === 'google_books');
   const others = sources.filter(source => source.provider !== 'google_books');
   return (
-    <section
-      aria-label="Fuentes de la respuesta"
-      className="space-y-3 border-t border-[var(--agichat-border)] pt-3 text-sm"
-    >
+    <div className="space-y-3 border-t border-[var(--agichat-border)] pt-3 text-sm">
       <h3 className="font-semibold">Fuentes</h3>
       {others.length > 0 && (
         <ul>
@@ -63,6 +60,6 @@ export function ResultSources({ sources }: { sources: Source[] }) {
           </ul>
         </div>
       )}
-    </section>
+    </div>
   );
 }

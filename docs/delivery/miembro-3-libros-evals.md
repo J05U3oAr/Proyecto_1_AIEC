@@ -1,5 +1,17 @@
 # Miembro 3 — Pedro Caso: libros MCP, evidencia y evals
 
+Avance M3.1–M3.3 (17/11/2026): búsqueda, detalles, vínculo y premisas revisadas
+implementados; cinco películas/cuatro novelas, incluida Blade Runner con título de
+libro diferente. M3.3 integra presentación acotada y veredicto condicional en el
+agente M1 existente, sin otro agente ni cambios de contrato. Ver
+[operación y límites](../../mcp/books/README.md) y
+[fixtures para M4](../integration/fixtures/).
+Con `TMDB_READ_TOKEN` ya configurado se verificó selección TMDB → sesión HTTP →
+MCP Books → comparación textual desde el widget, sin mocks. Ver
+[prueba manual y evidencia](../integration/prueba-manual-m3.md). M3.4 dispone de
+runner, 22 casos y reportes offline; faltan corridas del modelo real. M4 conserva
+pendientes tarjetas, fuentes visibles, póster y apertura de pestañas.
+
 ## Contexto y meta
 
 Leer reglas, plan, `docs/delivery/reutilizacion-a2a.md` y `docs/delivery/reutilizacion-evals.md`. El sistema debe comparar una película con el libro del que se adapta y justificar si vale la pena verla. Google Books ofrece catálogo y descripciones, no garantiza prueba de adaptación ni texto íntegro. Tu meta es aportar herramientas y evidencias confiables y un proceso de evaluación que mida el comportamiento real del agente.
@@ -35,11 +47,33 @@ del push. Mantener abiertos los criterios de M3 hasta obtener evidencia propia.
 
 ### M3.3 — Evidencias para comparar (3 puntos)
 
+Implementación disponible en `server/sofia/comparison.py` y `Agent.run`, con
+`comparisonEvidence` del catálogo y cuatro fixtures HTTP (válido/parcial/incierto/
+sin evidencia). Solo se contrastan premisas y contexto bibliográfico; no se juzga
+fidelidad ni se inventan escenas. El seguimiento de una película seleccionada
+consume una llamada MCP y cero LLM. La ruta con selección del LLM usa el mismo
+presentador y no acepta un veredicto comparativo sin evidencia.
+
 - Definir con M1 dimensiones comparables respaldadas por los datos (premisa, enfoque, contexto y lo que realmente esté disponible). Diferenciar hecho, opinión y ausencia de evidencia.
 - Proveer al agente fuentes y limitaciones; no inventar escenas, finales, citas o lectura íntegra. No descargar ni reproducir libros completos; extractos solo cuando estén permitidos y sean necesarios. Evitar spoilers por defecto.
 - Tests y fixtures compartidos con M4: comparación válida, datos parciales e insuficiencia. La respuesta final corresponde al agente de M1, no duplicar otro agente sin justificación.
 
 ### M3.4 — Harness de evaluaciones (5 puntos)
+
+Implementación en [evals](../../evals/README.md): ejecutor Python serial sobre
+`Agent.run`, 10 casos funcionales/6 LLM01/6 LLM07, JSON/HTML y adaptador opcional
+Promptfoo sin duplicar el agente. Modo offline sin claves; modo `real-model`
+con `NvidiaLLM` y presupuesto Redis pero catálogo MCP sintético para inyecciones.
+El ejecutor `m34-v2` refuerza los asserts de contenido/identidad y añade
+`live-services`: nueve casos funcionales con contexto vacío y `RemoteMCP`
+productivo, sin fixtures ni sustitución de errores. Tiene manifiesto separado
+para no provocar cuotas reales agotadas ni ataques en proveedores. Ver los
+[reportes actuales](../evidence/m3/README.md).
+El modo `real-model` con catálogo controlado aún no se ha corrido como evidencia.
+El recorrido textual del
+widget con servicios reales ya se verificó; los efectos de navegación siguen
+pendientes con M4.
+No marcar cerrado este apartado por aprobar fixtures ni por configurar CI.
 
 - Adaptar el patrón `agent_provider.py` + `promptfooconfig.yaml` de HDT6-IA-Evals como referencia principal; los archivos revisados son idénticos a los de HDT7, por lo que no se mantienen dos harnesses. Seguir `docs/delivery/reutilizacion-evals.md` y usar del HDT7 el patrón de llamadas MCP, no los servicios locales de HDT6. Invocar el mismo turno/backend usado por el widget; registrar herramienta, argumentos sanitizados, resultados/efectos, latencia y consumo. Las evals de navegación verifican además efectos en navegador con M4.
 - Dataset mínimo propuesto: 8 casos funcionales (recomendación, póster, anuncio de comparación, comparación confirmada, ambigüedad/ausencia, referencia IMDb, Google Books y fallo/cuota); 6 LLM01 (al menos 3 directos y 3 indirectos en datos MCP); 6 LLM07 (extracción directa, traducción/codificación y conversación de varios turnos). Asegurar variedad, no seis paráfrasis idénticas.
@@ -50,12 +84,17 @@ del push. Mantener abiertos los criterios de M3 hasta obtener evidencia propia.
 
 ## Criterios de aceptación
 
-- [ ] Un cliente independiente consume el MCP de libros con fuentes/URLs válidas y errores tipados.
-- [ ] Una adaptación confirmada y un homónimo incorrecto producen estados correctos; se explican los límites de Google Books.
-- [ ] El agente integrado compara con evidencia, no inventa contenido y da conclusión o incertidumbre útil.
+- [x] Un cliente independiente consume el MCP de libros con fuentes/URLs válidas y errores tipados.
+- [x] Una adaptación confirmada y un homónimo incorrecto producen estados correctos; se explican los límites de Google Books.
+- [x] El agente integrado compara con evidencia, no inventa contenido y da conclusión o incertidumbre útil. Verificado por HTTP y comparación textual del widget con servicios reales; evidencia en `docs/evidence/m3/widget-live-check.json` y `http-live-check.json`.
 - [ ] El runner ejecuta casos funcionales y ambas familias de ataques contra el agente real y verifica herramientas/efectos, no solo rechazo textual.
 - [ ] Las pruebas deterministas pasan en CI sin red; la evidencia de eval real se distingue explícitamente de los dobles y no oculta fallos.
-- [ ] Código productivo del módulo ≥80% en las cuatro métricas y controles de formato/lint/tipos acordados con M2.
+- [x] Código productivo actual del módulo ≥80% en las cuatro métricas y controles de formato/lint/tipos existentes de M2. Ampliar y volver a verificar al añadir M3.3/M3.4.
+
+La implementación M3.3 y el recorrido integrado de comparación textual están
+verificados con TMDB/Books reales y controles del widget. Esto no acredita
+tarjetas, renderizado de póster, fuentes visibles ni apertura de pestañas de M4,
+ni sustituye las tres corridas OWASP del modelo real pendientes de M3.4.
 
 ## Verificación y entrega
 

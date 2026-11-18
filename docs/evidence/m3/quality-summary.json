@@ -1,0 +1,26 @@
+{
+  "date": "2026-11-17",
+  "scope": "M3.2: deterministic Python tests; not LLM/security evals",
+  "testsPassed": 326,
+  "newTests": 35,
+  "ruffLint": "passed",
+  "ruffFormat": "passed",
+  "mypy": "passed: 30 source files",
+  "sharedContracts": "unchanged; divergence check passed",
+  "coverageGate": "passed: \u003e=80% in lines, statements, branches and functions for every production file",
+  "resolverCoverage": {
+    "lines": 100,
+    "statements": 100,
+    "branches": 100,
+    "functions": 100
+  },
+  "collectionVersion": 1,
+  "collectionSha256": "6f51427d029fc15edd80a46cded5a78b9a6527ab26856c784df5fca5e14e9e59",
+  "providers": "Google HTTP simulated in tests; real Redis isolated; independent MCP over HTTP",
+  "liveEvidence": "adaptation-check.json: Google Books real, no LLM",
+  "limitations": [
+    "No comparison verdict or UI validation",
+    "No remote CI run",
+    "Finite reviewed collection: 4 movies and 3 novels"
+  ]
+}

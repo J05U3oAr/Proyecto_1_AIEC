@@ -1,5 +1,16 @@
 # Integración para M3 — Pedro: libros, evidencia y evals
 
+Actualización M3.1–M3.3 (17/11/2026): búsqueda, detalles, vínculo y premisas
+implementados en `mcp/books/`; cinco películas/cuatro novelas. `Agent.run` integra
+comparación acotada a evidencia mediante `sofia/comparison.py`. Se conserva el
+contrato; M4 dispone de [cuatro fixtures](fixtures/) validados. El probe permite
+Books real con identidad revisada y recorrido HTTP/widget con selección TMDB
+ya verificado. M3.4 dispone de 22 casos controlados y, en `m34-v2`, nueve casos
+funcionales mediante `RemoteMCP` real; ver [operación de evals](../../evals/README.md).
+Las corridas OWASP del modelo real y los efectos de navegador siguen pendientes.
+La descripción del traspaso M2 de abajo es histórica; consultar
+[operación y evidencia actuales](../../mcp/books/README.md).
+
 Actualizado el 15/11/2026, después de integrar metadatos TMDB. Referencia local:
 `95c25fb`; al revisar, `feat/mcp` coincide con el tracking local `origin/feat/mcp`
 y el usuario confirma el push. Esto no acredita un run verde de GitHub Actions,

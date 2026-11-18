@@ -86,5 +86,33 @@ services:
       interval: 10s
       timeout: 3s
       retries: 5
+  books:
+    build:
+      context: ..
+      dockerfile: infra/docker/books.Dockerfile
+    environment:
+      REDIS_URL: redis://redis:6379/0
+      MCP_TOKEN: ${MCP_TOKEN:-}
+      GOOGLE_BOOKS_API_KEY: ${GOOGLE_BOOKS_API_KEY:-}
+      GOOGLE_BOOKS_DAILY_BUDGET: ${GOOGLE_BOOKS_DAILY_BUDGET:-1000}
+      CATALOG_CACHE_TTL: ${CATALOG_CACHE_TTL:-3600}
+      GOOGLE_BOOKS_TIMEOUT: ${GOOGLE_BOOKS_TIMEOUT:-5}
+      GOOGLE_BOOKS_RETRIES: ${GOOGLE_BOOKS_RETRIES:-1}
+    ports:
+      - '127.0.0.1:8002:8002'
+    depends_on:
+      redis:
+        condition: service_healthy
+    healthcheck:
+      test:
+        [
+          'CMD',
+          '.venv/bin/python',
+          '-c',
+          "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8002/health/ready')",
+        ]
+      interval: 10s
+      timeout: 3s
+      retries: 5
 volumes:
   sessions:

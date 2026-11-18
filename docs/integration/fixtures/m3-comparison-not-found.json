@@ -1,0 +1,36 @@
+{
+  "mode": "synthetic_fixture",
+  "case": "not-found",
+  "response": {
+    "response": "Película: Blade Runner (1982).\n\nNo hay evidencia revisada de esta adaptación en la colección disponible. Esto no demuestra que no exista un libro.\n\nCon estos datos no puedo comparar ni recomendarla frente al libro.\n\nAlcance: comparación de premisas; no lectura íntegra ni análisis de escenas o finales.\n\nFixture sintético para integración; no acredita llamadas reales.",
+    "requestId": "fixture-m33-not-found",
+    "movies": [
+      {
+        "id": 78,
+        "title": "Blade Runner",
+        "year": 1982,
+        "overview": "",
+        "tmdb": "https://www.themoviedb.org/movie/78",
+        "imdb": "https://www.imdb.com/title/tt0083658/",
+        "genres": []
+      }
+    ],
+    "comparison": {
+      "adaptation": {
+        "movieId": 78,
+        "status": "not_found",
+        "evidence": [],
+        "limitations": ["Fixture sintético para integración; no acredita llamadas reales."]
+      },
+      "verdict": "Película: Blade Runner (1982).\n\nNo hay evidencia revisada de esta adaptación en la colección disponible. Esto no demuestra que no exista un libro.\n\nCon estos datos no puedo comparar ni recomendarla frente al libro.\n\nAlcance: comparación de premisas; no lectura íntegra ni análisis de escenas o finales.\n\nFixture sintético para integración; no acredita llamadas reales."
+    },
+    "sources": [
+      {
+        "provider": "tmdb",
+        "url": "https://www.themoviedb.org/movie/78",
+        "label": "Blade Runner"
+      }
+    ],
+    "actions": []
+  }
+}

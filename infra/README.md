@@ -25,8 +25,13 @@ Ejecutar los comandos documentados desde la raíz. Los scripts npm y GitHub Acti
 ya usan estas rutas. Mantener `-p sofia` para reutilizar el proyecto y volumen de
 sesiones existentes; cambiar de nombre de proyecto crearía otros recursos.
 La ubicación nueva no requiere borrar contenedores ni volúmenes con `down -v`.
-Para M3, incorporar su Dockerfile en `infra/docker/` y su servicio aquí cuando esté
-implementado; `mcp/books/` y `evals/` contienen por ahora solo guías de inicio.
+M3.1 incorpora `infra/docker/books.Dockerfile` y el servicio `books`, con clave
+privada `GOOGLE_BOOKS_API_KEY`, MCP autenticado y health checks sin consultas a Google.
+Ver [configuración y prueba explícita](../mcp/books/README.md).
+M3.2 añade evidencia de adaptación con colección JSON revisada incluida en la
+imagen. M3.3 incorpora premisas revisadas y comparación acotada en el agente M1.
+La imagen backend incluye `scripts.probe_comparison`, con modo HTTP y modo de
+identidad revisada sin TMDB/LLM; ver el README de libros. `evals/` continúa pendiente.
 
 ## Límites de red y TLS
 
@@ -63,8 +68,8 @@ La suite Python usa Redis separado en `16379`, bases 14/15 y namespaces propios.
 Las pruebas solo borran claves que crearon. No apuntarlas a un Redis con datos
 reales ni correr varios suites ajenos sobre esa instancia simultáneamente.
 
-Cuando M3 agregue el MCP libros, incluir sus rutas de código en `server/pyproject.toml`
-(coverage/mypy), `server/Makefile` y su servicio/healthcheck en Compose. Cuando
+M3.1 incluye libros en `server/pyproject.toml` (coverage/mypy), `server/Makefile`
+y su servicio/healthcheck en Compose y CI. Cuando
 exista el runner de evals, añadir sus casos deterministas sin red al CI; la corrida
 real acotada produce evidencia separada. No crear un stub de libros que se haga
 pasar por el módulo terminado.

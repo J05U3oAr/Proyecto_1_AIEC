@@ -1,0 +1,39 @@
+{
+  "date": "2026-11-17",
+  "scope": "M3.3: reviewed comparison premises and production Agent integration",
+  "testsPassed": 375,
+  "newTests": 49,
+  "ruffLint": "passed",
+  "ruffFormat": "passed",
+  "mypy": "passed: 32 source files",
+  "sharedContracts": "unchanged; divergence check passed",
+  "coverageGate": "passed: all production files \u003e=80% in all four metrics",
+  "comparisonCoverage": {
+    "lines": 100,
+    "statements": 100,
+    "branches": 100,
+    "functions": 100
+  },
+  "agentCoverage": {
+    "lines": 96.08,
+    "statements": 96.08,
+    "branches": 89.81,
+    "functions": 100
+  },
+  "comparisonProbeCoverage": {
+    "lines": 97.62,
+    "statements": 97.62,
+    "branches": 100,
+    "functions": 100
+  },
+  "collectionVersion": 1,
+  "collectionSha256": "b1be05da1d0b80e3c8105b45e26145b6a070edcf7e6acff96afef60a4eb93872",
+  "collectionMovies": 5,
+  "collectionNovels": 4,
+  "fixtures": "4 synthetic HTTP examples: valid, partial, uncertain, not_found; schema/runtime validated",
+  "liveEvidence": "comparison-check.json: Agent + real Books MCP, reviewed movie identity, no live TMDB; no LLM calls",
+  "fullHttpChatVerified": false,
+  "fullHttpLimitation": "TMDB_READ_TOKEN not configured; widget and full HTTP selection remain pending",
+  "frontendChecks": "frontend-m33-check.json; src unchanged; existing AbortSignal/timeout/type/format failures remain",
+  "remoteCI": "not executed"
+}

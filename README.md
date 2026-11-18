@@ -124,7 +124,7 @@ AGIChat/
 ├── server/               # Backend, agente, scripts y pruebas Python
 ├── mcp/
 │   ├── movies/           # Servidor MCP de películas
-│   ├── books/            # Reservado para M3, pendiente de implementación
+│   ├── books/            # MCP libros M3.1/M3.2: búsqueda, detalles y evidencia
 │   ├── catalog_common/   # Caché y cuota compartidas
 │   └── tests/
 ├── shared/contracts/     # Schemas neutrales y fixtures
@@ -160,7 +160,10 @@ npm run dev:real
 
 `npm run dev` conserva la demo con MSW. `npm run dev:real` llama al backend local;
 el cliente ya conserva la sesión HTTP en memoria; los componentes enriquecidos,
-Créditos y navegación siguen a cargo de M4. Libros/evals corresponden a M3. La variabilidad observada del LLM
+Créditos y navegación siguen a cargo de M4. M3.1–M3.3 incorporan búsqueda, detalles,
+vínculo y comparación de premisas revisadas, con veredicto condicional o insuficiencia.
+Evals M3.4, selección TMDB/HTTP completa y presentación enriquecida siguen pendientes.
+La variabilidad observada del LLM
 se registra separada de las pruebas del catálogo; no se afirma cumplimiento global
 hasta integrar y evaluar esas partes.
 

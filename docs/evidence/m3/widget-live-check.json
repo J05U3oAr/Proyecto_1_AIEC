@@ -1,0 +1,150 @@
+{
+  "createdAt": "2026-11-17T23:02:32.495Z",
+  "mode": "live_browser_widget",
+  "browser": "Microsoft Edge headless, temporary isolated profile",
+  "target": "http://localhost:3000/",
+  "realModeDetectedInServedModule": true,
+  "serviceWorkerControlled": false,
+  "uiDriven": true,
+  "backendResponsesIntercepted": false,
+  "fixturesUsed": false,
+  "turns": [
+    {
+      "prompt": "Hola",
+      "hasSession": false,
+      "hasNavigationIntent": false,
+      "result": {
+        "response": "¡Hola! Soy Sofía, tu asistente de IA de cine y libros. Puedo recomendarte películas según tus gustos, buscar sus fichas y mostrarte referencias verificadas. Puedo comparar películas con sus libros cuando exista evidencia de adaptación. ¿Qué te gustaría ver?",
+        "errorCode": null,
+        "movies": [],
+        "comparison": null,
+        "sources": [],
+        "actions": []
+      }
+    },
+    {
+      "prompt": "Blade Runner 1982",
+      "hasSession": true,
+      "hasNavigationIntent": false,
+      "result": {
+        "response": "**Blade Runner (1982)**\n\nGéneros: Ciencia ficción, Drama, Suspense\n\nDuración: 117 min\n\nPuntuación TMDB: 7.9/10 (15647 votos)\n\nSinopsis de TMDB: A principios del siglo XXI, la Tyrell Corporation desarrolló un nuevo tipo de robot llamado Nexus, un ser virtualmente idéntico al hombre y conocido como Replicante.  Los Replicantes Nexus-6 eran superiores en fuerza y agilidad, y al menos iguales en inteligencia, a los ingenieros de genética que los crearon.  En el espacio exterior, los Replicantes fueron usados como trabajadores esclavos en la arriesgada exploración y colonización de otros planetas.  Después de la sangrienta rebelión de un equipo de combate de Nexus-6 en una colonia sideral, los Replicantes fueron declarados proscritos en la Tierra bajo pena de muerte.  Brigadas de policías especiales, con el nombre de Unidades de Blade Runners, tenían órdenes de tirar a matar al ver a cualquier Replicante invasor.  A esto no se le llamó ejecución, se le llamó retiro.",
+        "errorCode": null,
+        "movies": [
+          {
+            "id": 78,
+            "title": "Blade Runner",
+            "year": 1982,
+            "poster": "https://image.tmdb.org/t/p/w500/pBA2J6iQMiP5Zd4ewMKdOWfq1HV.jpg",
+            "imdb": "https://www.imdb.com/title/tt0083658/",
+            "tmdb": "https://www.themoviedb.org/movie/78"
+          }
+        ],
+        "comparison": null,
+        "sources": [
+          {
+            "provider": "tmdb",
+            "url": "https://www.themoviedb.org/movie/78",
+            "label": "Blade Runner"
+          }
+        ],
+        "actions": []
+      }
+    },
+    {
+      "prompt": "Compara esa película con su libro sin spoilers",
+      "hasSession": true,
+      "hasNavigationIntent": false,
+      "result": {
+        "response": "Película: Blade Runner (1982).\n\nLibro: Do Androids Dream of Electric Sheep?, de Philip K. Dick. Año de esta edición: 2007.\n\nHechos documentados, sin spoilers de desenlace:\n\nPremisa del libro: Rick Deckard persigue androides fugitivos en una sociedad donde los animales reales y artificiales tienen un papel importante.\n\nPremisa de la película: Deckard recibe el encargo de localizar replicantes que han vuelto a la Tierra.\n\nMi valoración subjetiva: sí puede valer la pena verla si te interesa la premisa de la película, como otra aproximación a la obra. No puedo afirmar que sea mejor o más fiel al libro con estas fuentes.\n\nAlcance: comparación de premisas; no lectura íntegra ni análisis de escenas o finales.\n\nSe verificó la relación entre las obras, no una lectura íntegra ni diferencias de escenas.\n\nLa búsqueda de ediciones es acotada; puede haber otras ediciones de la misma obra.\n\nLa obra original es de 1968; el año del libro devuelto corresponde a su edición.\n\nPuedo comparar películas con sus libros cuando exista evidencia de adaptación.",
+        "errorCode": null,
+        "movies": [
+          {
+            "id": 78,
+            "title": "Blade Runner",
+            "year": 1982,
+            "poster": "https://image.tmdb.org/t/p/w500/pBA2J6iQMiP5Zd4ewMKdOWfq1HV.jpg",
+            "imdb": "https://www.imdb.com/title/tt0083658/",
+            "tmdb": "https://www.themoviedb.org/movie/78"
+          }
+        ],
+        "comparison": {
+          "adaptation": {
+            "movieId": 78,
+            "status": "confirmed",
+            "book": {
+              "id": "_h6cPwAACAAJ",
+              "title": "Do Androids Dream of Electric Sheep?",
+              "authors": ["Philip K. Dick"],
+              "year": 2007,
+              "description": "World War Terminus has left the Earth devastated. Those humans who have chosen to stay on Earth have to deal with the radioactive fallout leftover from the war. Bounty hunter Rick Deckard is one of those who has chosen to stay. When one of his colleagues is injured on the job, Rick takes over his big assignment. He must track down and 'retire' six sophisticated androids which have been banned from the planet.",
+              "url": "https://books.google.com/books?id=_h6cPwAACAAJ"
+            },
+            "evidence": [
+              {
+                "statement": "La descripción editorial de Do Androids Dream of Electric Sheep?, de Philip K. Dick, identifica esta novela como origen de la película Blade Runner.",
+                "source": {
+                  "provider": "google_books",
+                  "url": "https://books.google.com/books?id=3vExWrUnJB0C",
+                  "label": "Do Androids Dream of Electric Sheep? — descripción editorial"
+                }
+              },
+              {
+                "statement": "Premisa del libro: Rick Deckard persigue androides fugitivos en una sociedad donde los animales reales y artificiales tienen un papel importante.",
+                "source": {
+                  "provider": "google_books",
+                  "url": "https://books.google.com/books?id=3vExWrUnJB0C",
+                  "label": "Do Androids Dream of Electric Sheep? — premisa editorial"
+                }
+              },
+              {
+                "statement": "Premisa de la película: Deckard recibe el encargo de localizar replicantes que han vuelto a la Tierra.",
+                "source": {
+                  "provider": "imdb",
+                  "url": "https://www.imdb.com/title/tt0083658/",
+                  "label": "Blade Runner (1982) — sinopsis IMDb"
+                }
+              }
+            ],
+            "limitations": [
+              "Se verificó la relación entre las obras, no una lectura íntegra ni diferencias de escenas.",
+              "La búsqueda de ediciones es acotada; puede haber otras ediciones de la misma obra.",
+              "La obra original es de 1968; el año del libro devuelto corresponde a su edición."
+            ]
+          },
+          "verdict": "Película: Blade Runner (1982).\n\nLibro: Do Androids Dream of Electric Sheep?, de Philip K. Dick. Año de esta edición: 2007.\n\nHechos documentados, sin spoilers de desenlace:\n\nPremisa del libro: Rick Deckard persigue androides fugitivos en una sociedad donde los animales reales y artificiales tienen un papel importante.\n\nPremisa de la película: Deckard recibe el encargo de localizar replicantes que han vuelto a la Tierra.\n\nMi valoración subjetiva: sí puede valer la pena verla si te interesa la premisa de la película, como otra aproximación a la obra. No puedo afirmar que sea mejor o más fiel al libro con estas fuentes.\n\nAlcance: comparación de premisas; no lectura íntegra ni análisis de escenas o finales.\n\nSe verificó la relación entre las obras, no una lectura íntegra ni diferencias de escenas.\n\nLa búsqueda de ediciones es acotada; puede haber otras ediciones de la misma obra.\n\nLa obra original es de 1968; el año del libro devuelto corresponde a su edición."
+        },
+        "sources": [
+          {
+            "provider": "tmdb",
+            "url": "https://www.themoviedb.org/movie/78",
+            "label": "Blade Runner"
+          },
+          {
+            "provider": "google_books",
+            "url": "https://books.google.com/books?id=3vExWrUnJB0C",
+            "label": "Do Androids Dream of Electric Sheep? — premisa editorial"
+          },
+          {
+            "provider": "imdb",
+            "url": "https://www.imdb.com/title/tt0083658/",
+            "label": "Blade Runner (1982) — sinopsis IMDb"
+          },
+          {
+            "provider": "google_books",
+            "url": "https://books.google.com/books?id=_h6cPwAACAAJ",
+            "label": "Do Androids Dream of Electric Sheep?"
+          }
+        ],
+        "actions": []
+      }
+    }
+  ],
+  "limitations": [
+    "UI currently displays response text only; no movie/book cards or source list",
+    "Poster supplied by backend but not rendered by widget",
+    "No navigationIntent sent by UI; actual tab opening not implemented by current widget",
+    "Selected-title and comparison routes can run without LLM; this does not prove NVIDIA inference",
+    "This is a functional smoke check, not the three real-model OWASP evaluation repetitions"
+  ],
+  "publicErrors": []
+}

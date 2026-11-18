@@ -33,6 +33,7 @@
     "dev:real": "VITE_CHAT_MODE=real vite",
     "check:python": "cd server && make check",
     "test:python": "cd server && make test",
+    "evals": "cd server && uv run --frozen python ../evals/run_evals.py",
     "start:services": "docker compose --env-file .env -p sofia -f infra/compose.yaml up --build -d",
     "stop:services": "docker compose --env-file .env -p sofia -f infra/compose.yaml stop"
   },

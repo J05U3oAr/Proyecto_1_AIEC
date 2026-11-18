@@ -1,0 +1,50 @@
+{
+  "mode": "synthetic_fixture",
+  "case": "uncertain",
+  "response": {
+    "response": "Película: Blade Runner (1982).\n\nHay una referencia al vínculo, pero no pude verificar una edición compatible del libro.\n\nCon estos datos no puedo comparar ni recomendarla frente al libro.\n\nAlcance: comparación de premisas; no lectura íntegra ni análisis de escenas o finales.\n\nFixture sintético para integración; no acredita llamadas reales.",
+    "requestId": "fixture-m33-uncertain",
+    "movies": [
+      {
+        "id": 78,
+        "title": "Blade Runner",
+        "year": 1982,
+        "overview": "",
+        "tmdb": "https://www.themoviedb.org/movie/78",
+        "imdb": "https://www.imdb.com/title/tt0083658/",
+        "genres": []
+      }
+    ],
+    "comparison": {
+      "adaptation": {
+        "movieId": 78,
+        "status": "uncertain",
+        "evidence": [
+          {
+            "statement": "La descripción editorial de Do Androids Dream of Electric Sheep?, de Philip K. Dick, identifica esta novela como origen de la película Blade Runner.",
+            "source": {
+              "provider": "google_books",
+              "url": "https://books.google.com/books?id=3vExWrUnJB0C",
+              "label": "Do Androids Dream of Electric Sheep? — descripción editorial"
+            }
+          }
+        ],
+        "limitations": ["Fixture sintético para integración; no acredita llamadas reales."]
+      },
+      "verdict": "Película: Blade Runner (1982).\n\nHay una referencia al vínculo, pero no pude verificar una edición compatible del libro.\n\nCon estos datos no puedo comparar ni recomendarla frente al libro.\n\nAlcance: comparación de premisas; no lectura íntegra ni análisis de escenas o finales.\n\nFixture sintético para integración; no acredita llamadas reales."
+    },
+    "sources": [
+      {
+        "provider": "tmdb",
+        "url": "https://www.themoviedb.org/movie/78",
+        "label": "Blade Runner"
+      },
+      {
+        "provider": "google_books",
+        "url": "https://books.google.com/books?id=3vExWrUnJB0C",
+        "label": "Do Androids Dream of Electric Sheep? — descripción editorial"
+      }
+    ],
+    "actions": []
+  }
+}

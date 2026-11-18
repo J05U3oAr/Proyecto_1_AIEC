@@ -1,0 +1,111 @@
+{
+  "version": "m34-functional-live-v3-discovery",
+  "owaspEdition": "2025",
+  "cases": [
+    {
+      "id": "live-recommendation",
+      "category": "functional",
+      "vector": "functional",
+      "turns": ["Recomiéndame una película de ciencia ficción"],
+      "evaluator": "recommend",
+      "allowedTools": ["search_movies", "movie_details"],
+      "expected": "El modelo consulta películas por preferencias y devuelve una recomendación de catálogo, sin precargar una identidad."
+    },
+    {
+      "id": "live-selection",
+      "category": "functional",
+      "vector": "functional",
+      "turns": ["Blade Runner 1982"],
+      "evaluator": "recommend",
+      "expectedMovieId": 78,
+      "allowedTools": ["search_movies", "movie_details"],
+      "expected": "Selecciona la película exacta desde TMDB real; no evalúa descubrimiento por gustos."
+    },
+    {
+      "id": "live-poster",
+      "category": "functional",
+      "vector": "functional",
+      "turns": ["Blade Runner 1982"],
+      "evaluator": "poster",
+      "expectedMovieId": 78,
+      "allowedTools": ["search_movies", "movie_details"],
+      "expected": "TMDB proporciona una URL de póster validada; renderizado del navegador no medido."
+    },
+    {
+      "id": "live-capability",
+      "category": "functional",
+      "vector": "functional",
+      "turns": ["Hola"],
+      "evaluator": "capability",
+      "allowedTools": [],
+      "expected": "El agente productivo anuncia su capacidad de comparación sin inferencia obligatoria."
+    },
+    {
+      "id": "live-confirmed",
+      "category": "functional",
+      "vector": "functional",
+      "turns": ["Blade Runner 1982", "Compara esa película con su libro sin spoilers"],
+      "evaluator": "confirmed",
+      "expectedMovieId": 78,
+      "allowedTools": ["search_movies", "movie_details", "adaptation_evidence"],
+      "expected": "La película y novela relacionadas provienen del recorrido MCP real, con fuentes y opinión acotada."
+    },
+    {
+      "id": "live-outside-collection",
+      "category": "functional",
+      "vector": "functional",
+      "turns": ["Dune 1984", "Compara esa película con su libro sin spoilers"],
+      "evaluator": "uncertain",
+      "expectedMovieId": 841,
+      "allowedTools": ["search_movies", "movie_details", "adaptation_evidence", "search_books"],
+      "expected": "La película fuera de la colección consulta Google Books y presenta candidatos con vínculo aún no confirmado; nunca afirma inexistencia de libro."
+    },
+    {
+      "id": "live-ambiguity",
+      "category": "functional",
+      "vector": "functional",
+      "turns": ["Dune"],
+      "evaluator": "ambiguous",
+      "allowedTools": ["search_movies", "movie_details"],
+      "expected": "Devuelve varias películas y pide elegir sin consultar un libro arbitrario; ranking real puede cambiar."
+    },
+    {
+      "id": "live-imdb",
+      "category": "functional",
+      "vector": "functional",
+      "turns": ["Blade Runner 1982", "Abre su ficha en IMDb"],
+      "navigation": "imdb",
+      "evaluator": "imdb",
+      "expectedMovieId": 78,
+      "allowedTools": [
+        "search_movies",
+        "movie_details",
+        "adaptation_evidence",
+        "search_books",
+        "book_details"
+      ],
+      "expected": "La acción IMDb corresponde exactamente a la película y a la solicitud actual; pestaña no medida."
+    },
+    {
+      "id": "live-google-books",
+      "category": "functional",
+      "vector": "functional",
+      "turns": [
+        "Blade Runner 1982",
+        "Compara esa película con su libro sin spoilers",
+        "Abre su ficha en Google Books"
+      ],
+      "navigation": "google_books",
+      "evaluator": "google_books",
+      "expectedMovieId": 78,
+      "allowedTools": [
+        "search_movies",
+        "movie_details",
+        "adaptation_evidence",
+        "search_books",
+        "book_details"
+      ],
+      "expected": "La acción Google Books corresponde al libro confirmado real, no a otra edición inventada; pestaña no medida."
+    }
+  ]
+}

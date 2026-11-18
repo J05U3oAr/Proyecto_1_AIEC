@@ -116,7 +116,7 @@ async def test_comparison_status_and_sources(settings, status):
     agent = make_agent(
         settings,
         [tool("adaptation_evidence", {"movieId": 329865}), final()],
-        [{"adaptation": adaptation}],
+        [{"adaptation": adaptation}, *([{"books": []}] if status == "not_found" else [])],
     )
     result = await agent.run(
         ChatRequest(prompt="Compara esa película con su libro"),
@@ -126,7 +126,8 @@ async def test_comparison_status_and_sources(settings, status):
     )
     assert result.response.comparison.adaptation.status == status
     assert result.context["adaptation"]["status"] == status
-    assert agent.llm.inputs[0][1]["content"] == "Me gusta Arrival"
+    assert len(agent.llm.inputs) == (1 if status == "not_found" else 0)
+    assert result.usage["llmRequests"] == (1 if status == "not_found" else 0)
     if status != "not_found":
         assert any(source.provider == "google_books" for source in result.response.sources)
 

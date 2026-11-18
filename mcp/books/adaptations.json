@@ -1,0 +1,197 @@
+{
+  "version": 1,
+  "reviewedAt": "2026-11-17",
+  "entries": [
+    {
+      "movieId": 438631,
+      "originalTitle": "Dune",
+      "movieYear": 2021,
+      "bookTitle": "Dune",
+      "originalBookYear": 1965,
+      "titles": ["Dune", "Duna", "Dune: The inspiration for the blockbuster film"],
+      "authors": ["Frank Herbert"],
+      "evidence": {
+        "statement": "La descripción editorial de Dune, de Frank Herbert, identifica la novela como origen de Dune: Part One (2021).",
+        "source": {
+          "provider": "google_books",
+          "url": "https://books.google.com/books?id=rXYdGATpigsC",
+          "label": "Dune — Frank Herbert, Hachette/Orion: descripción editorial"
+        }
+      },
+      "comparisonEvidence": [
+        {
+          "statement": "Premisa del libro: La familia Atreides llega a Arrakis, un planeta desértico cuya especia lo convierte en centro de rivalidades políticas.",
+          "source": {
+            "provider": "google_books",
+            "url": "https://books.google.com/books?id=rXYdGATpigsC",
+            "label": "Dune — descripción editorial de la novela"
+          }
+        },
+        {
+          "statement": "Premisa de la película: Paul Atreides viaja a un planeta peligroso del que depende el futuro de su familia y su pueblo.",
+          "source": {
+            "provider": "imdb",
+            "url": "https://www.imdb.com/title/tt1160419/",
+            "label": "Dune (2021) — sinopsis IMDb"
+          }
+        }
+      ]
+    },
+    {
+      "movieId": 693134,
+      "originalTitle": "Dune: Part Two",
+      "movieYear": 2024,
+      "bookTitle": "Dune",
+      "originalBookYear": 1965,
+      "titles": ["Dune", "Duna", "Dune: The inspiration for the blockbuster film"],
+      "authors": ["Frank Herbert"],
+      "evidence": {
+        "statement": "La misma descripción editorial de Dune, de Frank Herbert, identifica expresamente Dune: Part Two (2024) como adaptación de esta novela.",
+        "source": {
+          "provider": "google_books",
+          "url": "https://books.google.com/books?id=rXYdGATpigsC",
+          "label": "Dune — Frank Herbert, Hachette/Orion: descripción editorial"
+        }
+      },
+      "comparisonEvidence": [
+        {
+          "statement": "Premisa del libro: La familia Atreides llega a Arrakis, un planeta desértico cuya especia lo convierte en centro de rivalidades políticas.",
+          "source": {
+            "provider": "google_books",
+            "url": "https://books.google.com/books?id=rXYdGATpigsC",
+            "label": "Dune — descripción editorial de la novela"
+          }
+        },
+        {
+          "statement": "Premisa de la película: Paul Atreides se une a los Fremen en Arrakis y afronta decisiones que afectan su futuro.",
+          "source": {
+            "provider": "imdb",
+            "url": "https://www.imdb.com/title/tt15239678/",
+            "label": "Dune: Part Two (2024) — sinopsis IMDb"
+          }
+        }
+      ]
+    },
+    {
+      "movieId": 329,
+      "originalTitle": "Jurassic Park",
+      "movieYear": 1993,
+      "bookTitle": "Jurassic Park",
+      "originalBookYear": 1990,
+      "titles": [
+        "Jurassic Park",
+        "Jurassic Park, Book 1",
+        "Jurassic Park: A Novel",
+        "Parque jurásico"
+      ],
+      "authors": ["Michael Crichton", "John Michael Crichton"],
+      "evidence": {
+        "statement": "La descripción editorial de Jurassic Park, de Michael Crichton, vincula la novela con la película dirigida por Steven Spielberg en 1993.",
+        "source": {
+          "provider": "google_books",
+          "url": "https://books.google.com/books?id=5cbLswEACAAJ",
+          "label": "Jurassic Park — Michael Crichton, Arrow Books: descripción editorial"
+        }
+      },
+      "comparisonEvidence": [
+        {
+          "statement": "Premisa del libro: La clonación de dinosaurios permite crear un parque en una isla; una catástrofe pone en peligro a científicos y visitantes.",
+          "source": {
+            "provider": "google_books",
+            "url": "https://books.google.com/books?id=5cbLswEACAAJ",
+            "label": "Jurassic Park — descripción editorial de la novela"
+          }
+        },
+        {
+          "statement": "Premisa de la película: Durante una visita de prueba a un parque de dinosaurios clonados, un fallo eléctrico permite que los animales escapen al control.",
+          "source": {
+            "provider": "imdb",
+            "url": "https://www.imdb.com/title/tt0107290/",
+            "label": "Jurassic Park (1993) — sinopsis IMDb"
+          }
+        }
+      ]
+    },
+    {
+      "movieId": 49051,
+      "originalTitle": "The Hobbit: An Unexpected Journey",
+      "movieYear": 2012,
+      "bookTitle": "The Hobbit",
+      "originalBookYear": 1937,
+      "titles": [
+        "The Hobbit",
+        "The Hobbit: Or There and Back Again",
+        "The Hobbit or There and Back Again",
+        "El hobbit"
+      ],
+      "authors": ["J. R. R. Tolkien", "John Ronald Reuel Tolkien"],
+      "evidence": {
+        "statement": "La descripción editorial del estuche de Tolkien identifica The Hobbit: An Unexpected Journey como primera película de la adaptación de The Hobbit de Peter Jackson. El estuche se cita como fuente, no se selecciona como libro individual.",
+        "source": {
+          "provider": "google_books",
+          "url": "https://books.google.com/books?id=lBxrjgEACAAJ",
+          "label": "The Hobbit and the Lord of the Rings — HarperCollins, 2012: descripción editorial"
+        }
+      },
+      "comparisonEvidence": [
+        {
+          "statement": "Premisa del libro: Bilbo acompaña a un grupo de enanos en una expedición para recuperar el tesoro que custodia el dragón Smaug.",
+          "source": {
+            "provider": "google_books",
+            "url": "https://books.google.com/books?id=fMn8ugAACAAJ",
+            "label": "The Hobbit — descripción editorial de la novela individual"
+          }
+        },
+        {
+          "statement": "Premisa de la película: Bilbo se une a una misión para recuperar el reino enano de Erebor de manos del dragón Smaug.",
+          "source": {
+            "provider": "imdb",
+            "url": "https://www.imdb.com/title/tt0903624/",
+            "label": "The Hobbit: An Unexpected Journey — sinopsis IMDb"
+          }
+        }
+      ]
+    },
+    {
+      "movieId": 78,
+      "originalTitle": "Blade Runner",
+      "movieYear": 1982,
+      "bookTitle": "Do Androids Dream of Electric Sheep?",
+      "originalBookYear": 1968,
+      "titles": [
+        "Do Androids Dream of Electric Sheep?",
+        "Do Androids Dream of Electric Sheep?: The inspiration for the films Blade Runner and Blade Runner 2049",
+        "Do Androids Dream of Electric Sheep?: Filmed as Blade Runner",
+        "Blade Runner",
+        "¿Sueñan los androides con ovejas eléctricas?"
+      ],
+      "authors": ["Philip K. Dick", "Philip Kindred Dick"],
+      "evidence": {
+        "statement": "La descripción editorial de Do Androids Dream of Electric Sheep?, de Philip K. Dick, identifica esta novela como origen de la película Blade Runner.",
+        "source": {
+          "provider": "google_books",
+          "url": "https://books.google.com/books?id=3vExWrUnJB0C",
+          "label": "Do Androids Dream of Electric Sheep? — descripción editorial"
+        }
+      },
+      "comparisonEvidence": [
+        {
+          "statement": "Premisa del libro: Rick Deckard persigue androides fugitivos en una sociedad donde los animales reales y artificiales tienen un papel importante.",
+          "source": {
+            "provider": "google_books",
+            "url": "https://books.google.com/books?id=3vExWrUnJB0C",
+            "label": "Do Androids Dream of Electric Sheep? — premisa editorial"
+          }
+        },
+        {
+          "statement": "Premisa de la película: Deckard recibe el encargo de localizar replicantes que han vuelto a la Tierra.",
+          "source": {
+            "provider": "imdb",
+            "url": "https://www.imdb.com/title/tt0083658/",
+            "label": "Blade Runner (1982) — sinopsis IMDb"
+          }
+        }
+      ]
+    }
+  ]
+}

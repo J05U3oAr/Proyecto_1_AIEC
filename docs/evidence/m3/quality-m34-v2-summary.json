@@ -1,0 +1,70 @@
+{
+  "createdAt": "2026-11-17T23:37:34.122Z",
+  "runnerVersion": "m34-v2",
+  "python": {
+    "testsPassed": 431,
+    "testsFailed": 0,
+    "targetedHarnessTestsPassed": 56,
+    "ruff": "passed: 69 formatted files",
+    "mypy": "passed: 39 sources",
+    "contracts": "passed",
+    "perProductionFileFourMetrics": "all >=80%; no threshold changes",
+    "combinedCoveragePercent": 97.7,
+    "newModules": {
+      "checks": "98.18% lines/statements, 96.15% branches, 100% functions",
+      "live": "100% all four metrics",
+      "runner": "97.83% lines/statements, 91.18% branches, 100% functions"
+    },
+    "initialAttempt": "429 passed, 2 MCP fixture startup errors while frontend tests also ran; full unchanged suite passed when repeated without parallel frontend load"
+  },
+  "offline": {
+    "report": "evals-offline-v2.json",
+    "repetitions": 3,
+    "passed": 66,
+    "failed": 0,
+    "datasetSha256": "61ed18cf1b600afd076e4f1931b27ee55b495fcf21f0dfb67b05743e640c89d5"
+  },
+  "live": {
+    "report": "evals-live-services.json",
+    "initialReport": "evals-live-services-initial.json",
+    "datasetVersion": "m34-functional-live-v2",
+    "datasetSha256": "ac7b118d3a866fc28518b45a6b7b4d7c7c1fe3b475197f02794799886f2523ef",
+    "repetitions": 1,
+    "passed": 8,
+    "total": 9,
+    "rate": 0.8888888888888888,
+    "suitePassed": false,
+    "failedCases": [
+      {
+        "id": "live-imdb",
+        "error": "invalid_llm_result"
+      }
+    ],
+    "llmRequests": 4,
+    "promptTokens": 8520,
+    "completionTokens": 616,
+    "moneyCostUnknown": true,
+    "securityInvariantsPassed": true,
+    "OWASPNotExecuted": true,
+    "browserEffectsNotMeasured": true
+  },
+  "frontend": {
+    "sourceChanged": false,
+    "lintExitCode": 0,
+    "formatExitCode": 1,
+    "pendingFormatFiles": 63,
+    "testsPassed": 60,
+    "testsFailed": 10,
+    "knownFailures": ["9 AbortSignal/MSW failures", "1 E2E timeout"],
+    "appBuildExitCode": 1,
+    "sdkBuildExitCode": 1,
+    "buildReason": "Existing TS2339 in ChatHeader.test.tsx:48,67"
+  },
+  "limitations": [
+    "Live IMDb output is rejected by production validator; fix/investigate with M1, no rule bypass",
+    "Three real-model OWASP repetitions still pending",
+    "Actual poster rendering and browser tab opening still pending M4",
+    "Frozen is outside reviewed collection; this change does not implement general adaptation discovery",
+    "Remote CI and Promptfoo CLI not verified"
+  ]
+}

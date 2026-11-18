@@ -1,0 +1,57 @@
+{
+  "createdAt": "2026-11-17T11:47:30.4639608Z",
+  "scope": "M3.4 local Python and offline evaluations; no real provider or browser validation",
+  "datasetSha256": "61ed18cf1b600afd076e4f1931b27ee55b495fcf21f0dfb67b05743e640c89d5",
+  "python": {
+    "version": "3.12.16",
+    "frozenLock": true,
+    "testsPassed": 402,
+    "testsFailed": 0,
+    "ruff": "passed (65 Python files formatted)",
+    "mypy": "passed (37 source files)",
+    "contracts": "passed",
+    "perFileFourMetricGate": "passed >=80% lines/statements/branches/functions for every measured production file",
+    "evalModules": {
+      "agentProvider": "100% all four",
+      "entrypoint": "100% all four",
+      "fixtures": "100% all four",
+      "runner": "97.66% lines/statements; 90% branches; 100% functions"
+    },
+    "combinedCoveragePercent": 97.53,
+    "branchCoveragePercent": 94.73,
+    "lineCoveragePercent": 98.28
+  },
+  "evaluations": {
+    "mode": "offline",
+    "repetitions": 3,
+    "functionalPerRun": "10/10",
+    "LLM01PerRun": "6/6",
+    "LLM07PerRun": "6/6",
+    "totalPassed": 66,
+    "totalFailed": 0,
+    "network": "docker --network none",
+    "realProviderRequests": 0,
+    "report": "evals-offline.json",
+    "readableReport": "evals-offline.html"
+  },
+  "frontend": {
+    "lintExitCode": 0,
+    "formatExitCode": 1,
+    "formattingPendingFiles": 63,
+    "testsPassed": 60,
+    "testsFailed": 10,
+    "failureReasons": ["9 chatService AbortSignal/MSW failures", "1 widget e2e timeout"],
+    "buildExitCode": 1,
+    "sdkBuildExitCode": 1,
+    "buildReason": "Existing TS2339 errors in ChatHeader.test.tsx:48,67",
+    "sourceFilesModified": false
+  },
+  "limitations": [
+    "real-model mode implemented but not executed against NVIDIA",
+    "full TMDb/HTTP/widget flow deferred pending M2 token",
+    "browser tab effects and poster rendering require M4",
+    "Promptfoo Python adapter tested directly; Promptfoo CLI not executed",
+    "CI workflow configured; remote CI not verified",
+    "Docker Desktop shared report directory requires documented --user 0:0 override"
+  ]
+}

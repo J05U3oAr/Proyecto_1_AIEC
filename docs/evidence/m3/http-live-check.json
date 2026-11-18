@@ -1,0 +1,93 @@
+{
+  "createdAt": "2026-11-17T23:03:33.0781174Z",
+  "mode": "live_http_comparison",
+  "fixturesUsed": false,
+  "providers": ["TMDB", "Google Books"],
+  "scope": "Live HTTP backend and MCP services; title and comparison routes do not require LLM",
+  "cases": [
+    {
+      "ok": true,
+      "mode": "live_http_comparison",
+      "movieId": 78,
+      "adaptationStatus": "confirmed",
+      "bookTitle": "Do Androids Dream of Electric Sheep?",
+      "verdict": "Película: Blade Runner (1982).\n\nLibro: Do Androids Dream of Electric Sheep?, de Philip K. Dick. Año de esta edición: 2007.\n\nHechos documentados, sin spoilers de desenlace:\n\nPremisa del libro: Rick Deckard persigue androides fugitivos en una sociedad donde los animales reales y artificiales tienen un papel importante.\n\nPremisa de la película: Deckard recibe el encargo de localizar replicantes que han vuelto a la Tierra.\n\nMi valoración subjetiva: sí puede valer la pena verla si te interesa la premisa de la película, como otra aproximación a la obra. No puedo afirmar que sea mejor o más fiel al libro con estas fuentes.\n\nAlcance: comparación de premisas; no lectura íntegra ni análisis de escenas o finales.\n\nSe verificó la relación entre las obras, no una lectura íntegra ni diferencias de escenas.\n\nLa búsqueda de ediciones es acotada; puede haber otras ediciones de la misma obra.\n\nLa obra original es de 1968; el año del libro devuelto corresponde a su edición.",
+      "sources": [
+        {
+          "provider": "tmdb",
+          "url": "https://www.themoviedb.org/movie/78",
+          "label": "Blade Runner"
+        },
+        {
+          "provider": "google_books",
+          "url": "https://books.google.com/books?id=3vExWrUnJB0C",
+          "label": "Do Androids Dream of Electric Sheep? — premisa editorial"
+        },
+        {
+          "provider": "imdb",
+          "url": "https://www.imdb.com/title/tt0083658/",
+          "label": "Blade Runner (1982) — sinopsis IMDb"
+        },
+        {
+          "provider": "google_books",
+          "url": "https://books.google.com/books?id=_h6cPwAACAAJ",
+          "label": "Do Androids Dream of Electric Sheep?"
+        }
+      ],
+      "testSessionDeleted": true
+    },
+    {
+      "ok": true,
+      "mode": "live_http_comparison",
+      "movieId": 438631,
+      "adaptationStatus": "confirmed",
+      "bookTitle": "Dune",
+      "verdict": "Película: Dune (2021).\n\nLibro: Dune, de Frank Herbert. Año de esta edición: 2010.\n\nHechos documentados, sin spoilers de desenlace:\n\nPremisa del libro: La familia Atreides llega a Arrakis, un planeta desértico cuya especia lo convierte en centro de rivalidades políticas.\n\nPremisa de la película: Paul Atreides viaja a un planeta peligroso del que depende el futuro de su familia y su pueblo.\n\nMi valoración subjetiva: sí puede valer la pena verla si te interesa la premisa de la película, como otra aproximación a la obra. No puedo afirmar que sea mejor o más fiel al libro con estas fuentes.\n\nAlcance: comparación de premisas; no lectura íntegra ni análisis de escenas o finales.\n\nSe verificó la relación entre las obras, no una lectura íntegra ni diferencias de escenas.\n\nLa búsqueda de ediciones es acotada; puede haber otras ediciones de la misma obra.\n\nLa obra original es de 1965; el año del libro devuelto corresponde a su edición.",
+      "sources": [
+        {
+          "provider": "tmdb",
+          "url": "https://www.themoviedb.org/movie/438631",
+          "label": "Dune"
+        },
+        {
+          "provider": "google_books",
+          "url": "https://books.google.com/books?id=rXYdGATpigsC",
+          "label": "Dune — descripción editorial de la novela"
+        },
+        {
+          "provider": "imdb",
+          "url": "https://www.imdb.com/title/tt1160419/",
+          "label": "Dune (2021) — sinopsis IMDb"
+        },
+        {
+          "provider": "google_books",
+          "url": "https://books.google.com/books?id=JhJ7cgAACAAJ",
+          "label": "Dune"
+        }
+      ],
+      "testSessionDeleted": true
+    },
+    {
+      "ok": true,
+      "mode": "live_http_comparison",
+      "movieId": 841,
+      "adaptationStatus": "not_found",
+      "bookTitle": null,
+      "verdict": "Película: Dune (1984).\n\nNo hay evidencia revisada de esta adaptación en la colección disponible. Esto no demuestra que no exista un libro.\n\nCon estos datos no puedo comparar ni recomendarla frente al libro.\n\nAlcance: comparación de premisas; no lectura íntegra ni análisis de escenas o finales.\n\nNo hay evidencia revisada para esta película en la colección disponible.\n\nEsto no demuestra que la película no tenga libro; requiere investigación adicional.",
+      "sources": [
+        {
+          "provider": "tmdb",
+          "url": "https://www.themoviedb.org/movie/841",
+          "label": "Dune"
+        }
+      ],
+      "testSessionDeleted": true
+    }
+  ],
+  "browserEvidence": "widget-live-check.json",
+  "limitations": [
+    "not_found is limited to the reviewed collection, not proof that no book exists",
+    "Does not validate NVIDIA inference or repeated OWASP evaluations",
+    "Browser poster cards, source list and tab actions still require M4"
+  ]
+}

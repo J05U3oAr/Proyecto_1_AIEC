@@ -64,6 +64,35 @@ El workflow tiene tres jobs: `Frontend and SDK`, `Backend, contracts and MCP` y
 usa valores sintéticos para checks de configuración/readiness y autenticación;
 no demuestra conectividad de TMDB o LLM.
 
+### Entrega continua a GitHub Pages
+
+Al actualizar `main`, el pipeline primero ejecuta los tres checks de CI. Si
+pasan y la publicación está habilitada, empaqueta el frontend para la ruta de
+Pages y lo publica en el entorno `github-pages`. Los PR conservan sus checks y no
+publican. GitHub Pages sirve el frontend; el backend, Redis y los MCP requieren
+infraestructura separada. Esta fase no publica el SDK como paquete.
+
+Activación por un mantenedor:
+
+1. Tener el backend operativo en HTTPS. Configurar `ALLOWED_ORIGINS` con el
+   origen de Pages (por ejemplo, `https://j05u3oar.github.io`, sin incluir la
+   ruta del repositorio). Redis, MCP y credenciales quedan en servidor.
+2. En **Settings → Pages → Build and deployment**, elegir **GitHub Actions**.
+   Restringir el entorno `github-pages` a `main` en **Settings → Environments**.
+3. En **Settings → Secrets and variables → Actions → Variables**, crear
+   `VITE_CHAT_ENDPOINT` con la URL pública completa de chat, por ejemplo
+   `https://backend.example.org/api/chat`, y `PAGES_CD_ENABLED` con valor
+   `true`. La URL se incluye en el bundle, así que no debe contener secretos.
+4. Después del merge, revisar **Actions → CI Pipeline**. Si se activó Pages
+   después del merge, ejecutar **Run workflow** sobre `main` para volver a pasar
+   CI y publicar el commit actual. Abrir la URL del entorno y enviar una
+   recomendación desde el widget para verificar HTTPS, CORS y respuesta real.
+
+Para pausar nuevas publicaciones, cambiar `PAGES_CD_ENABLED` a `false`.
+La versión ya publicada sigue disponible. Para volver a una versión anterior,
+revertir el cambio mediante un PR; el flujo publica de nuevo tras pasar CI. El
+job rechaza artefactos de corridas que ya no corresponden a la punta de `main`.
+
 La suite Python usa Redis separado en `16379`, bases 14/15 y namespaces propios.
 Las pruebas solo borran claves que crearon. No apuntarlas a un Redis con datos
 reales ni correr varios suites ajenos sobre esa instancia simultáneamente.

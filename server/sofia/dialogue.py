@@ -58,6 +58,7 @@ class Intent:
         "out_of_scope",
         "blocked",
         "book_based_recommendation",
+        "adaptation_lookup",
         "genre_recommendation",
         "similar_recommendation",
         "alternative_recommendation",
@@ -109,6 +110,16 @@ def route(prompt: str) -> Intent:
         text,
     ):
         return Intent("social", "¡Con gusto! Aquí estaré si quieres buscar otra película.")
+    adaptation_lookup = re.fullmatch(
+        r"(?:(?:el libro|la novela)(?: de)? )?(.+?) "
+        r"tiene (?:una )?(?:pelicula|adaptacion(?: cinematografica)?)",
+        without_hello,
+    )
+    if adaptation_lookup:
+        title = adaptation_lookup[1]
+        if title in {"el libro", "la novela", "ese libro", "esa novela", "esa obra", "eso"}:
+            return Intent("adaptation_lookup", reply="¿Cuál es el título del libro o la novela?")
+        return Intent("adaptation_lookup", query=title)
     if re.search(
         r"\b(?:puntuacion(?:es)?|calificacion(?:es)?|ratings?|generos?|duracion|"
         r"cuanto (?:tiempo )?dura)\b",

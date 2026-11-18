@@ -103,7 +103,7 @@ describe('flujo E2E del widget AGIChat', () => {
       screen.getAllByRole('link', { name: /Ver libro en Google Books/ }).length
     ).toBeGreaterThan(0);
     expect(screen.getByText(/No confirma que el libro no exista/)).toBeInTheDocument();
-    expect(screen.getAllByText('Póster no disponible')).toHaveLength(5);
+    expect(screen.getAllByText('Sin póster')).toHaveLength(5);
     expect(open).not.toHaveBeenCalled();
   }, 15000);
 

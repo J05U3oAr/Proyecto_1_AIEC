@@ -19,7 +19,7 @@ describe('AGIChatWidget', () => {
     const { container } = render(<AGIChatWidget />);
     const widget = container.querySelector('[data-agichat-widget]');
 
-    expect(screen.getByText('¡Hola soy tu asistente virtual Sofía!')).toBeInTheDocument();
+    expect(screen.getByRole('heading', { name: 'Sofía' })).toBeInTheDocument();
     expect(
       screen.getByText(
         'Soy una IA. Puedo recomendarte películas y compararlas con sus libros cuando exista una adaptación.'
@@ -39,8 +39,10 @@ describe('AGIChatWidget', () => {
       />
     );
 
-    expect(screen.getByText('¡Hola soy tu asistente virtual Luna!')).toBeInTheDocument();
-    expect(screen.getByText('¿En qué puedo ayudarte hoy?')).toBeInTheDocument();
+    expect(screen.getByRole('heading', { name: 'Luna' })).toBeInTheDocument();
+    expect(screen.getByRole('log', { name: 'Conversación con Luna' })).toHaveTextContent(
+      '¿En qué puedo ayudarte hoy?'
+    );
     expect(screen.getByRole('img', { name: 'Avatar de Luna' })).toHaveAttribute(
       'src',
       'https://example.com/luna.png'
@@ -75,7 +77,7 @@ describe('AGIChatWidget', () => {
   ])('ubica el widget en $position', ({ position, panelClasses, launcherClasses }) => {
     render(<AGIChatWidget position={position} />);
 
-    const panel = screen.getByText(/soy tu asistente virtual/i).closest('div.fixed');
+    const panel = screen.getByRole('region', { name: 'Chat de Sofía' });
     const launcher = screen.getByRole('button', { name: 'Cerrar chat' });
 
     expect(panel).toHaveClass(...panelClasses);

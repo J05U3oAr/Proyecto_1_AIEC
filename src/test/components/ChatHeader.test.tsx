@@ -16,7 +16,8 @@ describe('ChatHeader', () => {
 
   it('renderiza la cabecera con el título y el avatar', () => {
     render(<ChatHeader />);
-    expect(screen.getByText(/soy tu asistente virtual Sofía/i)).toBeInTheDocument();
+    expect(screen.getByRole('heading', { name: 'Sofía' })).toBeInTheDocument();
+    expect(screen.getByText('Asistente de IA')).toBeInTheDocument();
     expect(screen.getByRole('img', { name: /Avatar de Sofía/i })).toBeInTheDocument();
     expect(screen.queryByLabelText('Estado: En línea')).not.toBeInTheDocument();
   });

@@ -39,22 +39,35 @@ export const BearAvatar = ({
 
 interface ChatHeaderProps {
   agentName?: string;
-  welcomeMessage?: string;
   avatarUrl?: string;
 }
 
-export const ChatHeader: React.FC<ChatHeaderProps> = ({
-  agentName = 'Sofía',
-  welcomeMessage = 'Soy una IA. Puedo recomendarte películas y compararlas con sus libros cuando exista una adaptación.',
-  avatarUrl,
-}) => {
+export const ChatHeader: React.FC<ChatHeaderProps> = ({ agentName = 'Sofía', avatarUrl }) => {
   const { toggleChat, isExpanded, toggleExpand } = useChatStore();
   const { reset } = useChat();
 
   return (
-    <div className="relative shrink-0 bg-[var(--agichat-surface)] px-4 pb-3 pt-14 text-[var(--agichat-text)]">
-      {/* Botones de acción minimalistas en la esquina superior derecha */}
-      <div className="absolute top-4 right-4 flex gap-2">
+    <div className="flex shrink-0 items-center justify-between gap-2 border-b border-[var(--agichat-border)] bg-[var(--agichat-surface)] px-3 py-2 text-[var(--agichat-text)]">
+      <div className="flex min-w-0 items-center gap-2">
+        <div className="shrink-0">
+          {avatarUrl ? (
+            <img
+              src={avatarUrl}
+              alt={`Avatar de ${agentName}`}
+              className="h-8 w-8 rounded-full border border-[var(--agichat-border)] object-cover"
+            />
+          ) : (
+            <BearAvatar size={32} ariaLabel={`Avatar de ${agentName}`} />
+          )}
+        </div>
+        <div className="min-w-0">
+          <h2 className="text-base font-semibold leading-tight [overflow-wrap:anywhere]">
+            {agentName}
+          </h2>
+          <p className="text-xs text-[var(--agichat-text-muted)]">Asistente de IA</p>
+        </div>
+      </div>
+      <div className="flex shrink-0 gap-1">
         <button
           onClick={reset}
           className="flex h-11 w-11 items-center justify-center rounded-full text-[var(--agichat-text)] focus-visible:outline focus-visible:outline-2"
@@ -84,26 +97,6 @@ export const ChatHeader: React.FC<ChatHeaderProps> = ({
           <Minus size={16} strokeWidth={2} />
         </button>
       </div>
-
-      <div className="float-left mr-3 mt-1">
-        {avatarUrl ? (
-          <img
-            src={avatarUrl}
-            alt={`Avatar de ${agentName}`}
-            className="h-8 w-8 rounded-full border border-[var(--agichat-border)] object-cover"
-          />
-        ) : (
-          <BearAvatar size={32} ariaLabel={`Avatar de ${agentName}`} />
-        )}
-      </div>
-
-      <h2 className="mb-1 text-lg font-bold text-[var(--agichat-text)]">
-        ¡Hola soy tu asistente virtual {agentName}!
-      </h2>
-
-      <p className="clear-both pt-2 text-sm text-[var(--agichat-text-muted)] [@media(max-height:500px)]:sr-only">
-        {welcomeMessage}
-      </p>
     </div>
   );
 };

@@ -26,6 +26,61 @@ const movie: Movie = {
   overview: 'Sinopsis de prueba',
 };
 
+describe('conversation with a movie card', () => {
+  const catalogBlock = [
+    '**Blade Runner (1982)**',
+    'Géneros: Ciencia ficción',
+    'Duración: 117 min',
+    'Puntuación TMDB: 8.1/10 (20 votos)',
+    'Sinopsis de TMDB: Sinopsis de prueba',
+  ].join('\n\n');
+
+  it('shows catalog facts once, keeps the synopsis collapsed and preserves the reply', () => {
+    const reason = 'Te la recomiendo si disfrutas del cine noir.';
+    render(
+      <MessageBubble
+        message={{
+          id: 'movie-turn',
+          role: 'assistant',
+          content: reason + '\n\n' + catalogBlock,
+          timestamp: 1,
+          status: 'sent',
+          details: { movies: [movie] },
+        }}
+      />
+    );
+    const card = screen.getByRole('article', { name: 'Película: Blade Runner' });
+    expect(screen.getByText(reason)).toBeVisible();
+    expect(screen.queryByText('Blade Runner (1982)')).not.toBeInTheDocument();
+    expect(screen.queryByText('Géneros: Ciencia ficción')).not.toBeInTheDocument();
+    expect(screen.queryByText('Duración: 117 min')).not.toBeInTheDocument();
+    expect(screen.queryByText('Puntuación TMDB: 8.1/10 (20 votos)')).not.toBeInTheDocument();
+    expect(screen.queryByText('Sinopsis de TMDB: Sinopsis de prueba')).not.toBeInTheDocument();
+    expect(within(card).getByText('Sinopsis de prueba')).not.toBeVisible();
+  });
+
+  it('retains the original reply when there is no usable card or a fenced block', () => {
+    const reply = {
+      id: 'movie-turn',
+      role: 'assistant' as const,
+      timestamp: 1,
+      status: 'sent' as const,
+    };
+    const { rerender } = render(<MessageBubble message={{ ...reply, content: catalogBlock }} />);
+    expect(screen.getByText('Duración: 117 min')).toBeVisible();
+    rerender(
+      <MessageBubble
+        message={{
+          ...reply,
+          content: '~~~text\n\nDuración: 117 min\n\n~~~',
+          details: { movies: [movie] },
+        }}
+      />
+    );
+    expect(screen.getByText('Duración: 117 min')).toBeVisible();
+  });
+});
+
 describe('movie result', () => {
   it('shows catalog metadata, safe sources and reserves a poster ratio', () => {
     const { container } = render(<MovieCard movie={movie} />);
@@ -44,7 +99,7 @@ describe('movie result', () => {
     const { rerender } = render(<MovieCard movie={movie} />);
     fireEvent.error(screen.getByRole('img'));
     expect(screen.queryByRole('img')).not.toBeInTheDocument();
-    expect(screen.getByText('Póster no disponible')).toBeInTheDocument();
+    expect(screen.getByText('Sin póster')).toBeInTheDocument();
     rerender(<MovieCard movie={{ ...movie, poster: 'https://image.tmdb.org/t/p/w500/new.png' }} />);
     expect(screen.getByRole('img')).toHaveAttribute('src', expect.stringContaining('new.png'));
   });
@@ -131,13 +186,16 @@ describe('comparison and attribution', () => {
     expect(within(details).getByAltText('Powered by Google')).toBeVisible();
     expect(within(details).getAllByRole('link')).toHaveLength(3);
   });
-  it('does not repeat identical verdicts or claim that absence of evidence means no book exists', () => {
-    const comparison = cinemaFixture('not_found').comparison!;
-    render(<ComparisonCard comparison={comparison} responseText={comparison.verdict} />);
-    expect(screen.getByText('Película de esta comparación')).toBeInTheDocument();
-    expect(screen.getByText(/No confirma que el libro no exista/)).toBeInTheDocument();
-    expect(screen.queryByText('Valoración de Sofía · opinión de IA')).not.toBeInTheDocument();
-  });
+  it.each(['', '\n\nPuedo comparar películas con sus libros si hay evidencia.'])(
+    'does not repeat the verdict when the reply has the suffix %j',
+    suffix => {
+      const comparison = cinemaFixture('not_found').comparison!;
+      render(<ComparisonCard comparison={comparison} responseText={comparison.verdict + suffix} />);
+      expect(screen.getByText('Película de esta comparación')).toBeInTheDocument();
+      expect(screen.getByText(/No confirma que el libro no exista/)).toBeInTheDocument();
+      expect(screen.queryByText('Valoración de Sofía · opinión de IA')).not.toBeInTheDocument();
+    }
+  );
   it('handles missing author/year, non-Google evidence and no optional details', () => {
     render(
       <ComparisonCard
@@ -163,6 +221,7 @@ describe('comparison and attribution', () => {
       />
     );
     expect(screen.getByText('Autoría no disponible')).toBeInTheDocument();
+    expect(screen.getByText('Libro candidato · vínculo sin confirmar')).toBeInTheDocument();
     expect(screen.getByText('<script>unsafe</script>')).toBeInTheDocument();
     expect(document.querySelector('script')).toBeNull();
   });

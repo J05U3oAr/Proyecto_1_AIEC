@@ -29,7 +29,7 @@ export function MovieCard({ movie }: { movie: Movie }) {
             />
           ) : (
             <p className="flex h-full items-center justify-center p-2 text-center text-sm">
-              Póster no disponible
+              Sin póster
             </p>
           )}
         </div>

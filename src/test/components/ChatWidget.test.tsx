@@ -11,21 +11,19 @@ describe('ChatWidget', () => {
 
   it('no renderiza el contenido del widget si está cerrado', () => {
     render(<ChatWidget />);
-    expect(screen.queryByText(/soy tu asistente virtual/i)).not.toBeInTheDocument();
+    expect(screen.queryByRole('region', { name: 'Chat de Sofía' })).not.toBeInTheDocument();
   });
 
   it('renderiza el contenido del widget si está abierto', () => {
     useChatStore.setState({ isOpen: true });
     render(<ChatWidget />);
-    expect(screen.getByText(/soy tu asistente virtual/i)).toBeInTheDocument();
+    expect(screen.getByRole('region', { name: 'Chat de Sofía' })).toBeInTheDocument();
   });
 
   it('renderiza clases de expansión cuando isExpanded es true', () => {
     useChatStore.setState({ isOpen: true, isExpanded: true });
     render(<ChatWidget />);
     // Verificar que el contenedor tenga la clase de ancho expandido
-    expect(screen.getByText(/soy tu asistente virtual/i).closest('div.fixed')).toHaveClass(
-      'w-[800px]'
-    );
+    expect(screen.getByRole('region', { name: 'Chat de Sofía' })).toHaveClass('w-[800px]');
   });
 });

@@ -1,23 +1,23 @@
 import { AGIChatTheme, AGIChatThemeColors } from './types';
 
 const lightTheme: AGIChatThemeColors = {
-  primary: '#000000',
+  primary: '#2563eb',
   primaryContrast: '#ffffff',
   surface: '#ffffff',
   surfaceMuted: '#f1f5f9',
   text: '#0f172a',
-  textMuted: '#64748b',
-  border: '#d1d5db',
+  textMuted: '#475569',
+  border: '#64748b',
 };
 
 const darkTheme: AGIChatThemeColors = {
-  primary: '#3b82f6',
-  primaryContrast: '#ffffff',
+  primary: '#60a5fa',
+  primaryContrast: '#0f172a',
   surface: '#0f172a',
   surfaceMuted: '#1e293b',
   text: '#f8fafc',
   textMuted: '#cbd5e1',
-  border: '#475569',
+  border: '#64748b',
 };
 
 export interface ResolvedWidgetTheme {

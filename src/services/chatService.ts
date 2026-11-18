@@ -1,4 +1,5 @@
-import type { ChatRequest, ChatResponse, IChatService } from '@/services/types';
+import type { ChatRequest, ChatResponse, ChatSendOptions, IChatService } from '@/services/types';
+import { navigationIntent } from '@/services/navigationIntent';
 import { useChatStore } from '@/store/useChatStore';
 import { isChatRequest, isChatResponse } from '@/services/responseValidation';
 import { ChatServiceError } from '@/services/chatErrors';
@@ -28,7 +29,7 @@ export class HttpChatService implements IChatService {
     this.active?.controller.abort();
   }
 
-  async sendMessage(prompt: string): Promise<ChatResponse> {
+  async sendMessage(prompt: string, options?: ChatSendOptions): Promise<ChatResponse> {
     const state = useChatStore.getState();
     if (this.active?.version === state.conversationVersion) {
       throw new ChatServiceError(
@@ -43,7 +44,8 @@ export class HttpChatService implements IChatService {
     const session = state.session?.endpoint === this.endpoint ? state.session : null;
     const request: ChatRequest = {
       prompt,
-      requestId: crypto.randomUUID(),
+      requestId: options?.requestId ?? crypto.randomUUID(),
+      ...(options ? { navigationIntent: options.navigationIntent } : {}),
       ...(session ? { sessionId: session.id } : {}),
     };
     let timedOut = false;
@@ -54,6 +56,7 @@ export class HttpChatService implements IChatService {
     try {
       if (
         prompt !== prompt.trim() ||
+        (options && navigationIntent(prompt)?.provider !== options.navigationIntent.provider) ||
         !isChatRequest(request) ||
         new TextEncoder().encode(JSON.stringify(request)).length > 16_384
       ) {

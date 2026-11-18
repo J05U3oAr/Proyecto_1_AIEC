@@ -25,6 +25,8 @@ export interface ChatState {
   messages: Message[];
   isTyping: boolean;
   lastError: ChatFailure | null;
+  navigationNotice: NavigationNotice | null;
+  setNavigationNotice: (notice: NavigationNotice | null) => void;
   setError: (error: ChatFailure | null) => void;
   toggleChat: () => void;
   toggleExpand: () => void;
@@ -37,3 +39,4 @@ export interface ChatState {
 }
 import type { ResponseDetails } from '@/services/responseValidation';
 import type { ChatFailure } from '@/services/chatErrors';
+import type { NavigationNotice } from '@/services/referenceNavigation';

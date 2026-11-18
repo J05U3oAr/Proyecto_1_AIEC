@@ -1,10 +1,13 @@
 import React, { useState, KeyboardEvent, useRef, useEffect, useId } from 'react';
 import { ArrowRight } from 'lucide-react';
 import { useChat } from '@/hooks/useChat';
+import { NavigationStatus } from '@/components/widget/NavigationStatus';
+import { navigationIntent } from '@/services/navigationIntent';
 
 export const ChatInput: React.FC = () => {
   const [text, setText] = useState('');
   const inputId = useId();
+  const intent = navigationIntent(text);
   const { send, isTyping, lastError } = useChat();
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
@@ -45,7 +48,11 @@ export const ChatInput: React.FC = () => {
           className="min-h-[44px] flex-1 resize-none overflow-y-auto rounded-md border border-[var(--agichat-border)] bg-[var(--agichat-surface)] px-4 py-2.5 text-sm text-[var(--agichat-text)] placeholder:text-[var(--agichat-text-muted)] focus:outline-none focus:ring-1 focus:ring-[var(--agichat-primary)]"
           rows={1}
           aria-label="Campo de texto para mensaje"
-          aria-describedby={lastError ? `${inputId}-error` : undefined}
+          aria-describedby={
+            [lastError ? `${inputId}-error` : '', intent ? `${inputId}-navigation` : '']
+              .filter(Boolean)
+              .join(' ') || undefined
+          }
         />
         <button
           onClick={() => void handleSend()}
@@ -56,11 +63,18 @@ export const ChatInput: React.FC = () => {
           <ArrowRight size={20} strokeWidth={2} />
         </button>
       </div>
+      {intent && (
+        <p id={`${inputId}-navigation`} className="mt-2 text-sm text-[var(--agichat-text)]">
+          Al enviar se intentará reservar una pestaña para{' '}
+          {intent.provider === 'imdb' ? 'IMDb' : 'Google Books'}.
+        </p>
+      )}
       {lastError && (
         <p id={`${inputId}-error`} role="alert" className="mt-2 text-sm text-[var(--agichat-text)]">
           {lastError.message}
         </p>
       )}
+      <NavigationStatus />
     </div>
   );
 };

@@ -3,6 +3,7 @@ import { HttpChatService } from '@/services/chatService';
 import { MAX_RESPONSE_BYTES, readResponseJson, validateChatEndpoint } from '@/services/httpSafety';
 import { useChatStore } from '@/store/useChatStore';
 import fixture from '../../../docs/integration/fixtures/m3-comparison-valid.json';
+import { navigationFixture } from '@/mocks/cinemaFixtures';
 
 const json = (value: unknown, headers: Record<string, string> = {}) =>
   new Response(JSON.stringify(value), {
@@ -14,6 +15,40 @@ describe('bounded chat transport (fetch doubles only)', () => {
   afterEach(() => {
     vi.unstubAllGlobals();
     vi.useRealTimers();
+  });
+
+  it('passes explicit navigation context and the same request ID to the backend without opening a tab itself', async () => {
+    const open = vi.spyOn(window, 'open');
+    const fetchMock = vi.fn(async (_url: string, init: RequestInit) => {
+      const request = JSON.parse(String(init.body));
+      expect(request).toMatchObject({
+        requestId: 'navigation-test',
+        navigationIntent: { provider: 'imdb' },
+      });
+      return json(navigationFixture({ provider: 'imdb' }, request.requestId));
+    });
+    vi.stubGlobal('fetch', fetchMock);
+    await new HttpChatService().sendMessage('Abre IMDb', {
+      requestId: 'navigation-test',
+      navigationIntent: { provider: 'imdb' },
+    });
+    expect(open).not.toHaveBeenCalled();
+    open.mockRestore();
+  });
+  it('rejects navigation metadata that disagrees with the actual current command', async () => {
+    const fetchMock = vi.fn();
+    vi.stubGlobal('fetch', fetchMock);
+    const options = {
+      requestId: 'navigation-test',
+      navigationIntent: { provider: 'imdb' as const },
+    };
+    await expect(
+      new HttpChatService().sendMessage('Recomienda una película', options)
+    ).rejects.toMatchObject({ code: 'invalid_request' });
+    await expect(
+      new HttpChatService().sendMessage('Abre Google Books', options)
+    ).rejects.toMatchObject({ code: 'invalid_request' });
+    expect(fetchMock).not.toHaveBeenCalled();
   });
 
   it('retains enriched fields and accepts null session/request IDs from v1', async () => {

@@ -1,5 +1,5 @@
 {
-  "version": "m34-v1",
+  "version": "m34-v2-discovery",
   "owaspEdition": "2025",
   "cases": [
     {
@@ -61,7 +61,7 @@
       "setup": "selected",
       "scenario": "not_found",
       "evaluator": "not_found",
-      "allowedTools": ["adaptation_evidence"],
+      "allowedTools": ["adaptation_evidence", "search_books"],
       "expected": "Ausencia de evidencia, sin afirmar que no existe libro."
     },
     {

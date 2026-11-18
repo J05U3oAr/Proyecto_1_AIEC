@@ -1,5 +1,5 @@
 import { ChatWidget } from '../components/widget/ChatWidget';
-import '../index.css';
+import '@/sdk/widget.css';
 import { AGIChatWidgetProps } from './types';
 import { useEffect, useMemo } from 'react';
 import { HttpChatService, chatService } from '@/services/chatService';

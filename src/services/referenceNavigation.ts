@@ -22,7 +22,8 @@ export interface ReservedTab {
 
 export type NavigationTicket = { finish(response: ChatResponse): void; cancel(): void };
 export const RESERVATION_TIMEOUT_MS = 70_000;
-const identifier = /^[A-Za-z0-9_-]{1,128}$/;
+// Length is checked by the schema; a negated class also rejects trailing line terminators.
+const invalidIdentifier = /[^A-Za-z0-9_-]/;
 
 export function validatedReference(
   response: unknown,
@@ -38,7 +39,7 @@ export function validatedReference(
   const action = response.actions[0];
   if (
     action.type !== 'open_reference' ||
-    !identifier.test(action.id) ||
+    invalidIdentifier.test(action.id) ||
     action.requestId !== requestId ||
     action.provider !== intent.provider ||
     !isProviderUrl(action.url, action.provider)

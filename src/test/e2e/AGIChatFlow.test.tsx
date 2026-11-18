@@ -10,6 +10,7 @@ import { handlers } from '@/mocks/handlers';
 import { useChatStore } from '@/store/useChatStore';
 import App from '@/App';
 import { ChatModeContext } from '@/services/ChatModeContext';
+import type { ReservedTab } from '@/services/referenceNavigation';
 
 const server = setupServer(...handlers);
 
@@ -41,6 +42,40 @@ describe('flujo E2E del widget AGIChat', () => {
   });
 
   afterAll(() => server.close());
+
+  it.each(['imdb', 'google_books'] as const)(
+    'procesa la apertura de %s por HTTP simulado sin afirmar evidencia de navegador real',
+    async provider => {
+      const child: ReservedTab = {
+        closed: false,
+        opener: {} as unknown,
+        location: { href: 'about:blank', replace: vi.fn() },
+        close: vi.fn(),
+      };
+      const open = vi.spyOn(window, 'open').mockReturnValue(child as Window);
+      render(<DemoApp />);
+      fireEvent.click(screen.getByRole('button', { name: 'Abrir chat' }));
+      const input = screen.getByRole('textbox', { name: /campo de texto/i });
+      fireEvent.change(input, {
+        target: {
+          value: provider === 'imdb' ? 'Abre su ficha en IMDb' : 'Abre el libro en Google Books',
+        },
+      });
+      fireEvent.keyDown(input, { key: 'Enter' });
+      expect(open).toHaveBeenCalledExactlyOnceWith('about:blank', '_blank');
+      expect(child.opener).toBeNull();
+      expect(child.location.replace).not.toHaveBeenCalled();
+      await waitFor(() => expect(child.location.replace).toHaveBeenCalledOnce(), { timeout: 4000 });
+      expect(child.location.replace).toHaveBeenCalledWith(
+        provider === 'imdb'
+          ? 'https://www.imdb.com/title/tt0083658/'
+          : 'https://books.google.com/books?id=3vExWrUnJB0C'
+      );
+      expect(useChatStore.getState().navigationNotice?.status).toBe('requested');
+      expect(localStorage.getItem('agichat-conversation')).not.toContain('actions');
+      expect(localStorage.getItem('agichat-conversation')).not.toContain('navigationNotice');
+    }
+  );
 
   it('recorre las fichas de cine y los estados de comparación desde los controles mock', async () => {
     const open = vi.spyOn(window, 'open');

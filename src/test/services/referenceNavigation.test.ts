@@ -218,6 +218,9 @@ describe('authorization of typed actions', () => {
         response.actions![0].id = 'bad id';
       },
       response => {
+        response.actions![0].id = 'trailing-newline\n';
+      },
+      response => {
         response.actions![0].url = 'javascript:alert(1)';
       },
       response => {

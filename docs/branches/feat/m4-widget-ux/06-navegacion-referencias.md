@@ -3,10 +3,9 @@
 Fecha: 18/11/2026. Responsable: Arodi Chávez. Rama: `feat/m4-widget-ux`.
 Base: `8827daa`. Único Markdown nuevo de esta sesión.
 
-**Estado: implementación y pruebas offline listas; apertura real pendiente.**
-La herramienta CUA informó que el host de navegador no está disponible. Los
-dobles de `Window` y JSDOM no demuestran permisos, apertura de una pestaña real,
-llegada al sitio del proveedor ni aislamiento real de `opener`.
+**Estado: apertura integrada verificada en Chromium con el SDK compilado y el backend local.**
+El perfil personal de navegador y la revisión cruzada siguen pendientes. El
+registro de esta sesión conserva la evolución de las pruebas y sus entornos.
 
 ## Registro de commits
 
@@ -118,7 +117,22 @@ inició backend real ni se ejecutaron evals contra un LLM. Consultas realizadas:
 documentación pública y pruebas locales. Probar manualmente la apertura de
 un sitio cargará esa página pública; el modo mock no llama a las APIs del agente.
 
-## Prueba manual necesaria antes de cerrar M4.3
+## Evidencia automatizada en navegador real
+
+El 18/11/2026 se ejecutó `npm.cmd run test:browser` con Playwright 1.65.1 y
+Chromium 159.0.8154.6 en Windows. Pasaron tres pruebas: IMDb y Google Books
+abiertos desde el gesto de envío con `window.opener === null` y sin repetir al
+restaurar historial; fallback dentro de un iframe sandboxed sin permiso de
+popups; y panel dentro de un viewport de 320 px con cero violaciones detectadas
+por axe en el widget.
+
+Chromium creó las pestañas reales; las respuestas de destino se sirvieron
+localmente mediante interceptación de red para no navegar a proveedores ni
+consumir servicios. Esto prueba el ciclo de pestaña/handle en Chromium, pero no
+la carga de IMDb o Google Books ni la configuración de popups de un navegador
+de uso personal.
+
+## Comprobación manual necesaria antes de cerrar M4.3
 
 Iniciar la app en modo mock, sin cambiar el archivo del usuario:
 
@@ -146,11 +160,11 @@ Abrir `http://127.0.0.1:3000/` y seguir este protocolo:
 8. Comprobar foco/lector de pantalla, ancho/altura de los avisos en móvil y
    comportamiento si se cierra o navega manualmente la reserva durante espera.
 
-Si un navegador exige otro gesto o permiso, registrar la diferencia. El enlace
-de respaldo no satisface por sí solo el requisito académico de abrir por orden
-conversacional sin clic en link. No hay resultado de navegador real registrado
-todavía. Para modo real, M1/M2/M3 deben entregar recursos de catálogo coherentes;
-se mantiene pendiente la integración mínima y revisión cruzada con ellos.
+Si un navegador exige otro gesto o permiso, registrar la diferencia. La
+apertura conversacional ya tiene evidencia automatizada de Chromium; falta
+repetir el protocolo manual con destinos externos y la configuración normal de
+popups. Para modo real, M1/M2/M3 deben entregar recursos de catálogo coherentes;
+se mantiene pendiente la revisión cruzada de esa integración.
 
 ## Fuentes, operación y límites
 
@@ -168,3 +182,67 @@ global por página; no se promete aislamiento de múltiples widgets simultáneos
 El trabajo se registra en commits locales según la solicitud de organización
 incremental del usuario. Sin push, merge, PR, releases ni despliegue Pages en
 esta sesión. Las claves permanecen en `.env`, ignorado por Git.
+
+## Verificación posterior del 18/11/2026
+
+Se iniciaron Redis, backend y MCP de películas/libros en Docker Compose; los
+cuatro servicios reportaron `healthy`. Una ejecución del probe documentado
+(`docker compose ... exec backend .venv/bin/python -m scripts.probe_comparison
+--confirm-no-billing`) devolvió `ok: true`, la relación confirmada entre
+Blade Runner y _Do Androids Dream of Electric Sheep?_, referencias TMDB/Google
+Books/IMDb y `testSessionDeleted: true`. El probe bloquea inferencias LLM; la
+comprobación consumió consultas reales de catálogo.
+
+`npm.cmd run test:browser:live` ejecutó el widget en Chromium contra ese
+backend real. Verificó la ficha y metadatos reales de TMDB, que el póster de
+TMDB cargara, la comparación confirmada con Google Books, el enlace y la
+limpieza de sesión. Axe no detectó violaciones en el widget con ambos turnos;
+el panel quedó dentro del ancho en 320, 375, 768 y 1440 px. Los dos turnos
+siguen rutas deterministas sin inferencia LLM. El script `test:browser:live`
+es explícito porque consulta proveedores reales; no se incluye en `test:browser`
+ni en Vitest. Las imágenes de revisión se generan bajo `test-results/`.
+
+`npm.cmd run test:browser:external` usa una respuesta de acción local para
+evitar credenciales/inferencia y crea pestañas reales de Chromium a las URLs
+exactas de IMDb y Google Books. Ambos destinos terminaron con `window.opener`
+nulo. Chromium llevó Google Books de `books.google.com` a su dominio regional
+`books.google.com.gt` con el mismo ID y `redir_esc=y`; la aplicación solo
+autorizó la URL inicial validada. Playwright conservó el bloqueo de popups de
+Chromium y las dos aperturas desde el gesto de envío funcionaron. El escenario
+de iframe sin permiso de popups también pasó en `test:browser` y mostró el
+enlace de respaldo.
+
+La automatización confirma Chromium y los destinos externos; no accede al
+perfil personal del usuario ni a extensiones o preferencias particulares.
+El host de navegador del escritorio no estuvo disponible para una pasada
+manual en Edge/Chrome. La integración real del backend y la UI de tarjetas sí
+quedó comprobada; la acción autorizada por el agente real hacia el navegador
+no se provocó porque ese camino necesita inferencia LLM. No se hicieron
+consultas NVIDIA.
+
+## Verificación del SDK compilado con el backend real
+
+El 18/11/2026 `npm run build:sdk` y `npm run test:browser:live` pasaron con el
+backend local y los proveedores de catálogo reales. La página anfitriona importa
+el JavaScript y el CSS compilados. La conversación cargó el póster de Blade Runner
+en TMDB, mostró su adaptación confirmada en Google Books y abrió ambos destinos
+desde la orden escrita y el gesto de envío. El test validó la acción emitida por
+el backend y `window.opener` nulo en ambas pestañas.
+
+Una consulta por separado al enlace local en modo real («Recomiéndame ciencia
+ficción de menos de dos horas») devolvió HTTP 200 y cinco fichas con póster. Se
+corrigió la traducción del argumento de género `Science Fiction` que enviaba el
+modelo, para que el MCP de películas pudiera resolverlo en el catálogo de TMDB.
+
+La primera ejecución devolvió HTTP 503 al pedir IMDb, porque el flujo de apertura
+pasaba por inferencia. El backend ahora resuelve órdenes directas sobre la
+selección verificada de la sesión con la autorización existente y la acción
+tipada. La prueba completa usa ese backend, sin sustituir `/api/chat` ni los
+destinos por dobles. Sigue pendiente la revisión con el responsable del backend.
+
+Playwright generó 12 capturas del SDK para 320, 375, 768 y 1440 px y los temas
+claro, oscuro y violeta, bajo `test-results/`. Pasaron axe, foco al abrir y retorno
+al botón con Escape. Queda pendiente la prueba manual con lector de pantalla y
+el perfil personal. Para CI, la propuesta de M4 es ejecutar `npm run test:sdk-css`
+después de `npm run build:sdk` y `npm run test:browser` con Chromium instalado.
+`test:browser:live` se reserva para la verificación local con proveedores reales.

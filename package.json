@@ -29,13 +29,17 @@
     "lint": "eslint . --max-warnings 0",
     "lint:fix": "eslint . --fix",
     "format": "prettier --write \"src/**/*.{ts,tsx,css,json}\"",
-    "format:check": "prettier --check \"src/**/*.{ts,tsx,css,json}\" vite.config.ts \".github/**/*.yml\" \"infra/*.yaml\" \"mcp/**/*.md\" \"docs/**/*.md\" \"evals/**/*.md\"",
-    "dev:real": "VITE_CHAT_MODE=real vite",
+    "format:check": "prettier --check --end-of-line auto \"src/**/*.{ts,tsx,css,json}\" vite.config.ts \".github/**/*.yml\" \"infra/*.yaml\" \"mcp/**/*.md\" \"docs/**/*.md\" \"evals/**/*.md\"",
+    "dev:real": "vite --mode real",
     "check:python": "cd server && make check",
     "test:python": "cd server && make test",
     "evals": "cd server && uv run --frozen python ../evals/run_evals.py",
     "start:services": "docker compose --env-file .env -p sofia -f infra/compose.yaml up --build -d",
-    "stop:services": "docker compose --env-file .env -p sofia -f infra/compose.yaml stop"
+    "stop:services": "docker compose --env-file .env -p sofia -f infra/compose.yaml stop",
+    "test:browser": "playwright test --config tests/browser/playwright.config.mjs",
+    "test:browser:live": "playwright test --config tests/browser/live.config.mjs",
+    "test:browser:external": "playwright test --config tests/browser/external.config.mjs",
+    "test:sdk-css": "node --test tests/build/sdk-styles.node.mjs"
   },
   "dependencies": {
     "@radix-ui/react-popover": "^1.1.6",
@@ -53,7 +57,9 @@
     "zustand": "^5.0.3"
   },
   "devDependencies": {
+    "@axe-core/playwright": "^4.14.0",
     "@eslint/js": "^9.20.0",
+    "@playwright/test": "^1.65.1",
     "@testing-library/jest-dom": "^6.6.3",
     "@testing-library/react": "^16.2.0",
     "@testing-library/user-event": "^14.6.1",

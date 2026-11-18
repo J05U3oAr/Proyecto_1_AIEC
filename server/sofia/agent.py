@@ -244,6 +244,8 @@ class Agent:
                 trace,
                 usage,
             )
+        if intent.kind == "adaptation_lookup" and intent.query:
+            return await self._lookup_adaptation(intent.query, history, request_id, trace, usage)
         movies = [
             Movie.model_validate(item) for item in cast(list[object], context.get("movies", []))
         ]
@@ -369,6 +371,36 @@ class Agent:
             exact = select_candidates(query, found)
             return self._verified_reply(exact or found, history, context, request_id, trace, usage)
         return None
+
+    async def _lookup_adaptation(
+        self,
+        query: str,
+        history: list[dict[str, str]],
+        request_id: str,
+        trace: list[dict[str, object]],
+        usage: dict[str, int],
+    ) -> TurnResult:
+        args = SearchMovies(query=query, limit=5)
+        try:
+            result = await self.mcp.call("search_movies", args)
+            validate_result("search_movies", args, result)
+        except PublicError as error:
+            trace.append({"tool": "search_movies", "status": "failed", "code": error.code})
+            raise
+        trace.append({"tool": "search_movies", "status": "ok", "arguments": {"limit": 5}})
+        movies = [movie for movie in result.movies if f" {query} " in f" {words(movie.title)} "]
+        reply = self._verified_reply(movies, history, {}, request_id, trace, usage)
+        if movies:
+            reply.response.response = (
+                "Busqué en TMDB por el título de la obra. Una coincidencia de título "
+                "no confirma que la película sea una adaptación.\n\n" + reply.response.response
+            )
+        else:
+            reply.response.response = (
+                "No encontré una coincidencia clara en TMDB. "
+                "¿Cuál es el título completo de la obra o el año de la película?"
+            )
+        return reply
 
     async def _recommend_by_genre(
         self,
@@ -646,6 +678,7 @@ class Agent:
                         usage,
                     )
         tool_count = 0
+        adaptation_verified_this_turn = False
         observed_catalog = bool(movies)
         for step in range(self.settings.max_llm_calls):
             await self.budget.take()
@@ -704,7 +737,8 @@ class Agent:
                     )
                 comparison = None
                 if (
-                    adaptation is not None
+                    adaptation_verified_this_turn
+                    and adaptation is not None
                     and adaptation.status == "not_found"
                     and len(movies) == 1
                     and tool_count <= self.settings.max_tool_calls - 2
@@ -719,7 +753,7 @@ class Agent:
                         self.settings.max_llm_calls,
                     )
                     comparison = Comparison(adaptation=adaptation, verdict=discovery_text)
-                if adaptation is not None and len(movies) == 1:
+                if adaptation_verified_this_turn and adaptation is not None and len(movies) == 1:
                     comparison = comparison or build_comparison(movies[0], adaptation)
                     text = comparison.verdict
                 elif len(movies) == 1 and re.search(
@@ -732,7 +766,7 @@ class Agent:
                 sources = [
                     Source(provider="tmdb", url=movie.tmdb, label=movie.title) for movie in movies
                 ]
-                if adaptation is not None:
+                if comparison is not None and adaptation is not None:
                     sources.extend(evidence.source for evidence in adaptation.evidence)
                     if adaptation.book:
                         sources.append(
@@ -742,7 +776,12 @@ class Agent:
                                 label=adaptation.book.title,
                             )
                         )
-                actions = self.actions(request, request_id, movies, adaptation)
+                actions = self.actions(
+                    request,
+                    request_id,
+                    movies,
+                    adaptation if adaptation_verified_this_turn else None,
+                )
                 response = ChatResponse(
                     response=text
                     if CAPABILITY in text
@@ -861,9 +900,11 @@ class Agent:
                 if name in {"search_movies", "movie_details"}:
                     movies = result.movies
                     adaptation = None
+                    adaptation_verified_this_turn = False
                     observed_catalog = bool(movies)
                 if result.adaptation:
                     adaptation = result.adaptation
+                    adaptation_verified_this_turn = True
                 if name in {"search_books", "book_details"}:
                     books = result.books
                 messages.append(

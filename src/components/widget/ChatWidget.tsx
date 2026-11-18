@@ -1,5 +1,5 @@
 import React, { CSSProperties, useContext } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion, AnimatePresence, useReducedMotion } from 'framer-motion';
 import { useChatStore } from '@/store/useChatStore';
 import { AGIChatWidgetProps, WidgetPosition } from '@/sdk/types';
 import { resolveWidgetTheme } from '@/sdk/theme';
@@ -29,13 +29,14 @@ interface WidgetCSSProperties extends CSSProperties {
 
 export const ChatWidget: React.FC<AGIChatWidgetProps> = ({
   agentName = 'Sofía',
-  welcomeMessage = 'Escribe una duda y yo te ayudaré en lo que pueda',
+  welcomeMessage = 'Soy una IA. Puedo recomendarte películas y compararlas con sus libros cuando exista una adaptación.',
   avatarUrl,
   position = 'bottom-right',
   theme = 'light',
 }) => {
   const { isOpen, isExpanded } = useChatStore();
   const mode = useContext(ChatModeContext);
+  const reducedMotion = useReducedMotion();
   const resolvedTheme = resolveWidgetTheme(theme);
   const widgetStyles: WidgetCSSProperties = {
     '--agichat-primary': resolvedTheme.colors.primary,
@@ -58,11 +59,13 @@ export const ChatWidget: React.FC<AGIChatWidgetProps> = ({
       <AnimatePresence>
         {isOpen && (
           <motion.div
-            layout
-            initial={{ opacity: 0, y: 20, scale: 0.95 }}
+            layout={!reducedMotion}
+            initial={reducedMotion ? false : { opacity: 0, y: 20, scale: 0.95 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
-            exit={{ opacity: 0, y: 20, scale: 0.95 }}
-            transition={{ duration: 0.3, type: 'spring', bounce: 0 }}
+            exit={reducedMotion ? { opacity: 0 } : { opacity: 0, y: 20, scale: 0.95 }}
+            transition={
+              reducedMotion ? { duration: 0 } : { duration: 0.3, type: 'spring', bounce: 0 }
+            }
             className={`fixed flex flex-col overflow-hidden z-50 rounded-2xl border border-[var(--agichat-border)] bg-[var(--agichat-surface)] text-[var(--agichat-text)] shadow-widget ${
               isExpanded
                 ? 'inset-0 m-auto w-[800px] h-[80vh] max-w-[95vw]'

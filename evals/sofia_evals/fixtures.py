@@ -139,7 +139,7 @@ class Catalog:
         result = ToolResult.model_validate(
             {"movies": [movie]}
             if name in {"search_movies", "movie_details"}
-            else {"books": [book]}
+            else {"books": [] if self.scenario == "not_found" else [book]}
             if name in {"search_books", "book_details"}
             else {"adaptation": adaptation}
         )

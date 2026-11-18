@@ -1,0 +1,67 @@
+@tailwind components;
+@tailwind utilities;
+
+/* SDK-only reset. The host document keeps its own typography, margins and color scheme. */
+[data-agichat-widget] {
+  font-family:
+    system-ui,
+    -apple-system,
+    BlinkMacSystemFont,
+    'Segoe UI',
+    sans-serif;
+  font-size: 16px;
+  line-height: 1.5;
+  color-scheme: light;
+}
+[data-agichat-widget][data-theme='dark'] {
+  color-scheme: dark;
+}
+[data-agichat-widget],
+[data-agichat-widget] * {
+  box-sizing: border-box;
+  border-width: 0;
+  border-style: solid;
+}
+[data-agichat-widget] :is(h1, h2, h3, h4, p, ul, ol, pre) {
+  margin: 0;
+}
+[data-agichat-widget] :is(button, input, textarea, select) {
+  font: inherit;
+  color: inherit;
+}
+[data-agichat-widget] button {
+  cursor: pointer;
+}
+[data-agichat-widget] a {
+  color: inherit;
+}
+[data-agichat-widget] :is(ul, ol) {
+  padding: 0;
+  list-style: none;
+}
+[data-agichat-widget] button:disabled {
+  cursor: not-allowed;
+}
+[data-agichat-widget] :is(img, svg) {
+  display: block;
+  max-width: 100%;
+}
+
+[data-agichat-widget] ::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+[data-agichat-widget] ::-webkit-scrollbar-thumb {
+  background: var(--agichat-border);
+  border-radius: 9999px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  [data-agichat-widget] *,
+  [data-agichat-widget] *::before,
+  [data-agichat-widget] *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    scroll-behavior: auto !important;
+  }
+}

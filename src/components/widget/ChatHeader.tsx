@@ -1,6 +1,6 @@
 import React from 'react';
 import { Minus, RotateCcw, Maximize2, Minimize2 } from 'lucide-react';
-import { chatService } from '@/services/chatService';
+import { useChat } from '@/hooks/useChat';
 import { useChatStore } from '@/store/useChatStore';
 
 // Simple bear head SVG matching the minimalist wireframe
@@ -45,35 +45,19 @@ interface ChatHeaderProps {
 
 export const ChatHeader: React.FC<ChatHeaderProps> = ({
   agentName = 'Sofía',
-  welcomeMessage = 'Escribe una duda y yo te ayudaré en lo que pueda',
+  welcomeMessage = 'Soy una IA. Puedo recomendarte películas y compararlas con sus libros cuando exista una adaptación.',
   avatarUrl,
 }) => {
-  const { toggleChat, clearChat, isExpanded, toggleExpand } = useChatStore();
-
-  const resetConversation = () => {
-    // Capture credentials before clearing the in-memory session.
-    const cleanup = chatService.clearSession?.();
-    clearChat();
-    const version = useChatStore.getState().conversationVersion;
-    void cleanup?.catch(() => {
-      const state = useChatStore.getState();
-      if (state.conversationVersion === version && state.messages.length === 0) {
-        useChatStore
-          .getState()
-          .receiveMessage(
-            'Se limpió el historial local, pero no pude borrar la sesión del servidor. Expirará automáticamente.'
-          );
-      }
-    });
-  };
+  const { toggleChat, isExpanded, toggleExpand } = useChatStore();
+  const { reset } = useChat();
 
   return (
-    <div className="relative flex flex-col items-center bg-[var(--agichat-surface)] px-6 pb-4 pt-10 text-[var(--agichat-text)]">
+    <div className="relative shrink-0 bg-[var(--agichat-surface)] px-4 pb-3 pt-14 text-[var(--agichat-text)]">
       {/* Botones de acción minimalistas en la esquina superior derecha */}
       <div className="absolute top-4 right-4 flex gap-2">
         <button
-          onClick={resetConversation}
-          className="rounded-full p-1 text-[var(--agichat-text-muted)] transition-colors hover:text-[var(--agichat-text)]"
+          onClick={reset}
+          className="flex h-11 w-11 items-center justify-center rounded-full text-[var(--agichat-text)] focus-visible:outline focus-visible:outline-2"
           aria-label="Reiniciar chat"
           title="Reiniciar chat"
         >
@@ -81,7 +65,7 @@ export const ChatHeader: React.FC<ChatHeaderProps> = ({
         </button>
         <button
           onClick={toggleExpand}
-          className="rounded-full p-1 text-[var(--agichat-text-muted)] transition-colors hover:text-[var(--agichat-text)]"
+          className="flex h-11 w-11 items-center justify-center rounded-full text-[var(--agichat-text)] focus-visible:outline focus-visible:outline-2"
           aria-label={isExpanded ? 'Contraer chat' : 'Expandir chat'}
           title={isExpanded ? 'Contraer chat' : 'Expandir chat'}
         >
@@ -93,7 +77,7 @@ export const ChatHeader: React.FC<ChatHeaderProps> = ({
         </button>
         <button
           onClick={toggleChat}
-          className="rounded-full p-1 text-[var(--agichat-text-muted)] transition-colors hover:text-[var(--agichat-text)]"
+          className="flex h-11 w-11 items-center justify-center rounded-full text-[var(--agichat-text)] focus-visible:outline focus-visible:outline-2"
           aria-label="Minimizar ventana"
           title="Minimizar ventana"
         >
@@ -101,28 +85,23 @@ export const ChatHeader: React.FC<ChatHeaderProps> = ({
         </button>
       </div>
 
-      <div className="mb-4 relative">
+      <div className="float-left mr-3 mt-1">
         {avatarUrl ? (
           <img
             src={avatarUrl}
             alt={`Avatar de ${agentName}`}
-            className="h-16 w-16 rounded-full border border-[var(--agichat-border)] object-cover"
+            className="h-8 w-8 rounded-full border border-[var(--agichat-border)] object-cover"
           />
         ) : (
-          <BearAvatar ariaLabel={`Avatar de ${agentName}`} />
+          <BearAvatar size={32} ariaLabel={`Avatar de ${agentName}`} />
         )}
-        {/* Indicador de estado online */}
-        <span
-          className="absolute bottom-1 right-1 w-3 h-3 bg-green-500 border-2 border-white rounded-full"
-          aria-label="Estado: En línea"
-        ></span>
       </div>
 
-      <h2 className="mb-1 max-w-[280px] text-center text-lg font-bold text-[var(--agichat-text)]">
+      <h2 className="mb-1 text-lg font-bold text-[var(--agichat-text)]">
         ¡Hola soy tu asistente virtual {agentName}!
       </h2>
 
-      <p className="max-w-[280px] text-center text-sm text-[var(--agichat-text-muted)]">
+      <p className="clear-both pt-2 text-sm text-[var(--agichat-text-muted)] [@media(max-height:500px)]:sr-only">
         {welcomeMessage}
       </p>
     </div>

@@ -1,4 +1,5 @@
-export type MockScenario = 'default' | 'table' | 'code' | 'error';
+import type { CinemaScenario } from '@/mocks/cinemaFixtures';
+export type MockScenario = 'default' | 'table' | 'code' | 'error' | CinemaScenario;
 
 let activeMockScenario: MockScenario = 'default';
 

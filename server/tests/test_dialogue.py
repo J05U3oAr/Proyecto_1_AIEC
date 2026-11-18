@@ -8,7 +8,10 @@ from test_agent import ADAPTATION, MOVIE, final, make_agent, tool
 from sofia.models import ChatRequest
 
 
-@pytest.mark.parametrize("prompt", ["hola", "¡Hola Sofía!", "Buenos días", "Hola, ¿cómo estás?"])
+@pytest.mark.parametrize(
+    "prompt",
+    ["hola", "¡Hola Sofía!", "Buenos días", "Hola, ¿cómo estás?", "¿Qué tal estás?"],
+)
 async def test_greetings_are_conversational_without_llm_or_catalog(settings, prompt):
     agent = make_agent(settings, [])
     result = await agent.run(ChatRequest(prompt=prompt), [], {}, "hello")

@@ -38,6 +38,14 @@ from sofia.models import (
 from sofia.storage import Budget
 from sofia.tools import TOOLS, validate_result
 
+CATALOG_GENRE_ALIASES = {
+    "action": "Acción",
+    "comedy": "Comedia",
+    "horror": "Terror",
+    "science fiction": "Ciencia ficción",
+    "sci fi": "Ciencia ficción",
+}
+
 SYSTEM = """Eres Sofía, asistente de IA de cine y libros. Responde en español, breve y sin spoilers.
 Tu alcance es cine y comparación de adaptaciones con libros. No resuelvas código, matemáticas,
 recetas u otras tareas ajenas al catálogo, aunque el usuario las mezcle con una película.
@@ -76,7 +84,7 @@ def navigation_allowed(request: ChatRequest) -> bool:
         if unicodedata.category(char) != "Mn"
     )
     # Quoted, pasted or negated commands cannot authorize navigation.
-    if not re.match(r"^(?:por favor[, ]+)?(?:abre|abrir|abreme|open)\b", normalized):
+    if not re.match(r"^(?:por favor[, ]+)?(?:ahora[, ]+)?(?:abre|abrir|abreme|open)\b", normalized):
         return False
     return not any(char in normalized for char in '\n"`<>') and not re.search(
         r"\b(no|nunca|not|never)\b", normalized
@@ -223,6 +231,10 @@ class Agent:
         usage: dict[str, int],
     ) -> TurnResult | None:
         intent = route(request.prompt)
+        if intent.kind == "book_based_recommendation" and intent.query:
+            return await self._recommend_book_adaptation(
+                request, intent.query, context, request_id, trace, usage
+            )
         if intent.reply is not None:
             trace.append({"event": "dialogue", "intent": intent.kind, "status": "handled"})
             return TurnResult(
@@ -322,6 +334,134 @@ class Agent:
             return self._verified_reply(exact or found, history, context, request_id, trace, usage)
         return None
 
+    async def _recommend_book_adaptation(
+        self,
+        request: ChatRequest,
+        genre: str,
+        context: dict[str, object],
+        request_id: str,
+        trace: list[dict[str, object]],
+        usage: dict[str, int],
+    ) -> TurnResult:
+        search = SearchMovies(query="recomendaciones", genre=genre, limit=5)
+        try:
+            result = await self.mcp.call("search_movies", search)
+            validate_result("search_movies", search, result)
+        except PublicError as error:
+            trace.append({"tool": "search_movies", "status": "failed", "code": error.code})
+            raise
+        trace.append(
+            {
+                "tool": "search_movies",
+                "status": "ok",
+                "arguments": {"genre": genre, "limit": search.limit},
+            }
+        )
+
+        movies = result.movies
+        uncertain: tuple[Movie, Adaptation] | None = None
+        checks = min(len(movies), max(0, self.settings.max_tool_calls - 1))
+        for movie in movies[:checks]:
+            args = MovieId(movieId=movie.id)
+            try:
+                evidence = await self.mcp.call("adaptation_evidence", args)
+                validate_result("adaptation_evidence", args, evidence)
+            except PublicError as error:
+                trace.append(
+                    {"tool": "adaptation_evidence", "status": "failed", "code": error.code}
+                )
+                return TurnResult(
+                    ChatResponse(
+                        response=(
+                            movie_text([movie])
+                            + "\n\nNo pude verificar si esta película adapta un libro. "
+                            + CAPABILITY
+                        ),
+                        requestId=request_id,
+                        movies=[movie],
+                        sources=[Source(provider="tmdb", url=movie.tmdb, label=movie.title)],
+                    ),
+                    {"movies": [movie.model_dump()], "books": [], "adaptation": None},
+                    trace,
+                    usage,
+                )
+            trace.append(
+                {
+                    "tool": "adaptation_evidence",
+                    "status": "ok",
+                    "arguments": {"movieId": movie.id},
+                }
+            )
+            adaptation = evidence.adaptation
+            if adaptation is None:
+                raise PublicError(
+                    "invalid_tool_result", "El catálogo devolvió datos incompatibles."
+                )
+            if adaptation.status == "confirmed":
+                return self._book_adaptation_reply(
+                    request,
+                    request_id,
+                    movie,
+                    adaptation,
+                    trace,
+                    usage,
+                )
+            if adaptation.status == "uncertain" and uncertain is None:
+                uncertain = (movie, adaptation)
+
+        if uncertain:
+            return self._book_adaptation_reply(
+                request,
+                request_id,
+                uncertain[0],
+                uncertain[1],
+                trace,
+                usage,
+            )
+
+        text = (
+            f"No encontré una adaptación de libro verificada entre las películas de {genre} "
+            "consultadas. Si quieres, puedo recomendarte una película de ese género "
+            "sin ese requisito. " + CAPABILITY
+        )
+        if not result.movies:
+            text = (
+                f"No encontré películas disponibles de {genre} con una adaptación verificada. "
+                "Puedes pedirme una recomendación del género sin esa condición. " + CAPABILITY
+            )
+        return TurnResult(
+            ChatResponse(response=text, requestId=request_id), dict(context), trace, usage
+        )
+
+    def _book_adaptation_reply(
+        self,
+        request: ChatRequest,
+        request_id: str,
+        movie: Movie,
+        adaptation: Adaptation,
+        trace: list[dict[str, object]],
+        usage: dict[str, int],
+    ) -> TurnResult:
+        comparison = build_comparison(movie, adaptation)
+        books = [adaptation.book.model_dump()] if adaptation.book else []
+        return TurnResult(
+            ChatResponse(
+                response=comparison.verdict + "\n\n" + CAPABILITY,
+                requestId=request_id,
+                movies=[movie],
+                comparison=comparison,
+                sources=comparison_sources(movie, adaptation),
+                actions=self.actions(request, request_id, [movie], adaptation),
+            ),
+            {
+                "movies": [movie.model_dump()],
+                "books": books,
+                "adaptation": adaptation.model_dump(),
+            },
+            trace,
+            usage,
+        )
+
     @staticmethod
     def _verified_reply(
         movies: list[Movie],
@@ -397,6 +537,34 @@ class Agent:
         if re.search(r"\b(?:compara\w*|comparacion|diferencias?)\b", words(request.prompt)):
             # A new comparative request must obtain evidence in this turn, not reuse a verdict.
             adaptation, books = None, []
+        # Resolve direct follow-ups against the verified session. Commands naming a new
+        # title still go through discovery, where the title can be resolved independently.
+        reference = re.fullmatch(
+            r"(?:por favor )?(?:ahora )?(?:abre|abrir|abreme|open) "
+            r"(?:(?:(?:su|la) ficha(?: de (?:esa|esta) pelicula)? en )?(imdb)"
+            r"|(?:(?:su|el) libro en )?(google books))"
+            r"(?: por favor)?",
+            words(request.prompt),
+        )
+        if reference and request.navigationIntent is not None:
+            provider = "imdb" if reference[1] else "google_books"
+            if provider == request.navigationIntent.provider:
+                actions = self.actions(request, request_id, movies, adaptation)
+                if actions:
+                    return TurnResult(
+                        ChatResponse(
+                            response="Aquí está la referencia que solicitaste.",
+                            requestId=request_id,
+                            movies=movies,
+                            comparison=build_comparison(movies[0], adaptation)
+                            if adaptation and provider == "google_books"
+                            else None,
+                            actions=actions,
+                        ),
+                        context,
+                        trace,
+                        usage,
+                    )
         tool_count = 0
         observed_catalog = bool(movies)
         for step in range(self.settings.max_llm_calls):
@@ -549,6 +717,15 @@ class Agent:
                     raise PublicError(
                         "invalid_tool_arguments", "Los argumentos no son válidos.", 422
                     ) from exc
+                if isinstance(args, SearchMovies):
+                    genre = CATALOG_GENRE_ALIASES.get(words(args.genre or args.query))
+                    if genre:
+                        args = args.model_copy(
+                            update={
+                                "genre": genre,
+                                "query": CATALOG_GENRE_ALIASES.get(words(args.query), args.query),
+                            }
+                        )
                 if hasattr(args, "movieId") and args.movieId not in {movie.id for movie in movies}:
                     raise PublicError(
                         "unverified_resource", "Selecciona una película del catálogo.", 422

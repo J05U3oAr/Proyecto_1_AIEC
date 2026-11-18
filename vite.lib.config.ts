@@ -3,6 +3,7 @@ import react from '@vitejs/plugin-react';
 import path from 'path';
 import tailwindcss from 'tailwindcss';
 import { defineConfig } from 'vite';
+import scopeWidgetCss from './scripts/scope-widget-css.mjs';
 
 export default defineConfig({
   plugins: [react()],
@@ -16,6 +17,7 @@ export default defineConfig({
       plugins: [
         tailwindcss({ config: path.resolve(__dirname, './tailwind.sdk.config.js') }),
         autoprefixer(),
+        scopeWidgetCss(),
       ],
     },
   },

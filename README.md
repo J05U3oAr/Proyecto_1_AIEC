@@ -158,14 +158,25 @@ npm run start:services
 npm run dev:real
 ```
 
-`npm run dev` conserva la demo con MSW. `npm run dev:real` llama al backend local;
-el cliente ya conserva la sesión HTTP en memoria; los componentes enriquecidos,
-Créditos y navegación siguen a cargo de M4. M3.1–M3.3 incorporan búsqueda, detalles,
-vínculo y comparación de premisas revisadas, con veredicto condicional o insuficiencia.
-Evals M3.4, selección TMDB/HTTP completa y presentación enriquecida siguen pendientes.
-La variabilidad observada del LLM
-se registra separada de las pruebas del catálogo; no se afirma cumplimiento global
-hasta integrar y evaluar esas partes.
+`npm run dev` conserva la demo con MSW. `npm run dev:real` usa el backend local
+e incluye las fichas, la comparación, los créditos y las órdenes para abrir IMDb
+y Google Books. El cliente conserva la sesión HTTP en memoria. Consulta la
+[evidencia de M4](docs/branches/feat/m4-widget-ux/06-navegacion-referencias.md)
+para distinguir las pruebas controladas de las comprobaciones con proveedores reales.
+
+Para preparar el frontend de GitHub Pages, configura `VITE_CHAT_ENDPOINT` con
+la URL HTTPS pública de `/api/chat` del backend. Es una URL pública, sin credenciales.
+El backend debe permitir el origen `https://j05u3oar.github.io` en `ALLOWED_ORIGINS`.
+Desde PowerShell, sustituye el dominio de ejemplo por el del equipo y genera `dist/`:
+
+```powershell
+$env:VITE_CHAT_ENDPOINT = 'https://backend.example.org/api/chat'
+npm run build -- --base=/Proyecto_1_AIEC/
+```
+
+El mantenedor debe publicar `dist/` en GitHub Pages con el backend ya operativo.
+GitHub Pages aloja el frontend. El backend, Redis y los servidores MCP se ejecutan
+en la infraestructura del equipo.
 
 Checks Python de backend/contratos/MCP: levantar el Redis aislado de
 `infra/compose.test.yaml`, ejecutar `uv sync --frozen --python 3.12` desde `server/`

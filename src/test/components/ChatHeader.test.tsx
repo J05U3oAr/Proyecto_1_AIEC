@@ -18,6 +18,7 @@ describe('ChatHeader', () => {
     render(<ChatHeader />);
     expect(screen.getByText(/soy tu asistente virtual Sofía/i)).toBeInTheDocument();
     expect(screen.getByRole('img', { name: /Avatar de Sofía/i })).toBeInTheDocument();
+    expect(screen.queryByLabelText('Estado: En línea')).not.toBeInTheDocument();
   });
 
   it('minimiza el chat al hacer clic en el botón minimizar', () => {

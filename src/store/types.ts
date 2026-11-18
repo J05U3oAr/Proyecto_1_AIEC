@@ -7,6 +7,7 @@ export interface Message {
   content: string;
   timestamp: number;
   status: MessageStatus;
+  details?: ResponseDetails;
 }
 
 export interface ChatSession {
@@ -23,12 +24,19 @@ export interface ChatState {
   isExpanded: boolean;
   messages: Message[];
   isTyping: boolean;
+  lastError: ChatFailure | null;
+  navigationNotice: NavigationNotice | null;
+  setNavigationNotice: (notice: NavigationNotice | null) => void;
+  setError: (error: ChatFailure | null) => void;
   toggleChat: () => void;
   toggleExpand: () => void;
   sendMessage: (content: string) => string;
-  receiveMessage: (content: string) => void;
+  receiveMessage: (content: string, details?: ResponseDetails) => void;
   markMessageAsSent: (messageId: string) => void;
   markMessageAsError: (messageId: string) => void;
   setTyping: (isTyping: boolean) => void;
   clearChat: () => void;
 }
+import type { ResponseDetails } from '@/services/responseValidation';
+import type { ChatFailure } from '@/services/chatErrors';
+import type { NavigationNotice } from '@/services/referenceNavigation';

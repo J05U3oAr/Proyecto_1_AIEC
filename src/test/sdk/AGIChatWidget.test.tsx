@@ -21,7 +21,9 @@ describe('AGIChatWidget', () => {
 
     expect(screen.getByText('¡Hola soy tu asistente virtual Sofía!')).toBeInTheDocument();
     expect(
-      screen.getByText('Escribe una duda y yo te ayudaré en lo que pueda')
+      screen.getByText(
+        'Soy una IA. Puedo recomendarte películas y compararlas con sus libros cuando exista una adaptación.'
+      )
     ).toBeInTheDocument();
     expect(screen.getByRole('img', { name: 'Avatar de Sofía' })).toBeInTheDocument();
     expect(widget).toHaveAttribute('data-theme', 'light');

@@ -5,6 +5,7 @@ import remarkGfm from 'remark-gfm';
 import 'highlight.js/styles/github-dark.css';
 
 import { CodeBlock } from '@/components/markdown/CodeBlock';
+import { isProviderUrl } from '@/services/responseValidation';
 
 interface MarkdownRendererProps {
   content: string;
@@ -32,16 +33,35 @@ function extractText(content: ReactNode): string {
 }
 
 const markdownComponents: Components = {
-  a: ({ children, node: _node, ...props }) => (
-    <a
-      {...props}
-      target="_blank"
-      rel="noopener noreferrer"
-      className="font-semibold text-[var(--agichat-primary)] underline underline-offset-2"
-    >
-      {children}
-    </a>
-  ),
+  a: ({ children, href, title }) => {
+    if (
+      !href ||
+      !(
+        isProviderUrl(href, 'tmdb') ||
+        isProviderUrl(href, 'imdb') ||
+        isProviderUrl(href, 'google_books')
+      )
+    ) {
+      return <>{children}</>;
+    }
+    return (
+      <a
+        href={href}
+        title={title}
+        target="_blank"
+        rel="noopener noreferrer"
+        className="font-semibold text-[var(--agichat-primary)] underline underline-offset-2"
+      >
+        {children}
+      </a>
+    );
+  },
+  img: ({ src, alt }) =>
+    typeof src === 'string' && isProviderUrl(src, 'poster') ? (
+      <img src={src} alt={alt ?? ''} loading="lazy" referrerPolicy="no-referrer" />
+    ) : (
+      <>{alt}</>
+    ),
   blockquote: ({ children }) => (
     <blockquote className="my-3 border-l-4 border-[var(--agichat-primary)] bg-[var(--agichat-surface-muted)] px-4 py-2 text-[var(--agichat-text-muted)]">
       {children}

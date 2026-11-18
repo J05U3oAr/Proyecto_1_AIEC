@@ -1,6 +1,7 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 import type { ChatState, Message } from '@/store/types';
+import { HISTORY_VERSION, restoreHistory } from '@/store/historyPersistence';
 
 const createMessage = (
   role: Message['role'],
@@ -24,6 +25,10 @@ export const useChatStore = create<ChatState>()(
       isExpanded: false,
       messages: [],
       isTyping: false,
+      lastError: null,
+      navigationNotice: null,
+      setNavigationNotice: navigationNotice => set({ navigationNotice }),
+      setError: lastError => set({ lastError }),
       toggleChat: () => set(state => ({ isOpen: !state.isOpen })),
       toggleExpand: () => set(state => ({ isExpanded: !state.isExpanded })),
       sendMessage: content => {
@@ -31,9 +36,12 @@ export const useChatStore = create<ChatState>()(
         set(state => ({ messages: [...state.messages, message] }));
         return message.id;
       },
-      receiveMessage: content =>
+      receiveMessage: (content, details) =>
         set(state => ({
-          messages: [...state.messages, createMessage('assistant', content, 'sent')],
+          messages: [
+            ...state.messages,
+            { ...createMessage('assistant', content, 'sent'), ...(details ? { details } : {}) },
+          ],
           isTyping: false,
         })),
       markMessageAsSent: messageId =>
@@ -59,12 +67,17 @@ export const useChatStore = create<ChatState>()(
           messages: [],
           isTyping: false,
           session: null,
+          lastError: null,
+          navigationNotice: null,
           conversationVersion: state.conversationVersion + 1,
         })),
     }),
     {
       name: 'agichat-conversation',
-      partialize: state => ({ messages: state.messages }),
+      version: HISTORY_VERSION,
+      partialize: state => restoreHistory({ messages: state.messages }),
+      migrate: (snapshot, version) => (version === 0 ? restoreHistory(snapshot) : { messages: [] }),
+      merge: (snapshot, current) => ({ ...current, ...restoreHistory(snapshot) }),
     }
   )
 );

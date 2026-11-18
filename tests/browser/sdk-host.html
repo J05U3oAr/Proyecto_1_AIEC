@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Sitio anfitrión del SDK de AGIChat</title>
+    <link rel="stylesheet" href="/dist-sdk/agichat-widget.css" />
+  </head>
+  <body>
+    <div id="widget"></div>
+    <script type="module">
+      import React from 'react';
+      import { createRoot } from 'react-dom/client';
+      import { AGIChatWidget } from '/dist-sdk/agichat-widget.js';
+
+      const requestedTheme = new URLSearchParams(location.search).get('theme');
+      const theme =
+        requestedTheme === 'violet'
+          ? {
+              primary: '#7c3aed',
+              surface: '#faf5ff',
+              surfaceMuted: '#ede9fe',
+              text: '#2e1065',
+              textMuted: '#6b21a8',
+              border: '#7c3aed',
+            }
+          : requestedTheme === 'dark'
+            ? 'dark'
+            : 'light';
+      createRoot(document.querySelector('#widget')).render(
+        React.createElement(AGIChatWidget, { apiEndpoint: '/api/chat', theme })
+      );
+    </script>
+  </body>
+</html>

@@ -1,10 +1,27 @@
-import { describe, expect, it } from 'vitest';
-import { shouldEnableMocking } from '@/services/runtimeMode';
+import { afterEach, describe, expect, it, vi } from 'vitest';
+import { currentChatMode, shouldEnableMocking } from '@/services/runtimeMode';
 
 describe('runtime mode', () => {
+  afterEach(() => vi.unstubAllEnvs());
+  it('identifies the configured development mode without starting or probing a backend', () => {
+    vi.stubEnv('DEV', true);
+    vi.stubEnv('VITE_CHAT_MODE', 'mock');
+    expect(currentChatMode()).toBe('mock');
+    vi.stubEnv('VITE_CHAT_MODE', 'real');
+    expect(currentChatMode()).toBe('real');
+    vi.stubEnv('DEV', false);
+    vi.stubEnv('VITE_CHAT_MODE', 'mock');
+    expect(currentChatMode()).toBe('real');
+  });
   it('preserves the development demo default', () => {
     expect(shouldEnableMocking(true)).toBe(true);
     expect(shouldEnableMocking(true, 'mock')).toBe(true);
+  });
+  it('honors the explicit Vite real mode on development servers', () => {
+    vi.stubEnv('MODE', 'real');
+    vi.stubEnv('DEV', true);
+    vi.stubEnv('VITE_CHAT_MODE', 'mock');
+    expect(currentChatMode()).toBe('real');
   });
   it('does not intercept backend requests in real mode or production', () => {
     expect(shouldEnableMocking(true, 'real')).toBe(false);

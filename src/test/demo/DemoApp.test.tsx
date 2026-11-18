@@ -13,6 +13,7 @@ vi.mock('@/services/chatService', () => ({
 
 describe('DemoApp', () => {
   beforeEach(() => {
+    vi.stubEnv('VITE_CHAT_MODE', 'mock');
     useChatStore.setState({
       isOpen: true,
       isExpanded: false,
@@ -25,6 +26,7 @@ describe('DemoApp', () => {
   });
 
   afterEach(() => {
+    vi.unstubAllEnvs();
     resetMockScenario();
     vi.clearAllMocks();
   });
@@ -64,7 +66,7 @@ describe('DemoApp', () => {
       { role: 'user', content: 'Muéstrame las métricas del piloto', status: 'sent' },
       { role: 'assistant', content: 'Respuesta de demostración', status: 'sent' },
     ]);
-    expect(screen.getByText('API: table')).toBeInTheDocument();
+    expect(screen.getByText('Simulación: table')).toBeInTheDocument();
   });
 
   it('envía una prueba de código mediante el servicio del chat', async () => {
@@ -75,7 +77,7 @@ describe('DemoApp', () => {
     await waitFor(() => {
       expect(sendMessageMock).toHaveBeenCalledWith('Muéstrame un ejemplo de integración');
     });
-    expect(screen.getByText('API: code')).toBeInTheDocument();
+    expect(screen.getByText('Simulación: code')).toBeInTheDocument();
   });
 
   it('muestra el mensaje fallido cuando se simula una caída de red', async () => {
@@ -88,7 +90,7 @@ describe('DemoApp', () => {
       expect(useChatStore.getState().messages).toMatchObject([{ role: 'user', status: 'error' }]);
     });
     expect(screen.getByRole('status')).toHaveTextContent('No se pudo enviar');
-    expect(screen.getByText('API: error')).toBeInTheDocument();
+    expect(screen.getByText('Simulación: error')).toBeInTheDocument();
   });
 
   it('limpia los mensajes y restablece el escenario normal', async () => {
@@ -101,6 +103,13 @@ describe('DemoApp', () => {
     fireEvent.click(screen.getByRole('button', { name: /limpiar demostración/i }));
 
     expect(useChatStore.getState().messages).toEqual([]);
-    expect(screen.getByText('API: normal')).toBeInTheDocument();
+    expect(screen.getByText('Simulación: normal')).toBeInTheDocument();
+  });
+  it('hides simulation controls and shows the configured real mode without probing availability', () => {
+    vi.stubEnv('VITE_CHAT_MODE', 'real');
+    render(<DemoApp />);
+    expect(screen.queryByRole('button', { name: /probar tabla/i })).not.toBeInTheDocument();
+    expect(screen.getByText('Modo real · disponibilidad sin comprobar')).toBeVisible();
+    expect(sendMessageMock).not.toHaveBeenCalled();
   });
 });

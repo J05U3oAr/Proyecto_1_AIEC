@@ -31,9 +31,10 @@ test('compiled SDK renders the live catalog and opens both references from the a
   const userBounds = await userBubble.boundingBox();
   const assistantBounds = await assistantBubble.boundingBox();
   const midpoint = logBounds.x + logBounds.width / 2;
-  expect(userBounds.x + userBounds.width / 2).toBeLessThan(midpoint);
-  expect(assistantBounds.x + assistantBounds.width / 2).toBeGreaterThan(midpoint);
-  await expect(assistantBubble).toHaveCSS('border-top-right-radius', '2px');
+  expect(userBounds.x + userBounds.width / 2).toBeGreaterThan(midpoint);
+  expect(assistantBounds.x + assistantBounds.width / 2).toBeLessThan(midpoint);
+  await expect(userBubble).toHaveCSS('border-top-right-radius', '2px');
+  await expect(assistantBubble).toHaveCSS('border-top-left-radius', '2px');
   await movie.screenshot({ path: 'test-results/live-movie-card-320.png' });
 
   await input.fill('Compara esa película con su libro sin spoilers');

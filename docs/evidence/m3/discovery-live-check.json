@@ -1,0 +1,76 @@
+{
+  "createdAt": "2026-11-18T00:19:28.8404766Z",
+  "mode": "live_http_book_discovery",
+  "collectionExpanded": false,
+  "testsPassed": 442,
+  "limits": "At most two Books searches and one model proposal per discovery; model proposal is not evidence",
+  "results": [
+    {
+      "ok": true,
+      "mode": "live_http_comparison",
+      "movieId": 10830,
+      "adaptationStatus": "uncertain",
+      "bookTitle": "Matilda",
+      "verdict": "Película: Matilda (1996).\n\nConsulté Google Books para buscar la obra literaria.\n\nLibro candidato encontrado: Matilda — Roald Dahl.\n\nSinopsis de la película (TMDB): Matilda Wormwood es una jovencita extremadamente curiosa e inteligente, todo lo contrario que sus chabacanos padres, que a menudo la ignoran. A medida que crece va descubriendo que posee poderes telequinéticos, hasta que un día un profesor le enseña que puede usar esos poderes para ayudar a sus amigos. Además las personas que hasta ese momento le han hecho la vida imposible sufrirán las consecuencias.\n\nLa descripción editorial está disponible en la fuente del libro; no la reproduzco para evitar spoilers.\n\nContraste provisional de metadatos: encontré ambas obras, pero no verifiqué independientemente la relación de adaptación. Mi valoración subjetiva: la sinopsis puede ayudarte a decidir si te interesa verla; no puedo juzgar fidelidad ni superioridad frente al libro.\n\nEl vínculo aún no está confirmado. No se leyó el texto íntegro de las obras.",
+      "sources": [
+        {
+          "provider": "tmdb",
+          "url": "https://www.themoviedb.org/movie/10830",
+          "label": "Matilda"
+        },
+        {
+          "provider": "google_books",
+          "url": "https://books.google.com/books?id=ggbLDwAAQBAJ",
+          "label": "Matilda"
+        },
+        {
+          "provider": "google_books",
+          "url": "https://books.google.com/books?id=SmA-NQEACAAJ",
+          "label": "Matilda; Or the Barbadoes Girl. A Tale for Young People. By the Author of the \"Clergyman\u0027s Widow and Family,\" Etc. [B. Hofland.]."
+        },
+        {
+          "provider": "google_books",
+          "url": "https://books.google.com/books?id=W-120AEACAAJ",
+          "label": "Poems by Matilda"
+        }
+      ],
+      "testSessionDeleted": true
+    },
+    {
+      "ok": true,
+      "mode": "live_http_comparison",
+      "movieId": 109445,
+      "adaptationStatus": "uncertain",
+      "bookTitle": "The Snow Queen",
+      "verdict": "Película: Frozen: El reino del hielo (2013).\n\nConsulté Google Books para buscar la obra literaria.\n\nLibro candidato encontrado: The Snow Queen — Geraldine McCaughrean, Hans Christian Andersen.\n\nSinopsis de la película (TMDB): Cuando una profecía condena a un reino a un invierno eterno, Anna, una joven optimista se une a un temerario montañero llamado Kristoff y a su compinche el reno Sven. Juntos emprenden un viaje épico en busca de Elsa, hermana de Anna y reina de Las Nieves para poner fin al gélido hechizo.\n\nLa descripción editorial está disponible en la fuente del libro; no la reproduzco para evitar spoilers.\n\nContraste provisional de metadatos: encontré ambas obras, pero no verifiqué independientemente la relación de adaptación. Mi valoración subjetiva: la sinopsis puede ayudarte a decidir si te interesa verla; no puedo juzgar fidelidad ni superioridad frente al libro.\n\nEl vínculo aún no está confirmado. No se leyó el texto íntegro de las obras.",
+      "sources": [
+        {
+          "provider": "tmdb",
+          "url": "https://www.themoviedb.org/movie/109445",
+          "label": "Frozen: El reino del hielo"
+        },
+        {
+          "provider": "google_books",
+          "url": "https://books.google.com/books?id=-fLTvAEACAAJ",
+          "label": "The Snow Queen"
+        },
+        {
+          "provider": "google_books",
+          "url": "https://books.google.com/books?id=IQDMDQAAQBAJ",
+          "label": "The Snow Queen, The Ice-Maiden, Other Wonderful Stories for Children and Essays on Scandinavian Literature"
+        },
+        {
+          "provider": "google_books",
+          "url": "https://books.google.com/books?id=XNgq0gEACAAJ",
+          "label": "Frozen"
+        }
+      ],
+      "testSessionDeleted": true
+    }
+  ],
+  "limitations": [
+    "Book candidates do not independently confirm adaptation",
+    "This does not implement full-text comparison",
+    "Short Frozen 2013 selection failed before discovery; localized full title succeeded"
+  ]
+}

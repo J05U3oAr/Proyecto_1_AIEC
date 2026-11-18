@@ -8,12 +8,12 @@ Este documento reúne el trabajo realizado para convertir el widget de la primer
 
 ## 1. Alcance y relación con el equipo
 
-| Bloque | Trabajo de M4 | Resultado que se puede demostrar |
-| --- | --- | --- |
-| M4.1 · Servicio, estado y SDK | Conectar el widget al servicio de chat, validar el contrato, conservar historial y configurar el SDK | La demo y el widget embebido comparten el flujo de conversación y pueden apuntar al backend |
-| M4.2 · Recomendación y comparación | Convertir resultados estructurados en fichas accesibles y legibles | Póster, metadatos, veredicto de adaptación, libro y fuentes dentro de la conversación |
-| M4.3 · Referencias | Ejecutar una orden conversacional con intención explícita, validación y control de pestañas | Pedir IMDb o Google Books desde el chat y abrir la referencia correspondiente |
-| M4.4 · Demo y evidencia | Créditos, escenarios de demostración, accesibilidad y pruebas | Modos identificables, evidencias de Chromium y un recorrido reproducible |
+| Bloque                             | Trabajo de M4                                                                                        | Resultado que se puede demostrar                                                            |
+| ---------------------------------- | ---------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------- |
+| M4.1 · Servicio, estado y SDK      | Conectar el widget al servicio de chat, validar el contrato, conservar historial y configurar el SDK | La demo y el widget embebido comparten el flujo de conversación y pueden apuntar al backend |
+| M4.2 · Recomendación y comparación | Convertir resultados estructurados en fichas accesibles y legibles                                   | Póster, metadatos, veredicto de adaptación, libro y fuentes dentro de la conversación       |
+| M4.3 · Referencias                 | Ejecutar una orden conversacional con intención explícita, validación y control de pestañas          | Pedir IMDb o Google Books desde el chat y abrir la referencia correspondiente               |
+| M4.4 · Demo y evidencia            | Créditos, escenarios de demostración, accesibilidad y pruebas                                        | Modos identificables, evidencias de Chromium y un recorrido reproducible                    |
 
 El miembro 1 es responsable del agente, backend y contrato. El miembro 2 trabaja el catálogo de películas mediante MCP y la infraestructura. El miembro 3 trabaja el catálogo de libros, la evidencia de adaptación y las evaluaciones. El aporte principal de M4 es integrar esos resultados en una experiencia que la persona pueda usar. La rama también incluye ajustes puntuales en el backend para desbloquear esa integración. Se explican en el apartado 8.
 
@@ -85,21 +85,21 @@ El build del SDK genera JavaScript y CSS para el anfitrión. `src/sdk/widget.css
 
 ## 7. Evidencia y guion reproducible
 
-| Capa | Qué se comprobó históricamente | Alcance de la evidencia |
-| --- | --- | --- |
-| Vitest y JSDOM | Validadores, transporte, persistencia, contrato, interacción y recorridos simulados | Verifican lógica y efectos observados sobre dobles, sin pestañas Chromium reales |
-| `test:browser` | Tres recorridos históricos en Chromium: referencias, ausencia de repetición al restaurar, fallback en iframe y layout de 320 px con axe | Pestañas reales, respuestas de red interceptadas |
-| `test:browser:external` | Apertura de sitios externos y `window.opener` nulo, con acción local controlada | Comprueba los destinos. Google Books redirigió a su dominio regional conservando el ID |
-| `test:browser:live` | SDK compilado, backend local, ficha y póster de Blade Runner, comparación confirmada y órdenes para ambos proveedores | Comprueba la integración con catálogos reales. La apertura directa usa una ruta determinista y el test puede consumir cuota de catálogo |
-| Layout y accesibilidad | 12 capturas en los temas claro, oscuro y violeta a 320, 375, 768 y 1440 px, revisión de foco y análisis axe | Evidencia automatizada de Chromium. Queda la prueba manual con lector de pantalla y perfil personal |
-| Build y cobertura | Build de app y SDK, chequeo de estilos y lint ejecutados históricamente. Una corrida documentada registró 287 pruebas y 97.57% de sentencias, 96.73% de ramas, 97.66% de funciones y 98.15% de líneas | Cifras de esa sesión, no una nueva medición de la rama actual |
+| Capa                    | Qué se comprobó históricamente                                                                                                                                                                        | Alcance de la evidencia                                                                                                                 |
+| ----------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------- |
+| Vitest y JSDOM          | Validadores, transporte, persistencia, contrato, interacción y recorridos simulados                                                                                                                   | Verifican lógica y efectos observados sobre dobles, sin pestañas Chromium reales                                                        |
+| `test:browser`          | Tres recorridos históricos en Chromium: referencias, ausencia de repetición al restaurar, fallback en iframe y layout de 320 px con axe                                                               | Pestañas reales, respuestas de red interceptadas                                                                                        |
+| `test:browser:external` | Apertura de sitios externos y `window.opener` nulo, con acción local controlada                                                                                                                       | Comprueba los destinos. Google Books redirigió a su dominio regional conservando el ID                                                  |
+| `test:browser:live`     | SDK compilado, backend local, ficha y póster de Blade Runner, comparación confirmada y órdenes para ambos proveedores                                                                                 | Comprueba la integración con catálogos reales. La apertura directa usa una ruta determinista y el test puede consumir cuota de catálogo |
+| Layout y accesibilidad  | 12 capturas en los temas claro, oscuro y violeta a 320, 375, 768 y 1440 px, revisión de foco y análisis axe                                                                                           | Evidencia automatizada de Chromium. Queda la prueba manual con lector de pantalla y perfil personal                                     |
+| Build y cobertura       | Build de app y SDK, chequeo de estilos y lint ejecutados históricamente. Una corrida documentada registró 287 pruebas y 97.57% de sentencias, 96.73% de ramas, 97.66% de funciones y 98.15% de líneas | Cifras de esa sesión, no una nueva medición de la rama actual                                                                           |
 
 ### Demostración oral con backend real
 
 Abrir el widget local. En la última comprobación previa a este documento, la app respondió en `http://127.0.0.1:4321/` y el backend en `http://127.0.0.1:8000/health/ready`. Si los servicios se detuvieron, seguir el README para iniciar Compose con el `.env` local del equipo y arrancar Vite en modo real. El puerto efectivo aparece en la salida de Vite. El enlace loopback funciona desde la computadora que ejecuta el proyecto.
 
 1. Escribir «Háblame de Blade Runner de 1982». Mostrar la selección, el póster y la ficha de TMDB.
-2. Escribir «Compárala con su libro sin spoilers». Mostrar la relación confirmada con *Do Androids Dream of Electric Sheep?* y la fuente de Google Books.
+2. Escribir «Compárala con su libro sin spoilers». Mostrar la relación confirmada con _Do Androids Dream of Electric Sheep?_ y la fuente de Google Books.
 3. Escribir «Abre la ficha de esa película en IMDb». Mostrar la nueva pestaña de la película y volver al chat.
 4. Escribir «Ahora abre el libro en Google Books». Mostrar la nueva pestaña con el libro de la comparación.
 5. Recargar el chat y comprobar que el historial no dispara de nuevo las aperturas. Cerrar el widget con Escape y observar el retorno del foco.
@@ -114,29 +114,29 @@ En CI, un job de backend se detuvo porque Ruff detectó una línea de 102 caract
 
 ## 9. Trazabilidad por hitos
 
-| Commits de referencia | Cambios |
-| --- | --- |
-| `543d751`, `6f08771`, `40d33d8` | Recursos oficiales, componente de créditos e integración en el widget |
-| `ad315be`, `07ab7d0`, `fc970b6`, `5cb6cec`, `d99abed` | Contrato, persistencia, transporte, coordinación y configuración del SDK |
-| `f5db7fa`, `58b148d`, `8827daa` | Fichas de cine y libros, experiencia de lectura y escenarios demo |
-| `4526d75`, `ef44af8`, `2c2a664` | Intención, reserva de pestaña, ciclo conversacional y pruebas con fixtures |
-| `9d6d07c`, `3befddf`, `fe9ce7f` | Contraste, foco, tamaños pequeños y aislamiento del CSS |
-| `2491f4e`, `20774cc`, `18b14f2`, `342d512` | Ajustes de integración, Markdown seguro, burbujas y configuración del modo real |
-| `c26e890`, `a44131b`, `c1642b8` | Pruebas de navegador/SDK, documentación y formato de la prueba backend |
+| Commits de referencia                                 | Cambios                                                                         |
+| ----------------------------------------------------- | ------------------------------------------------------------------------------- |
+| `543d751`, `6f08771`, `40d33d8`                       | Recursos oficiales, componente de créditos e integración en el widget           |
+| `ad315be`, `07ab7d0`, `fc970b6`, `5cb6cec`, `d99abed` | Contrato, persistencia, transporte, coordinación y configuración del SDK        |
+| `f5db7fa`, `58b148d`, `8827daa`                       | Fichas de cine y libros, experiencia de lectura y escenarios demo               |
+| `4526d75`, `ef44af8`, `2c2a664`                       | Intención, reserva de pestaña, ciclo conversacional y pruebas con fixtures      |
+| `9d6d07c`, `3befddf`, `fe9ce7f`                       | Contraste, foco, tamaños pequeños y aislamiento del CSS                         |
+| `2491f4e`, `20774cc`, `18b14f2`, `342d512`            | Ajustes de integración, Markdown seguro, burbujas y configuración del modo real |
+| `c26e890`, `a44131b`, `c1642b8`                       | Pruebas de navegador/SDK, documentación y formato de la prueba backend          |
 
 La evidencia principal corresponde al entorno local. El material revisado no acredita publicación en GitHub Pages ni un backend público. Pages puede servir el frontend estático, mientras el modo real de la versión publicada necesita un backend HTTPS accesible y configurado por el equipo.
 
 ## 10. Preguntas sugeridas para preparar la defensa
 
-| Pregunta | Ideas que debe contener la respuesta |
-| --- | --- |
-| ¿Qué hiciste personalmente? | Integración del widget y SDK, fichas, experiencia, navegación segura y pruebas. Delimitar el trabajo propio frente a los proveedores MCP y al agente del equipo. |
-| ¿Por qué hay dos tipos de validación? | Los tipos ayudan durante el desarrollo. La validación en ejecución examina lo que realmente llega del servidor, incluidos URLs e identificadores. |
-| ¿Por qué reservas la pestaña antes de recibir respuesta? | El navegador decide sobre popups en el gesto de envío. La reserva conserva ese momento y queda en blanco hasta validar el destino. |
-| ¿Por qué no se repite una apertura al recargar? | Las acciones no se guardan en el historial, y la ejecución exige el ticket vigente del turno con intención explícita. |
-| ¿Qué ocurre con un libro sin relación confirmada? | La interfaz comunica el estado de evidencia. Google Books solo se abre automáticamente si la acción coincide con un libro de una adaptación confirmada. |
-| ¿Qué demuestran las pruebas de navegador? | Distinguir Chromium con red simulada, destinos públicos con respuesta controlada e integración real del SDK con backend y catálogos. |
-| ¿Qué quedó por verificar? | Revisión cruzada, lector de pantalla, perfil personal del navegador y estado remoto de CI y publicación. |
+| Pregunta                                                 | Ideas que debe contener la respuesta                                                                                                                             |
+| -------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| ¿Qué hiciste personalmente?                              | Integración del widget y SDK, fichas, experiencia, navegación segura y pruebas. Delimitar el trabajo propio frente a los proveedores MCP y al agente del equipo. |
+| ¿Por qué hay dos tipos de validación?                    | Los tipos ayudan durante el desarrollo. La validación en ejecución examina lo que realmente llega del servidor, incluidos URLs e identificadores.                |
+| ¿Por qué reservas la pestaña antes de recibir respuesta? | El navegador decide sobre popups en el gesto de envío. La reserva conserva ese momento y queda en blanco hasta validar el destino.                               |
+| ¿Por qué no se repite una apertura al recargar?          | Las acciones no se guardan en el historial, y la ejecución exige el ticket vigente del turno con intención explícita.                                            |
+| ¿Qué ocurre con un libro sin relación confirmada?        | La interfaz comunica el estado de evidencia. Google Books solo se abre automáticamente si la acción coincide con un libro de una adaptación confirmada.          |
+| ¿Qué demuestran las pruebas de navegador?                | Distinguir Chromium con red simulada, destinos públicos con respuesta controlada e integración real del SDK con backend y catálogos.                             |
+| ¿Qué quedó por verificar?                                | Revisión cruzada, lector de pantalla, perfil personal del navegador y estado remoto de CI y publicación.                                                         |
 
 **Instrucción para el agente que prepare la exposición.** Usa este documento para entregar una explicación en primera persona de 3–5 minutos, un guion breve de demostración y preguntas con respuestas. Empieza por el aporte visible, explica después el camino de una orden hasta la pestaña y termina con la evidencia y sus límites. Usa el ejemplo de Blade Runner. Presenta las cifras como resultados históricos y distingue el trabajo propio del backend y los MCP del equipo.
 

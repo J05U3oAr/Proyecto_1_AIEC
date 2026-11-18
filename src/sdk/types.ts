@@ -13,6 +13,8 @@ export interface AGIChatThemeColors {
 export type AGIChatTheme = 'light' | 'dark' | Partial<AGIChatThemeColors>;
 
 export interface AGIChatWidgetProps {
+  /** Trusted backend URL ending in /chat. No credentials or provider API URLs. */
+  apiEndpoint?: string;
   agentName?: string;
   welcomeMessage?: string;
   avatarUrl?: string;

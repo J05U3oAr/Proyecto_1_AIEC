@@ -1,4 +1,4 @@
-import React, { CSSProperties } from 'react';
+import React, { CSSProperties, useContext } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useChatStore } from '@/store/useChatStore';
 import { AGIChatWidgetProps, WidgetPosition } from '@/sdk/types';
@@ -8,6 +8,7 @@ import { MessageList } from './MessageList';
 import { ChatInput } from './ChatInput';
 import { FloatingLauncher } from './FloatingLauncher';
 import { ProviderCredits } from './ProviderCredits';
+import { ChatModeContext } from '@/services/ChatModeContext';
 
 const panelPositionClasses: Record<WidgetPosition, string> = {
   'bottom-right': 'bottom-24 right-6 origin-bottom-right',
@@ -34,6 +35,7 @@ export const ChatWidget: React.FC<AGIChatWidgetProps> = ({
   theme = 'light',
 }) => {
   const { isOpen, isExpanded } = useChatStore();
+  const mode = useContext(ChatModeContext);
   const resolvedTheme = resolveWidgetTheme(theme);
   const widgetStyles: WidgetCSSProperties = {
     '--agichat-primary': resolvedTheme.colors.primary,
@@ -50,6 +52,7 @@ export const ChatWidget: React.FC<AGIChatWidgetProps> = ({
       data-agichat-widget=""
       data-position={position}
       data-theme={resolvedTheme.name}
+      data-mode={mode}
       style={widgetStyles}
     >
       <AnimatePresence>
@@ -72,6 +75,11 @@ export const ChatWidget: React.FC<AGIChatWidgetProps> = ({
               avatarUrl={avatarUrl}
             />
             <MessageList />
+            <p className="shrink-0 px-4 py-1 text-sm text-[var(--agichat-text-muted)]">
+              {mode === 'mock'
+                ? 'Modo simulado · respuestas de prueba'
+                : 'Modo real · consultas al agente al enviar'}
+            </p>
             <div className="shrink-0 border-t border-[var(--agichat-border)]">
               <ChatInput />
             </div>

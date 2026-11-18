@@ -2,8 +2,11 @@ import React from 'react';
 import { ChatWidget } from '@/components/widget/ChatWidget';
 import { BearAvatar } from '@/components/widget/ChatHeader';
 import { ScenarioButtons } from '@/components/widget/ScenarioButtons';
+import { useContext } from 'react';
+import { ChatModeContext } from '@/services/ChatModeContext';
 
 export const App: React.FC = () => {
+  const mode = useContext(ChatModeContext);
   return (
     <main className="min-h-screen bg-black font-mono relative flex flex-col items-center justify-center p-6 text-center text-green-500 overflow-hidden">
       <div className="absolute top-6 left-6 text-left text-sm md:text-base opacity-80 pointer-events-none">
@@ -16,7 +19,7 @@ export const App: React.FC = () => {
         <BearAvatar size={250} />
         <h1 className="text-4xl font-bold mt-8 tracking-widest uppercase">AGIChat</h1>
       </div>
-      <ScenarioButtons />
+      {mode === 'mock' && <ScenarioButtons />}
       <ChatWidget />
     </main>
   );

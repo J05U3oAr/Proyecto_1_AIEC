@@ -2,7 +2,7 @@ import { Code2, Table2, WifiOff } from 'lucide-react';
 import { useState } from 'react';
 
 import { setMockScenario, type MockScenario } from '@/mocks/demoScenario';
-import { chatService } from '@/services/chatService';
+import { useChat } from '@/hooks/useChat';
 import { useChatStore } from '@/store/useChatStore';
 
 type DemoScenario = Exclude<MockScenario, 'default'>;
@@ -40,32 +40,27 @@ const scenarios: ScenarioDefinition[] = [
 ];
 
 export function ScenarioButtons() {
+  const { send, isTyping } = useChat();
   const [activeScenario, setActiveScenario] = useState<DemoScenario | null>(null);
   const [completedScenario, setCompletedScenario] = useState<DemoScenario | null>(null);
+  const [failed, setFailed] = useState(false);
 
   const runScenario = async (definition: ScenarioDefinition): Promise<void> => {
     const store = useChatStore.getState();
+    if (store.isTyping) return;
     setMockScenario(definition.scenario);
     setActiveScenario(definition.scenario);
     setCompletedScenario(null);
+    setFailed(false);
 
     if (!store.isOpen) {
       store.toggleChat();
     }
 
-    const messageId = store.sendMessage(definition.prompt);
-    store.setTyping(true);
-
-    try {
-      const response = await chatService.sendMessage(definition.prompt);
-      useChatStore.getState().markMessageAsSent(messageId);
-      useChatStore.getState().receiveMessage(response.response);
-    } catch {
-      useChatStore.getState().markMessageAsError(messageId);
-    } finally {
-      setCompletedScenario(definition.scenario);
-      setActiveScenario(null);
-    }
+    const result = await send(definition.prompt);
+    setFailed(result === 'failed');
+    setCompletedScenario(definition.scenario);
+    setActiveScenario(null);
   };
 
   return (
@@ -73,7 +68,13 @@ export function ScenarioButtons() {
       <div className="mb-3 flex items-center justify-between gap-4 text-xs uppercase tracking-[0.18em]">
         <h2 id="scenario-title">Escenarios de demostración</h2>
         <span aria-live="polite" className="text-green-300/70">
-          {activeScenario ? '[RUNNING]' : completedScenario ? '[DONE]' : '[READY]'}
+          {activeScenario
+            ? '[RUNNING]'
+            : failed
+              ? '[ERROR]'
+              : completedScenario
+                ? '[DONE]'
+                : '[READY]'}
         </span>
       </div>
 
@@ -87,7 +88,7 @@ export function ScenarioButtons() {
               key={definition.scenario}
               type="button"
               onClick={() => void runScenario(definition)}
-              disabled={activeScenario !== null}
+              disabled={activeScenario !== null || isTyping}
               className="group flex items-center gap-3 rounded border border-green-500/50 bg-black/60 p-3 text-left transition hover:bg-green-500/10 focus:outline-none focus:ring-2 focus:ring-green-400 disabled:cursor-not-allowed disabled:opacity-60"
             >
               <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded border border-green-500/50 text-green-300 transition group-hover:bg-green-500 group-hover:text-black">

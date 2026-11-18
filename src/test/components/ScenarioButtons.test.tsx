@@ -67,5 +67,6 @@ describe('ScenarioButtons', () => {
         { role: 'user', content: 'Comprueba la disponibilidad del agente', status: 'error' },
       ]);
     });
+    expect(screen.getByText('[ERROR]')).toBeVisible();
   });
 });

@@ -1,6 +1,8 @@
 import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, it, vi } from 'vitest';
 import { setupServer } from 'msw/node';
+import { http, HttpResponse } from 'msw';
+import fixture from '../../../docs/integration/fixtures/m3-comparison-valid.json';
 
 import { DemoApp } from '@/demo/DemoApp';
 import { resetMockScenario, setMockScenario } from '@/mocks/demoScenario';
@@ -13,6 +15,7 @@ describe('flujo E2E del widget AGIChat', () => {
   beforeAll(() => server.listen({ onUnhandledRequest: 'error' }));
 
   beforeEach(() => {
+    vi.stubEnv('VITE_CHAT_MODE', 'mock');
     useChatStore.setState({
       isOpen: false,
       isExpanded: false,
@@ -28,6 +31,7 @@ describe('flujo E2E del widget AGIChat', () => {
   });
 
   afterEach(() => {
+    vi.unstubAllEnvs();
     server.resetHandlers();
     resetMockScenario();
   });
@@ -66,5 +70,60 @@ describe('flujo E2E del widget AGIChat', () => {
     });
     expect(screen.queryByText(prompt)).not.toBeInTheDocument();
     expect(screen.queryByRole('button', { name: 'Copiar código' })).not.toBeInTheDocument();
+  });
+
+  it('conserva respuesta enriquecida y sesión por HTTP simulado sin ejecutar ni rehidratar acciones', async () => {
+    const open = vi.spyOn(window, 'open');
+    const requests: Array<{ body: Record<string, unknown>; token: string | null }> = [];
+    server.use(
+      http.post('*/api/chat', async ({ request }) => {
+        const body = (await request.json()) as Record<string, unknown>;
+        requests.push({ body, token: request.headers.get('X-Session-Token') });
+        return HttpResponse.json(
+          {
+            ...fixture.response,
+            response: 'Respuesta sintética de comparación para M4.1',
+            requestId: body.requestId,
+            sessionId: 'e2e-session',
+            actions: [
+              {
+                type: 'open_reference',
+                id: 'a',
+                requestId: body.requestId,
+                provider: 'imdb',
+                resourceId: 'tt0083658',
+                url: 'https://www.imdb.com/title/tt0083658/',
+              },
+            ],
+          },
+          { headers: { 'X-Session-Token': 'synthetic-e2e-token' } }
+        );
+      })
+    );
+    render(<DemoApp />);
+    fireEvent.click(screen.getByRole('button', { name: 'Abrir chat' }));
+    const input = screen.getByRole('textbox', { name: /campo de texto/i });
+    for (const prompt of ['Recomienda una película', 'Compárala con el libro']) {
+      fireEvent.change(input, { target: { value: prompt } });
+      fireEvent.click(screen.getByRole('button', { name: 'Enviar mensaje' }));
+      await waitFor(() => expect(useChatStore.getState().isTyping).toBe(false));
+    }
+    expect(requests).toHaveLength(2);
+    expect(requests[1].body).toMatchObject({ sessionId: 'e2e-session' });
+    expect(requests[1].token).toBe('synthetic-e2e-token');
+    expect(useChatStore.getState().messages[3].details?.comparison).toEqual(
+      fixture.response.comparison
+    );
+    const snapshot = localStorage.getItem('agichat-conversation')!;
+    expect(snapshot).not.toContain('actions');
+    expect(snapshot).not.toContain('synthetic-e2e-token');
+    useChatStore.getState().clearChat();
+    localStorage.setItem('agichat-conversation', snapshot);
+    await useChatStore.persist.rehydrate();
+    expect(useChatStore.getState().messages).toHaveLength(4);
+    expect(useChatStore.getState().session).toBeNull();
+    expect(open).not.toHaveBeenCalled();
+    expect(requests).toHaveLength(2);
+    open.mockRestore();
   });
 });

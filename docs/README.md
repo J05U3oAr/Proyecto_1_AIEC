@@ -18,7 +18,6 @@ vigentes para agentes están en `AGENTS.md`.
 ## Arquitectura
 
 - [Arquitectura del sistema](architecture/ARQUITECTURA.md).
-- [Explicación de la opción C](architecture/EXPLICACION_OPCION_C.md): contexto de la primera entrega.
 - [Contratos y schemas](../shared/contracts/README.md): permanecen junto a los contratos compartidos.
 
 ## Integración

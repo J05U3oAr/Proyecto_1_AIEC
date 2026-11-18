@@ -20,6 +20,9 @@ export function ComparisonCard({
   const { adaptation, verdict } = comparison;
   const book = adaptation.book;
   const googleEvidence = adaptation.evidence?.some(item => item.source.provider === 'google_books');
+  const reply = responseText.trim();
+  const valuation = verdict.trim();
+  const alreadyShown = reply === valuation || reply.startsWith(valuation + '\n\n');
   return (
     <section
       aria-label="Comparación con el libro"
@@ -35,7 +38,11 @@ export function ComparisonCard({
       )}
       {book && (
         <div className="rounded-lg bg-[var(--agichat-surface-muted)] p-3">
-          <p className="text-sm text-[var(--agichat-text-muted)]">Libro</p>
+          <p className="text-sm text-[var(--agichat-text-muted)]">
+            {adaptation.status === 'confirmed'
+              ? 'Libro'
+              : 'Libro candidato · vínculo sin confirmar'}
+          </p>
           <h4 className="font-semibold">{book.title}</h4>
           <p>{book.authors?.length ? book.authors.join(', ') : 'Autoría no disponible'}</p>
           {book.year != null && <p className="text-sm">Año de esta edición: {book.year}</p>}
@@ -73,7 +80,7 @@ export function ComparisonCard({
           </ul>
         </details>
       )}
-      {verdict.trim() !== responseText.trim() && (
+      {!alreadyShown && (
         <div>
           <h4 className="font-semibold">Valoración de Sofía · opinión de IA</h4>
           <MarkdownRenderer content={verdict} />

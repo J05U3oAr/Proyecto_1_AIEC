@@ -22,6 +22,19 @@ BLOCKED = (
     "No genero ni ejecuto código, ni comparto instrucciones internas o credenciales. "
     "Puedo ayudarte con películas y sus adaptaciones literarias."
 )
+RECOMMENDATION_GENRES = {
+    "accion": "Acción",
+    "animacion": "Animación",
+    "aventura": "Aventura",
+    "ciencia ficcion": "Ciencia ficción",
+    "comedia": "Comedia",
+    "drama": "Drama",
+    "familia": "Familia",
+    "fantasia": "Fantasía",
+    "romance": "Romance",
+    "suspense": "Suspense",
+    "terror": "Terror",
+}
 
 
 def normalized(text: str) -> str:
@@ -45,6 +58,9 @@ class Intent:
         "out_of_scope",
         "blocked",
         "book_based_recommendation",
+        "genre_recommendation",
+        "similar_recommendation",
+        "alternative_recommendation",
         "catalog",
         "lookup",
         "metadata",
@@ -129,6 +145,21 @@ def route(prompt: str) -> Intent:
         )
         if genre:
             return Intent("book_based_recommendation", query=genre)
+    recommendation = re.fullmatch(
+        r"(?:recomienda(?:me)?|sugiere(?:me)?) (?:una |unas |algunas )?(?:peliculas?|pelis?) "
+        r"(.+?)(?: por favor)?",
+        without_hello,
+    )
+    if recommendation:
+        preference = recommendation[1]
+        if preference in {"parecida", "parecidas", "similar", "similares"}:
+            return Intent("similar_recommendation")
+        genre = RECOMMENDATION_GENRES.get(preference.removeprefix("de "))
+        if genre:
+            return Intent("genre_recommendation", query=genre)
+    alternative = re.fullmatch(r"(?:una|otra)(?: pelicula)? que no sea (.+)", without_hello)
+    if alternative:
+        return Intent("alternative_recommendation", query=alternative[1])
     if re.search(
         r"\b(?:peliculas?|pelis?|cine|films?|movies?|libros?|novelas?|adaptaci\w*|"
         r"tmdb|imdb|books|sinopsis|guion|generos?|duracion|recomiend\w*|recomendar|"

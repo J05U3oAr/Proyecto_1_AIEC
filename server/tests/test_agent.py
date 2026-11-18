@@ -174,7 +174,9 @@ async def test_comparison_status_and_sources(settings, status):
         assert any(source.provider == "google_books" for source in result.response.sources)
 
 
-@pytest.mark.parametrize("prompt", ["Abre su ficha en IMDb", "Abre la ficha de esa película en IMDb"])
+@pytest.mark.parametrize(
+    "prompt", ["Abre su ficha en IMDb", "Abre la ficha de esa película en IMDb"]
+)
 async def test_followup_actions_require_current_intent(settings, prompt):
     request = ChatRequest(prompt=prompt, navigationIntent={"provider": "imdb"})
     agent = make_agent(settings, [])

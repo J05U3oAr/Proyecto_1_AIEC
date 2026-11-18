@@ -17,6 +17,12 @@ describe('runtime mode', () => {
     expect(shouldEnableMocking(true)).toBe(true);
     expect(shouldEnableMocking(true, 'mock')).toBe(true);
   });
+  it('honors the explicit Vite real mode on development servers', () => {
+    vi.stubEnv('MODE', 'real');
+    vi.stubEnv('DEV', true);
+    vi.stubEnv('VITE_CHAT_MODE', 'mock');
+    expect(currentChatMode()).toBe('real');
+  });
   it('does not intercept backend requests in real mode or production', () => {
     expect(shouldEnableMocking(true, 'real')).toBe(false);
     expect(shouldEnableMocking(false, 'mock')).toBe(false);

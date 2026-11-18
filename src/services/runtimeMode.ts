@@ -9,5 +9,6 @@ export function shouldEnableMocking(isDevelopment: boolean, mode?: string): bool
 }
 
 export function currentChatMode(): ChatMode {
-  return shouldEnableMocking(import.meta.env.DEV, import.meta.env.VITE_CHAT_MODE) ? 'mock' : 'real';
+  const mode = import.meta.env.MODE === 'real' ? 'real' : import.meta.env.VITE_CHAT_MODE;
+  return shouldEnableMocking(import.meta.env.DEV, mode) ? 'mock' : 'real';
 }

@@ -28,29 +28,31 @@ describe('ScenarioButtons', () => {
     resetMockScenario();
   });
 
-  it('muestra los tres escenarios con estado listo', () => {
+  it('muestra los escenarios de cine con estado listo', () => {
     render(<ScenarioButtons />);
 
     expect(
       screen.getByRole('heading', { name: /escenarios de demostración/i })
     ).toBeInTheDocument();
-    expect(screen.getByRole('button', { name: /probar tabla/i })).toBeInTheDocument();
-    expect(screen.getByRole('button', { name: /probar código/i })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: /ver recomendación simulada/i })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: /ver comparación simulada/i })).toBeInTheDocument();
     expect(screen.getByRole('button', { name: /simular caída/i })).toBeInTheDocument();
     expect(screen.getByText('[READY]')).toBeInTheDocument();
   });
 
-  it('ejecuta el escenario de tabla y abre el chat', async () => {
+  it('ejecuta la recomendación simulada y abre el chat', async () => {
     render(<ScenarioButtons />);
 
-    fireEvent.click(screen.getByRole('button', { name: /probar tabla/i }));
+    fireEvent.click(screen.getByRole('button', { name: /ver recomendación simulada/i }));
 
     await waitFor(() => {
-      expect(sendMessageMock).toHaveBeenCalledWith('Muéstrame las métricas del piloto');
+      expect(sendMessageMock).toHaveBeenCalledWith(
+        'Recomiéndame ciencia ficción basada en un libro'
+      );
     });
     expect(useChatStore.getState().isOpen).toBe(true);
     expect(useChatStore.getState().messages).toMatchObject([
-      { role: 'user', content: 'Muéstrame las métricas del piloto', status: 'sent' },
+      { role: 'user', content: 'Recomiéndame ciencia ficción basada en un libro', status: 'sent' },
       { role: 'assistant', content: 'Respuesta de prueba', status: 'sent' },
     ]);
     expect(screen.getByText('[DONE]')).toBeInTheDocument();

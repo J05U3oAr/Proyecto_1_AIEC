@@ -8,6 +8,8 @@ import { DemoApp } from '@/demo/DemoApp';
 import { resetMockScenario, setMockScenario } from '@/mocks/demoScenario';
 import { handlers } from '@/mocks/handlers';
 import { useChatStore } from '@/store/useChatStore';
+import App from '@/App';
+import { ChatModeContext } from '@/services/ChatModeContext';
 
 const server = setupServer(...handlers);
 
@@ -15,6 +17,7 @@ describe('flujo E2E del widget AGIChat', () => {
   beforeAll(() => server.listen({ onUnhandledRequest: 'error' }));
 
   beforeEach(() => {
+    useChatStore.getState().clearChat();
     vi.stubEnv('VITE_CHAT_MODE', 'mock');
     useChatStore.setState({
       isOpen: false,
@@ -31,12 +34,43 @@ describe('flujo E2E del widget AGIChat', () => {
   });
 
   afterEach(() => {
+    vi.restoreAllMocks();
     vi.unstubAllEnvs();
     server.resetHandlers();
     resetMockScenario();
   });
 
   afterAll(() => server.close());
+
+  it('recorre las fichas de cine y los estados de comparación desde los controles mock', async () => {
+    const open = vi.spyOn(window, 'open');
+    render(
+      <ChatModeContext.Provider value="mock">
+        <App />
+      </ChatModeContext.Provider>
+    );
+    for (const name of [
+      /Ver recomendación simulada/,
+      /Ver comparación simulada/,
+      /Vínculo incierto/,
+      /Datos parciales/,
+      /Sin adaptación confirmada/,
+    ]) {
+      fireEvent.click(screen.getByRole('button', { name }));
+      await waitFor(() => expect(useChatStore.getState().isTyping).toBe(false), { timeout: 4000 });
+      expect(useChatStore.getState().messages.slice(-1)[0].details?.movies?.[0].title).toBe(
+        'Blade Runner'
+      );
+    }
+    expect(screen.getAllByRole('article', { name: 'Película: Blade Runner' })).toHaveLength(5);
+    expect(screen.getAllByAltText('Powered by Google').length).toBeGreaterThan(0);
+    expect(
+      screen.getAllByRole('link', { name: /Ver libro en Google Books/ }).length
+    ).toBeGreaterThan(0);
+    expect(screen.getByText(/No confirma que el libro no exista/)).toBeInTheDocument();
+    expect(screen.getAllByText('Póster no disponible')).toHaveLength(5);
+    expect(open).not.toHaveBeenCalled();
+  }, 15000);
 
   it('abre, envía una pregunta, renderiza código Markdown, copia y limpia el chat', async () => {
     render(<DemoApp />);

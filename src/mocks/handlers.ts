@@ -2,6 +2,7 @@ import { delay, http, HttpResponse } from 'msw';
 import { getMockScenario } from '@/mocks/demoScenario';
 import { getMockResponse } from '@/mocks/mockData';
 import type { ChatRequest, ChatResponse } from '@/services/types';
+import { cinemaFixture } from '@/mocks/cinemaFixtures';
 
 const getLatency = (): number => 800 + Math.floor(Math.random() * 701);
 
@@ -17,6 +18,10 @@ export const handlers = [
         { message: 'El agente no está disponible temporalmente.' },
         { status: 503 }
       );
+    }
+
+    if (scenario !== 'default' && scenario !== 'table' && scenario !== 'code') {
+      return HttpResponse.json(cinemaFixture(scenario, body.requestId));
     }
 
     const response: ChatResponse = {

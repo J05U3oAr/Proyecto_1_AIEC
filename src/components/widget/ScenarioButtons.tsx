@@ -1,4 +1,4 @@
-import { Code2, Table2, WifiOff } from 'lucide-react';
+import { BookOpen, Film, WifiOff } from 'lucide-react';
 import { useState } from 'react';
 
 import { setMockScenario, type MockScenario } from '@/mocks/demoScenario';
@@ -12,23 +12,23 @@ interface ScenarioDefinition {
   label: string;
   description: string;
   prompt: string;
-  icon: typeof Table2;
+  icon: typeof Film;
 }
 
 const scenarios: ScenarioDefinition[] = [
   {
-    scenario: 'table',
-    label: 'Probar tabla',
-    description: 'Métricas estructuradas con Markdown GFM.',
-    prompt: 'Muéstrame las métricas del piloto',
-    icon: Table2,
+    scenario: 'movie',
+    label: 'Ver recomendación simulada',
+    description: 'Ficha de película con póster no disponible.',
+    prompt: 'Recomiéndame ciencia ficción basada en un libro',
+    icon: Film,
   },
   {
-    scenario: 'code',
-    label: 'Probar código',
-    description: 'Bloque TypeScript con resaltado y copiado.',
-    prompt: 'Muéstrame un ejemplo de integración',
-    icon: Code2,
+    scenario: 'comparison',
+    label: 'Ver comparación simulada',
+    description: 'Libro, evidencia y fuentes de una adaptación.',
+    prompt: 'Compara Blade Runner con el libro',
+    icon: BookOpen,
   },
   {
     scenario: 'error',
@@ -36,6 +36,27 @@ const scenarios: ScenarioDefinition[] = [
     description: 'Respuesta HTTP 503 desde MSW.',
     prompt: 'Comprueba la disponibilidad del agente',
     icon: WifiOff,
+  },
+  {
+    scenario: 'uncertain',
+    label: 'Vínculo incierto',
+    description: 'Cómo se comunica la incertidumbre.',
+    prompt: 'Muestra una adaptación sin confirmar',
+    icon: BookOpen,
+  },
+  {
+    scenario: 'partial',
+    label: 'Datos parciales',
+    description: 'Evidencia disponible y límites.',
+    prompt: 'Muestra una comparación con datos parciales',
+    icon: BookOpen,
+  },
+  {
+    scenario: 'not_found',
+    label: 'Sin adaptación confirmada',
+    description: 'Ausencia de evidencia en la colección.',
+    prompt: 'Muestra una película sin adaptación confirmada',
+    icon: Film,
   },
 ];
 

@@ -24,6 +24,11 @@ const themeOptions: Record<ThemeOption, AGIChatTheme> = {
 };
 
 const scenarioPrompts: Record<MockScenario, string> = {
+  movie: 'Recomiéndame ciencia ficción basada en un libro',
+  comparison: 'Compara Blade Runner con el libro',
+  uncertain: 'Muestra una adaptación sin confirmar',
+  partial: 'Muestra una comparación con datos parciales',
+  not_found: 'Muestra una película sin adaptación confirmada',
   default: 'Hola Sofía',
   table: 'Muéstrame las métricas del piloto',
   code: 'Muéstrame un ejemplo de integración',

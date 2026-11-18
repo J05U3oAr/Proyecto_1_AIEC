@@ -101,7 +101,9 @@ export const ChatHeader: React.FC<ChatHeaderProps> = ({
         ¡Hola soy tu asistente virtual {agentName}!
       </h2>
 
-      <p className="clear-both pt-2 text-sm text-[var(--agichat-text-muted)]">{welcomeMessage}</p>
+      <p className="clear-both pt-2 text-sm text-[var(--agichat-text-muted)] [@media(max-height:500px)]:sr-only">
+        {welcomeMessage}
+      </p>
     </div>
   );
 };

@@ -1,4 +1,4 @@
-import React, { CSSProperties, useContext } from 'react';
+import React, { CSSProperties, useContext, useEffect, useRef } from 'react';
 import { motion, AnimatePresence, useReducedMotion } from 'framer-motion';
 import { useChatStore } from '@/store/useChatStore';
 import { AGIChatWidgetProps, WidgetPosition } from '@/sdk/types';
@@ -37,6 +37,21 @@ export const ChatWidget: React.FC<AGIChatWidgetProps> = ({
   const { isOpen, isExpanded } = useChatStore();
   const mode = useContext(ChatModeContext);
   const reducedMotion = useReducedMotion();
+  const panelRef = useRef<HTMLDivElement>(null);
+  const launcherRef = useRef<HTMLButtonElement>(null);
+  const wasOpen = useRef(false);
+  useEffect(() => {
+    let cancelled = false;
+    if (isOpen)
+      queueMicrotask(() => {
+        if (!cancelled) panelRef.current?.querySelector('textarea')?.focus({ preventScroll: true });
+      });
+    else if (wasOpen.current) launcherRef.current?.focus({ preventScroll: true });
+    wasOpen.current = isOpen;
+    return () => {
+      cancelled = true;
+    };
+  }, [isOpen]);
   const resolvedTheme = resolveWidgetTheme(theme);
   const widgetStyles: WidgetCSSProperties = {
     '--agichat-primary': resolvedTheme.colors.primary,
@@ -59,6 +74,15 @@ export const ChatWidget: React.FC<AGIChatWidgetProps> = ({
       <AnimatePresence>
         {isOpen && (
           <motion.div
+            ref={panelRef}
+            role="region"
+            aria-label={`Chat de ${agentName}`}
+            onKeyDown={event => {
+              if (event.key === 'Escape' && useChatStore.getState().isOpen) {
+                event.preventDefault();
+                useChatStore.getState().toggleChat();
+              }
+            }}
             layout={!reducedMotion}
             initial={reducedMotion ? false : { opacity: 0, y: 20, scale: 0.95 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
@@ -66,7 +90,7 @@ export const ChatWidget: React.FC<AGIChatWidgetProps> = ({
             transition={
               reducedMotion ? { duration: 0 } : { duration: 0.3, type: 'spring', bounce: 0 }
             }
-            className={`fixed flex flex-col overflow-hidden z-50 rounded-2xl border border-[var(--agichat-border)] bg-[var(--agichat-surface)] text-[var(--agichat-text)] shadow-widget ${
+            className={`fixed flex flex-col overflow-hidden z-50 rounded-2xl border border-[var(--agichat-border)] bg-[var(--agichat-surface)] text-[var(--agichat-text)] shadow-widget max-sm:inset-3 max-sm:m-0 max-sm:h-auto max-sm:w-auto max-sm:max-w-none max-sm:max-h-none [@media(max-height:700px)]:inset-y-3 [@media(max-height:700px)]:h-auto [@media(max-height:700px)]:max-h-none ${
               isExpanded
                 ? 'inset-0 m-auto w-[800px] h-[80vh] max-w-[95vw]'
                 : `${panelPositionClasses[position]} w-[380px] max-w-[calc(100vw-48px)] h-[600px] max-h-[calc(100dvh-120px)]`
@@ -83,14 +107,14 @@ export const ChatWidget: React.FC<AGIChatWidgetProps> = ({
                 ? 'Modo simulado · respuestas de prueba'
                 : 'Modo real · consultas al agente al enviar'}
             </p>
-            <div className="shrink-0 border-t border-[var(--agichat-border)]">
+            <div className="min-h-0 max-h-[45dvh] overflow-y-auto border-t border-[var(--agichat-border)]">
               <ChatInput />
             </div>
             <ProviderCredits />
           </motion.div>
         )}
       </AnimatePresence>
-      <FloatingLauncher position={position} />
+      <FloatingLauncher position={position} buttonRef={launcherRef} />
     </div>
   );
 };

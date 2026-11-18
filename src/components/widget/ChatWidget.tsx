@@ -7,6 +7,7 @@ import { ChatHeader } from './ChatHeader';
 import { MessageList } from './MessageList';
 import { ChatInput } from './ChatInput';
 import { FloatingLauncher } from './FloatingLauncher';
+import { ProviderCredits } from './ProviderCredits';
 
 const panelPositionClasses: Record<WidgetPosition, string> = {
   'bottom-right': 'bottom-24 right-6 origin-bottom-right',
@@ -62,7 +63,7 @@ export const ChatWidget: React.FC<AGIChatWidgetProps> = ({
             className={`fixed flex flex-col overflow-hidden z-50 rounded-2xl border border-[var(--agichat-border)] bg-[var(--agichat-surface)] text-[var(--agichat-text)] shadow-widget ${
               isExpanded
                 ? 'inset-0 m-auto w-[800px] h-[80vh] max-w-[95vw]'
-                : `${panelPositionClasses[position]} w-[380px] h-[600px] max-h-[calc(100vh-120px)]`
+                : `${panelPositionClasses[position]} w-[380px] max-w-[calc(100vw-48px)] h-[600px] max-h-[calc(100dvh-120px)]`
             }`}
           >
             <ChatHeader
@@ -71,9 +72,10 @@ export const ChatWidget: React.FC<AGIChatWidgetProps> = ({
               avatarUrl={avatarUrl}
             />
             <MessageList />
-            <div className="border-t border-[var(--agichat-border)]">
+            <div className="shrink-0 border-t border-[var(--agichat-border)]">
               <ChatInput />
             </div>
+            <ProviderCredits />
           </motion.div>
         )}
       </AnimatePresence>

@@ -98,12 +98,8 @@ export const ChatWidget: React.FC<AGIChatWidgetProps> = ({
                 : `${panelPositionClasses[position]} w-[380px] max-w-[calc(100vw-48px)] h-[600px] max-h-[calc(100dvh-120px)]`
             }`}
           >
-            <ChatHeader
-              agentName={agentName}
-              welcomeMessage={welcomeMessage}
-              avatarUrl={avatarUrl}
-            />
-            <MessageList />
+            <ChatHeader agentName={agentName} avatarUrl={avatarUrl} />
+            <MessageList agentName={agentName} welcomeMessage={welcomeMessage} />
             <p className="shrink-0 px-4 py-1 text-sm text-[var(--agichat-text-muted)]">
               {mode === 'mock'
                 ? 'Modo simulado · respuestas de prueba'

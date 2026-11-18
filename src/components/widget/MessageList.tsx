@@ -4,7 +4,15 @@ import { MessageBubble } from './MessageBubble';
 import { TypingIndicator } from './TypingIndicator';
 import * as ScrollArea from '@radix-ui/react-scroll-area';
 
-export const MessageList: React.FC = () => {
+interface MessageListProps {
+  agentName?: string;
+  welcomeMessage?: string;
+}
+
+export const MessageList: React.FC<MessageListProps> = ({
+  agentName = 'Sofía',
+  welcomeMessage,
+}) => {
   const { messages, isTyping } = useChatStore();
   const viewportRef = useRef<HTMLDivElement>(null);
   const nearBottom = useRef(true);
@@ -41,7 +49,7 @@ export const MessageList: React.FC = () => {
     <ScrollArea.Root className="relative min-h-0 w-full flex-1 overflow-hidden bg-[var(--agichat-surface)]">
       <ScrollArea.Viewport
         role="log"
-        aria-label="Conversación con Sofía"
+        aria-label={`Conversación con ${agentName}`}
         tabIndex={0}
         ref={viewportRef}
         className="w-full h-full px-4 py-4"
@@ -52,10 +60,13 @@ export const MessageList: React.FC = () => {
         }}
       >
         {messages.length === 0 && (
-          <p className="text-base leading-relaxed text-[var(--agichat-text)]">
-            ¿Qué te gustaría ver? Puedes indicar género, duración o una película que te guste.
-            También puedes corregir un título o año durante la conversación.
-          </p>
+          <div className="space-y-2 text-base leading-relaxed text-[var(--agichat-text)]">
+            {welcomeMessage && <p>{welcomeMessage}</p>}
+            <p>
+              ¿Qué te gustaría ver? Puedes indicar género, duración o una película que te guste.
+              También puedes corregir un título o año durante la conversación.
+            </p>
+          </div>
         )}
         {messages.map(msg => (
           <MessageBubble key={msg.id} message={msg} />

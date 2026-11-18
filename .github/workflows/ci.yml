@@ -5,6 +5,7 @@ on:
     branches: [main]
   pull_request:
     branches: [main]
+  workflow_dispatch:
 
 permissions:
   contents: read
@@ -84,3 +85,131 @@ jobs:
       - name: Stop test services
         if: always()
         run: docker compose --env-file .env.example -p sofia-ci -f infra/compose.yaml down
+
+  service-delivery:
+    name: Package backend and MCP services
+    if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request' && vars.SERVICE_CD_ENABLED == 'true'
+    needs: [quality-checks, python-checks, container-checks]
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    env:
+      SOFIA_IMAGE_TAG: ${{ github.sha }}
+      MCP_TOKEN: synthetic-ci-token-not-a-secret
+      TMDB_READ_TOKEN: synthetic-ci-token-not-a-provider-credential
+      GOOGLE_BOOKS_API_KEY: synthetic-ci-books-not-a-provider-credential
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - name: Build versioned images
+        run: |
+          for service in backend movies books; do
+            docker build --file "infra/docker/${service}.Dockerfile" \
+              --tag "sofia-${service}:${SOFIA_IMAGE_TAG}" .
+          done
+      - name: Check readiness using the packaged images
+        run: |
+          docker compose --env-file .env.example -p sofia-delivery-ci \
+            -f infra/compose.yaml -f infra/compose.delivery.yaml up --no-build -d --wait --wait-timeout 120
+          curl --fail --silent --show-error http://127.0.0.1:8000/health/ready
+      - name: Export images and Compose configuration
+        run: |
+          set -o pipefail
+          mkdir delivery
+          docker image save \
+            "sofia-backend:${SOFIA_IMAGE_TAG}" \
+            "sofia-movies:${SOFIA_IMAGE_TAG}" \
+            "sofia-books:${SOFIA_IMAGE_TAG}" | gzip -1 > delivery/images.tar.gz
+          cp infra/compose.yaml infra/compose.delivery.yaml delivery/
+          cd delivery
+          printf '%s\n' "$SOFIA_IMAGE_TAG" > revision.txt
+          sha256sum images.tar.gz compose.yaml compose.delivery.yaml revision.txt > SHA256SUMS
+      - uses: actions/upload-artifact@v4
+        with:
+          name: sofia-services-${{ github.sha }}-attempt-${{ github.run_attempt }}
+          path: delivery/
+          if-no-files-found: error
+          retention-days: 7
+          compression-level: 0
+      - name: Stop delivery smoke-test services
+        if: always()
+        run: |
+          docker compose --env-file .env.example -p sofia-delivery-ci \
+            -f infra/compose.yaml -f infra/compose.delivery.yaml down
+
+  pages-build:
+    name: Package frontend for GitHub Pages
+    if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request' && vars.PAGES_CD_ENABLED == 'true'
+    needs: [quality-checks, python-checks, container-checks]
+    permissions:
+      contents: read
+      pages: read
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - name: Read GitHub Pages configuration
+        id: pages
+        uses: actions/configure-pages@v5
+      - name: Validate public backend endpoint
+        env:
+          VITE_CHAT_ENDPOINT: ${{ vars.VITE_CHAT_ENDPOINT }}
+        run: |
+          node --input-type=module <<'NODE'
+          const endpoint = URL.parse(process.env.VITE_CHAT_ENDPOINT ?? '');
+          if (
+            !endpoint ||
+            endpoint.protocol !== 'https:' ||
+            endpoint.username || endpoint.password ||
+            endpoint.search || endpoint.hash ||
+            endpoint.pathname !== '/api/chat' ||
+            !endpoint.hostname.includes('.') ||
+            endpoint.hostname.endsWith('.localhost') ||
+            endpoint.hostname === '127.0.0.1'
+          ) {
+            console.error('VITE_CHAT_ENDPOINT must point to the public HTTPS /api/chat endpoint without credentials.');
+            process.exit(1);
+          }
+          NODE
+      - run: npm ci
+      - name: Build frontend for the Pages base path
+        env:
+          PAGES_BASE_PATH: ${{ steps.pages.outputs.base_path }}
+          VITE_CHAT_ENDPOINT: ${{ vars.VITE_CHAT_ENDPOINT }}
+          VITE_CHAT_MODE: real
+        run: npm run build -- --base="${PAGES_BASE_PATH%/}/"
+      - uses: actions/upload-pages-artifact@v4
+        with:
+          path: dist
+
+  pages-deploy:
+    name: Deploy frontend to GitHub Pages
+    needs: pages-build
+    permissions:
+      contents: read
+      pages: write
+      id-token: write
+    concurrency:
+      group: github-pages
+      cancel-in-progress: false
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Confirm the artifact is from the current main
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          head_sha="$(gh api "repos/${GITHUB_REPOSITORY}/git/ref/heads/main" --jq .object.sha)"
+          if [ "$head_sha" != "$GITHUB_SHA" ]; then
+            echo "::error::This run is outdated. Deploy from the current main."
+            exit 1
+          fi
+      - id: deployment
+        uses: actions/deploy-pages@v4

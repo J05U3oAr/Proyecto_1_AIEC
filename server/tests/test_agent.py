@@ -96,6 +96,87 @@ def make_agent(settings, replies, results=(), **kwargs):
     return Agent(settings, StubLLM(replies), StubMCP(results), StubBudget(), **kwargs)
 
 
+async def test_recommends_alternatives_instead_of_repeating_the_selected_movie(settings):
+    cars = {**MOVIE, "title": "Cars 2", "year": 2011, "genres": ["Animación", "Familia"]}
+    other = {
+        **cars,
+        "id": 42,
+        "title": "Otra película",
+        "tmdb": "https://www.themoviedb.org/movie/42",
+    }
+    agent = make_agent(
+        settings,
+        [],
+        [{"movies": [cars]}, {"movies": [cars, other]}, {"movies": [cars, other]}],
+    )
+
+    lookup = await agent.run(ChatRequest(prompt="Cars 2"), [], {}, "lookup")
+    similar = await agent.run(
+        ChatRequest(prompt="recomienda películas parecidas"), [], lookup.context, "similar"
+    )
+    excluded = await agent.run(
+        ChatRequest(prompt="una que no sea cars 2"), [], similar.context, "exclude"
+    )
+
+    assert [movie.id for movie in similar.response.movies] == [42]
+    assert [movie.id for movie in excluded.response.movies] == [42]
+    assert [args["genre"] for _, args in agent.mcp.calls[1:]] == ["Animación", "Animación"]
+    assert excluded.response.actions == []
+    assert not agent.llm.inputs
+
+
+async def test_explicit_action_genre_queries_catalog_without_reusing_old_context(settings):
+    action = {**MOVIE, "genres": ["Acción"]}
+    previous = {**MOVIE, "id": 3, "tmdb": "https://www.themoviedb.org/movie/3"}
+    agent = make_agent(settings, [], [{"movies": [action]}])
+    result = await agent.run(
+        ChatRequest(prompt="recomienda películas de acción"),
+        [],
+        {"movies": [previous]},
+        "genre",
+    )
+
+    assert agent.mcp.calls[0][1]["genre"] == "Acción"
+    assert result.response.movies[0].id == MOVIE["id"]
+    assert not agent.llm.inputs
+
+
+async def test_similar_recommendation_asks_for_a_seed_and_does_not_repeat_empty_matches(settings):
+    agent = make_agent(settings, [], [{"movies": [MOVIE]}])
+    prompt = ChatRequest(prompt="recomienda películas parecidas")
+    missing = await agent.run(prompt, [], {}, "missing")
+    assert "¿A qué película" in missing.response.response
+    assert not agent.mcp.calls
+
+    context = {"movies": [{**MOVIE, "genres": ["Ciencia ficción"]}]}
+    no_match = await agent.run(prompt, [], context, "empty")
+    assert "No encontré alternativas" in no_match.response.response
+    assert no_match.response.movies == []
+    assert no_match.context == context
+
+
+async def test_similar_recommendation_does_not_guess_a_missing_genre(settings):
+    agent = make_agent(settings, [])
+    result = await agent.run(
+        ChatRequest(prompt="recomienda películas parecidas"),
+        [],
+        {"movies": [MOVIE]},
+        "missing-genre",
+    )
+    assert "No tengo un género verificado" in result.response.response
+    assert not agent.mcp.calls
+
+
+async def test_genre_recommendation_reports_catalog_failure(settings):
+    agent = make_agent(settings, [], [PublicError("upstream_unavailable", "No disponible")])
+    with pytest.raises(PublicError) as failure:
+        await agent.run(ChatRequest(prompt="recomienda películas de acción"), [], {}, "error")
+    assert failure.value.code == "upstream_unavailable"
+    assert failure.value.trace == [
+        {"tool": "search_movies", "status": "failed", "code": "upstream_unavailable"}
+    ]
+
+
 async def test_recommendation_with_poster_and_no_automatic_navigation(settings):
     agent = make_agent(settings, [tool(), final()], [{"movies": [MOVIE]}])
     result = await agent.run(ChatRequest(prompt="Recomienda ciencia ficción"), [], {}, "r")
@@ -265,9 +346,7 @@ def test_missing_or_ambiguous_resources_never_open_tabs():
 async def test_hostile_model_cannot_bypass_policy(settings, reply, code):
     agent = make_agent(settings, [reply])
     with pytest.raises(PublicError) as failure:
-        await agent.run(
-            ChatRequest(prompt="Recomienda una película de ciencia ficción"), [], {}, "r"
-        )
+        await agent.run(ChatRequest(prompt="Recomienda ciencia ficción"), [], {}, "r")
     assert failure.value.code == code
     assert agent.mcp.calls == []
 

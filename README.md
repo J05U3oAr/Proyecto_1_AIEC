@@ -164,19 +164,12 @@ y Google Books. El cliente conserva la sesión HTTP en memoria. Consulta la
 [evidencia de M4](docs/branches/feat/m4-widget-ux/06-navegacion-referencias.md)
 para distinguir las pruebas controladas de las comprobaciones con proveedores reales.
 
-Para preparar el frontend de GitHub Pages, configura `VITE_CHAT_ENDPOINT` con
-la URL HTTPS pública de `/api/chat` del backend. Es una URL pública, sin credenciales.
-El backend debe permitir el origen `https://j05u3oar.github.io` en `ALLOWED_ORIGINS`.
-Desde PowerShell, sustituye el dominio de ejemplo por el del equipo y genera `dist/`:
-
-```powershell
-$env:VITE_CHAT_ENDPOINT = 'https://backend.example.org/api/chat'
-npm run build -- --base=/Proyecto_1_AIEC/
-```
-
-El mantenedor debe publicar `dist/` en GitHub Pages con el backend ya operativo.
-GitHub Pages aloja el frontend. El backend, Redis y los servidores MCP se ejecutan
-en la infraestructura del equipo.
+La [guía de entrega continua](infra/README.md#entrega-continua-a-github-pages)
+explica cómo activar la publicación del frontend en GitHub Pages después de
+los tres checks de CI. El backend HTTPS, Redis y los servidores MCP se ejecutan
+en la infraestructura del equipo. La
+[entrega del backend y MCP](infra/README.md#entrega-continua-del-backend-y-mcp)
+prepara imágenes verificadas para ese host.
 
 Checks Python de backend/contratos/MCP: levantar el Redis aislado de
 `infra/compose.test.yaml`, ejecutar `uv sync --frozen --python 3.12` desde `server/`

@@ -1,0 +1,17 @@
+services:
+  redis:
+    ports: !reset []
+  backend:
+    build: !reset null
+    image: sofia-backend:${SOFIA_IMAGE_TAG:?Set SOFIA_IMAGE_TAG to the delivered revision}
+    pull_policy: never
+  movies:
+    build: !reset null
+    image: sofia-movies:${SOFIA_IMAGE_TAG:?Set SOFIA_IMAGE_TAG to the delivered revision}
+    pull_policy: never
+    ports: !reset []
+  books:
+    build: !reset null
+    image: sofia-books:${SOFIA_IMAGE_TAG:?Set SOFIA_IMAGE_TAG to the delivered revision}
+    pull_policy: never
+    ports: !reset []

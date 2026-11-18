@@ -1,5 +1,21 @@
 # Probar M3 desde el chatbot real
 
+Corrección del bloqueo de colección: una película ajena al JSON ahora consulta
+Google Books mediante `search_books`. El modelo puede proponer título/autor de
+la obra original y se verifica que la API devuelva ese candidato. Eso verifica
+el libro, no prueba por sí solo la adaptación: se presenta como `uncertain`.
+Los vínculos documentados anteriores conservan su comparación confirmada.
+
+Ejemplos nuevos, reiniciando el chat entre películas:
+
+1. `Matilda 1996` → `Compara esa película con su libro sin spoilers`.
+2. `Frozen: El reino del hielo 2013` → el mismo seguimiento.
+
+En pruebas reales se encontraron Matilda (Roald Dahl) y The Snow Queen
+(Hans Christian Andersen). No se añadieron esas películas al JSON.
+La selección corta `Frozen 2013` no identificó la película por la localización
+del título en TMDB; usar el título completo anterior.
+
 El recorrido de comparación ya se verificó mediante el widget en Edge, con
 servicios TMDB/Google Books reales y sin MSW. Ver la
 [captura](../evidence/m3/widget-live-comparison.png), el
@@ -72,15 +88,15 @@ las herramientas MCP y conserva la película seleccionada en la sesión.
 
 Reiniciar el chat entre casos y enviar cada pareja de mensajes:
 
-| Selección   | Seguimiento                                      | Resultado esperado                                                                                      |
-| ----------- | ------------------------------------------------ | ------------------------------------------------------------------------------------------------------- |
-| `Dune 2021` | `Compara esa película con su libro sin spoilers` | Dune, de Frank Herbert; adaptación confirmada y comparación de premisas.                                |
-| `Dune 1984` | `Compara esa película con su libro sin spoilers` | No hay evidencia en nuestra colección revisada para esa película. No equivale a que no exista un libro. |
+| Selección   | Seguimiento                                      | Resultado esperado                                                       |
+| ----------- | ------------------------------------------------ | ------------------------------------------------------------------------ |
+| `Dune 2021` | `Compara esa película con su libro sin spoilers` | Dune, de Frank Herbert; adaptación confirmada y comparación de premisas. |
 
-La colección tiene cinco películas y cuatro novelas. No descubre automáticamente
-todas las adaptaciones del cine. `Dune 1984` sirve como caso fuera de cobertura,
-aunque la película sí procede de una novela. Para ampliar cobertura se revisa
-y añade el vínculo en `mcp/books/adaptations.json`.
+La colección tiene cinco películas y cuatro novelas con vínculos revisados.
+Para otras películas, incluido `Dune 1984`, ahora se buscan candidatos reales;
+el vínculo se mantiene incierto hasta contar con evidencia independiente.
+La colección es un respaldo de relaciones documentadas, no una lista que
+impida consultar Google Books para títulos nuevos.
 
 ## 5. Qué se puede demostrar actualmente
 

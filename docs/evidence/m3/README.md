@@ -1,5 +1,20 @@
 # Evidencia M3
 
+## Corrección: búsqueda fuera de la colección
+
+`sofia/discovery.py` elimina la salida temprana del seguimiento comparativo:
+si falta el vínculo revisado, consulta Google Books y, si corresponde, busca
+también un título/autor propuesto por el modelo. No se añadieron Matilda ni
+Frozen al JSON. Se verificaron ambas mediante HTTP real; ver
+[resultado público](discovery-live-check.json) y
+[pasos manuales](../../integration/prueba-manual-m3.md).
+
+El resultado distingue candidato bibliográfico de vínculo confirmado. No se
+acredita descubrimiento universal ni lectura íntegra. 442 tests Python pasan;
+mypy (40 módulos) y Ruff de archivos cambiados pasan. El módulo nuevo alcanza
+98.44% líneas/sentencias, 80% ramas y 100% funciones. Los reportes anteriores
+son históricos: el caso fuera de colección ahora debe invocar `search_books`.
+
 ## Recorrido funcional real desde el widget
 
 - [Captura de comparación en Edge](widget-live-comparison.png).

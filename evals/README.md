@@ -149,18 +149,22 @@ silenciosamente ni bajar el umbral.
 ## Por qué una película como Frozen puede quedar fuera
 
 TMDB busca películas reales; Google Books busca volúmenes reales. La herramienta
-`adaptation_evidence` actual solo busca una edición cuando ya dispone del vínculo
-en `mcp/books/adaptations.json`. Para un ID ajeno devuelve falta de evidencia
-revisada antes de consultar Google Books. Es una limitación del resolvedor,
-no un fallo de conectividad ni una limitación de búsqueda de las APIs.
+`adaptation_evidence` conserva los vínculos revisados en `mcp/books/adaptations.json`.
+La orquestación ya no termina cuando falta uno: `sofia/discovery.py` consulta
+`search_books` y puede proponer y buscar un título/autor alternativo mediante el
+modelo. La identidad bibliográfica se verifica contra resultados reales de Books.
+Una coincidencia o propuesta del modelo no confirma por sí sola la adaptación.
 
 Buscar libros llamados Frozen puede devolver novelizaciones y publicaciones
 posteriores a la película; eso no acredita la obra que la inspiró. Añadir una
 adaptación requiere revisar una fuente del vínculo y consultar el título/autor
 de la obra de origen. Un descubrimiento automático general y la presentación
 de candidatos no confirmados son una ampliación distinta del harness. Este
-cambio no amplía la colección ni convierte coincidencias de búsqueda en
-adaptaciones confirmadas.
+cambio no amplía la colección ni convierte coincidencias en adaptaciones
+confirmadas. El bloqueo anterior se corrigió; Matilda y Frozen ya se probaron
+fuera del JSON y devolvieron candidatos. El manifiesto funcional de descubrimiento
+actualiza el caso Dune (1984) para esperar búsqueda e incertidumbre, en lugar
+de una salida temprana por falta de cobertura.
 
 ## Calidad, CI y compatibilidad Promptfoo
 

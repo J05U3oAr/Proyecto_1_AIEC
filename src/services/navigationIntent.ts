@@ -8,7 +8,7 @@ export function navigationIntent(prompt: string): NavigationIntent | null {
     .toLowerCase()
     .trim();
   if (
-    !/^(?:por favor[, ]+)?(?:abre|abrir|abreme|open)\b/.test(text) ||
+    !/^(?:por favor[, ]+)?(?:ahora[, ]+)?(?:abre|abrir|abreme|open)\b/.test(text) ||
     /[\r\n"'`<>«»“”‘’;:\\]/.test(prompt) ||
     /\b(?:no|nunca|not|never|si|if)\b/.test(text)
   )

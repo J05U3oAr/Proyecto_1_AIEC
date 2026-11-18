@@ -108,6 +108,48 @@ async def test_recommendation_with_poster_and_no_automatic_navigation(settings):
     assert agent.llm.inputs[0][0]["role"] == "system"
 
 
+async def test_recommendation_localizes_the_model_genre_for_tmdb(settings):
+    reply = tool(
+        arguments={"query": "ciencia ficcion", "genre": "Science Fiction", "maxRuntime": 120}
+    )
+    agent = make_agent(settings, [reply, final()], [{"movies": [MOVIE]}])
+
+    result = await agent.run(
+        ChatRequest(prompt="Recomienda ciencia ficción de menos de dos horas"), [], {}, "r"
+    )
+
+    _, arguments = agent.mcp.calls[0]
+    assert arguments["query"] == "ciencia ficcion"
+    assert arguments["genre"] == "Ciencia ficción"
+    assert arguments["maxRuntime"] == 120
+    assert result.response.movies[0].id == MOVIE["id"]
+
+
+async def test_book_based_genre_recommendation_uses_verified_catalog_without_llm(settings):
+    agent = make_agent(
+        settings,
+        [],
+        [{"movies": [MOVIE]}, {"adaptation": ADAPTATION}],
+    )
+
+    result = await agent.run(
+        ChatRequest(prompt="Recomiéndame ciencia ficción basada en un libro"), [], {}, "book-film"
+    )
+
+    assert [name for name, _ in agent.mcp.calls] == ["search_movies", "adaptation_evidence"]
+    assert agent.mcp.calls[0][1] == {
+        "query": "recomendaciones",
+        "genre": "Ciencia ficción",
+        "maxRuntime": None,
+        "limit": 5,
+    }
+    assert result.usage["llmRequests"] == 0
+    assert result.response.movies[0].id == MOVIE["id"]
+    assert result.response.comparison.adaptation.status == "confirmed"
+    assert result.response.comparison.adaptation.book.id == BOOK["id"]
+    assert any(source.provider == "google_books" for source in result.response.sources)
+
+
 @pytest.mark.parametrize("status", ["confirmed", "uncertain", "not_found"])
 async def test_comparison_status_and_sources(settings, status):
     adaptation = {**ADAPTATION, "status": status}
@@ -132,17 +174,34 @@ async def test_comparison_status_and_sources(settings, status):
         assert any(source.provider == "google_books" for source in result.response.sources)
 
 
-async def test_followup_actions_require_current_intent(settings):
-    request = ChatRequest(prompt="Abre su ficha en IMDb", navigationIntent={"provider": "imdb"})
-    agent = make_agent(settings, [final("Abriré la referencia solicitada.")])
+@pytest.mark.parametrize("prompt", ["Abre su ficha en IMDb", "Abre la ficha de esa película en IMDb"])
+async def test_followup_actions_require_current_intent(settings, prompt):
+    request = ChatRequest(prompt=prompt, navigationIntent={"provider": "imdb"})
+    agent = make_agent(settings, [])
     result = await agent.run(request, [], {"movies": [MOVIE]}, "r")
     assert result.response.actions[0].url == MOVIE["imdb"]
     assert result.response.actions[0].requestId == "r"
+    assert result.usage["llmRequests"] == 0
     request.navigationIntent.provider = "google_books"
     actions = Agent.actions(
         request, "r", [Movie.model_validate(MOVIE)], Adaptation.model_validate(ADAPTATION)
     )
     assert actions[0].resourceId == BOOK["id"]
+
+
+async def test_opening_verified_book_uses_session_without_inference(settings):
+    request = ChatRequest(
+        prompt="Ahora abre el libro en Google Books", navigationIntent={"provider": "google_books"}
+    )
+    context = {"movies": [MOVIE], "books": [BOOK], "adaptation": ADAPTATION}
+    agent = make_agent(settings, [])
+    result = await agent.run(request, [], context, "book-reference")
+    assert result.response.actions[0].url == BOOK["url"]
+    assert result.response.actions[0].requestId == "book-reference"
+    assert result.response.comparison.adaptation.book.id == BOOK["id"]
+    assert result.context == context
+    assert result.usage["llmRequests"] == 0
+    assert agent.mcp.calls == []
 
 
 @pytest.mark.parametrize(

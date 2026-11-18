@@ -44,6 +44,7 @@ class Intent:
         "social",
         "out_of_scope",
         "blocked",
+        "book_based_recommendation",
         "catalog",
         "lookup",
         "metadata",
@@ -82,9 +83,9 @@ def route(prompt: str) -> Intent:
         return Intent("capabilities", CAPABILITIES)
     if re.fullmatch(
         r"(?:(?:hola|hey|hi|hello|buenas|buenos dias|buenas tardes|buenas noches)\s*)+"
-        r"(?:(?:sofia|asistente)\s*)?(?:como estas|que tal)?",
+        r"(?:(?:sofia|asistente)\s*)?(?:como estas|que tal(?: estas)?)?",
         text,
-    ) or text in {"como estas", "que tal", "todo bien"}:
+    ) or text in {"como estas", "que tal", "que tal estas", "todo bien"}:
         return Intent("greeting", "¡Hola! " + CAPABILITIES)
     if re.fullmatch(
         r"(?:muchas )?gracias(?: sofia| por tu ayuda)?|adios|hasta luego|nos vemos|"
@@ -109,6 +110,25 @@ def route(prompt: str) -> Intent:
         if query in {"esa", "esa pelicula", "la pelicula", "esta", "tiene"}:
             query = ""
         return Intent("metadata", query=query or None)
+    if re.search(
+        r"\b(?:basad[oa]s? en (?:un )?(?:libro|novela)|"
+        r"adaptad[oa]s? de (?:un )?(?:libro|novela))\b",
+        text,
+    ):
+        genres = {
+            "ciencia ficcion": "Ciencia ficción",
+            "ficcion cientifica": "Ciencia ficción",
+            "accion": "Acción",
+            "comedia": "Comedia",
+            "drama": "Drama",
+            "terror": "Terror",
+        }
+        genre = next(
+            (value for term, value in genres.items() if re.search(rf"\b{re.escape(term)}\b", text)),
+            None,
+        )
+        if genre:
+            return Intent("book_based_recommendation", query=genre)
     if re.search(
         r"\b(?:peliculas?|pelis?|cine|films?|movies?|libros?|novelas?|adaptaci\w*|"
         r"tmdb|imdb|books|sinopsis|guion|generos?|duracion|recomiend\w*|recomendar|"

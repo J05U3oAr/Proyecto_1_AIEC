@@ -167,7 +167,9 @@ para distinguir las pruebas controladas de las comprobaciones con proveedores re
 La [guía de entrega continua](infra/README.md#entrega-continua-a-github-pages)
 explica cómo activar la publicación del frontend en GitHub Pages después de
 los tres checks de CI. El backend HTTPS, Redis y los servidores MCP se ejecutan
-en la infraestructura del equipo.
+en la infraestructura del equipo. La
+[entrega del backend y MCP](infra/README.md#entrega-continua-del-backend-y-mcp)
+prepara imágenes verificadas para ese host.
 
 Checks Python de backend/contratos/MCP: levantar el Redis aislado de
 `infra/compose.test.yaml`, ejecutar `uv sync --frozen --python 3.12` desde `server/`

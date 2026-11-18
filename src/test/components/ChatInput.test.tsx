@@ -98,4 +98,22 @@ describe('ChatInput', () => {
     expect(screen.getByRole('button', { name: /enviar mensaje/i })).toBeDisabled();
     expect(sendMessageMock).not.toHaveBeenCalled();
   });
+  it('preserves the draft and explains a local size rejection without a request', async () => {
+    useChatStore.getState().clearChat();
+    render(<ChatInput />);
+    const input = screen.getByRole('textbox');
+    fireEvent.change(input, { target: { value: 'x'.repeat(4001) } });
+    await act(async () => fireEvent.keyDown(input, { key: 'Enter' }));
+    expect(input).toHaveValue('x'.repeat(4001));
+    expect(screen.getByRole('alert')).toHaveTextContent('4000 caracteres');
+    expect(sendMessageMock).not.toHaveBeenCalled();
+  });
+  it('does not submit while composing IME text', () => {
+    render(<ChatInput />);
+    const input = screen.getByRole('textbox');
+    fireEvent.change(input, { target: { value: '映画' } });
+    fireEvent.keyDown(input, { key: 'Enter', isComposing: true });
+    expect(sendMessageMock).not.toHaveBeenCalled();
+    expect(input).toHaveValue('映画');
+  });
 });

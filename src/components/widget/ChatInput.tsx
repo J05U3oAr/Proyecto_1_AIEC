@@ -1,18 +1,11 @@
-import React, { useState, KeyboardEvent, useRef, useEffect } from 'react';
+import React, { useState, KeyboardEvent, useRef, useEffect, useId } from 'react';
 import { ArrowRight } from 'lucide-react';
-import { chatService } from '@/services/chatService';
-import { useChatStore } from '@/store/useChatStore';
+import { useChat } from '@/hooks/useChat';
 
 export const ChatInput: React.FC = () => {
   const [text, setText] = useState('');
-  const {
-    sendMessage,
-    receiveMessage,
-    markMessageAsSent,
-    markMessageAsError,
-    setTyping,
-    isTyping,
-  } = useChatStore();
+  const inputId = useId();
+  const { send, isTyping, lastError } = useChat();
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
   // Auto-ajuste de altura del textarea
@@ -25,19 +18,9 @@ export const ChatInput: React.FC = () => {
 
   const handleSend = async (): Promise<void> => {
     const trimmed = text.trim();
-    if (!trimmed || useChatStore.getState().isTyping) return;
-
-    const messageId = sendMessage(trimmed);
-    setText('');
-    setTyping(true);
-
-    try {
-      const response = await chatService.sendMessage(trimmed);
-      markMessageAsSent(messageId);
-      receiveMessage(response.response);
-    } catch {
-      markMessageAsError(messageId);
-    }
+    const pending = send(trimmed);
+    if (trimmed && !isTyping && [...trimmed].length <= 4000) setText('');
+    await pending;
   };
 
   const handleKeyDown = (e: KeyboardEvent<HTMLTextAreaElement>) => {
@@ -49,8 +32,12 @@ export const ChatInput: React.FC = () => {
 
   return (
     <div className="w-full bg-[var(--agichat-surface)] p-4">
+      <label htmlFor={inputId} className="mb-2 block text-sm font-medium">
+        Mensaje
+      </label>
       <div className="flex items-end gap-3 max-w-full">
         <textarea
+          id={inputId}
           ref={textareaRef}
           value={text}
           onChange={e => setText(e.target.value)}
@@ -58,6 +45,7 @@ export const ChatInput: React.FC = () => {
           className="min-h-[44px] flex-1 resize-none overflow-y-auto rounded-md border border-[var(--agichat-border)] bg-[var(--agichat-surface)] px-4 py-2.5 text-sm text-[var(--agichat-text)] placeholder:text-[var(--agichat-text-muted)] focus:outline-none focus:ring-1 focus:ring-[var(--agichat-primary)]"
           rows={1}
           aria-label="Campo de texto para mensaje"
+          aria-describedby={lastError ? `${inputId}-error` : undefined}
         />
         <button
           onClick={() => void handleSend()}
@@ -68,6 +56,11 @@ export const ChatInput: React.FC = () => {
           <ArrowRight size={20} strokeWidth={2} />
         </button>
       </div>
+      {lastError && (
+        <p id={`${inputId}-error`} role="alert" className="mt-2 text-sm text-[var(--agichat-text)]">
+          {lastError.message}
+        </p>
+      )}
     </div>
   );
 };

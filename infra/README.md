@@ -93,6 +93,43 @@ La versión ya publicada sigue disponible. Para volver a una versión anterior,
 revertir el cambio mediante un PR; el flujo publica de nuevo tras pasar CI. El
 job rechaza artefactos de corridas que ya no corresponden a la punta de `main`.
 
+### Entrega continua del backend y MCP
+
+Con la variable de repositorio `SERVICE_CD_ENABLED=true`, un push a `main` o
+**Run workflow** sobre `main` prepara las imágenes del backend y los dos MCP
+después de los tres checks de CI. El job arranca esas mismas imágenes con Redis,
+espera el estado saludable y sube el paquete a **Artifacts** como
+`sofia-services-<sha>-attempt-<n>`. La comprobación usa valores sintéticos y no
+consulta los proveedores. No requiere un servidor de destino ni acceso a un
+registro de imágenes. La descarga tiene una retención de siete días; guardar el
+paquete anterior si se necesitará para revertir.
+
+El paquete contiene imágenes para Linux AMD64, dos archivos Compose, la revisión
+y sumas SHA-256. Para probarlo en un host compatible, descomprimir el artefacto
+descargado de la corrida correcta. Crear aparte un archivo de entorno con permisos
+restringidos tomando como referencia `.env.example` de la misma revisión.
+Configurar ahí las credenciales de proveedores, un token MCP compartido y los
+orígenes permitidos. Luego, desde la carpeta del artefacto:
+
+```bash
+sha256sum --check SHA256SUMS
+docker image load --input images.tar.gz
+export SOFIA_IMAGE_TAG="$(cat revision.txt)"
+docker compose --env-file /ruta/privada/sofia.env -p sofia-delivery \
+  -f compose.yaml -f compose.delivery.yaml up --no-build -d --wait
+curl --fail --silent --show-error http://127.0.0.1:8000/health/ready
+```
+
+Usar un nombre de proyecto distinto al del entorno de desarrollo. Redis y los
+MCP quedan en la red de Compose, y el backend escucha solo en el loopback del
+host. Redis se obtiene de su imagen de contenedor habitual y conserva su volumen.
+Para revertir, cargar el paquete anterior y repetir el arranque con ese SHA y el
+mismo nombre de proyecto y archivo de entorno, sin eliminar el volumen.
+
+El artefacto permite validar la entrega sin publicar un servicio. Para conectar
+Pages en modo real todavía hay que elegir el host, configurar el acceso HTTPS y
+verificar CORS y un turno completo desde el navegador.
+
 La suite Python usa Redis separado en `16379`, bases 14/15 y namespaces propios.
 Las pruebas solo borran claves que crearon. No apuntarlas a un Redis con datos
 reales ni correr varios suites ajenos sobre esa instancia simultáneamente.

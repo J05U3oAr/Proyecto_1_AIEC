@@ -26,6 +26,61 @@ const movie: Movie = {
   overview: 'Sinopsis de prueba',
 };
 
+describe('conversation with a movie card', () => {
+  const catalogBlock = [
+    '**Blade Runner (1982)**',
+    'Géneros: Ciencia ficción',
+    'Duración: 117 min',
+    'Puntuación TMDB: 8.1/10 (20 votos)',
+    'Sinopsis de TMDB: Sinopsis de prueba',
+  ].join('\n\n');
+
+  it('shows catalog facts once, keeps the synopsis collapsed and preserves the reply', () => {
+    const reason = 'Te la recomiendo si disfrutas del cine noir.';
+    render(
+      <MessageBubble
+        message={{
+          id: 'movie-turn',
+          role: 'assistant',
+          content: reason + '\n\n' + catalogBlock,
+          timestamp: 1,
+          status: 'sent',
+          details: { movies: [movie] },
+        }}
+      />
+    );
+    const card = screen.getByRole('article', { name: 'Película: Blade Runner' });
+    expect(screen.getByText(reason)).toBeVisible();
+    expect(screen.queryByText('Blade Runner (1982)')).not.toBeInTheDocument();
+    expect(screen.queryByText('Géneros: Ciencia ficción')).not.toBeInTheDocument();
+    expect(screen.queryByText('Duración: 117 min')).not.toBeInTheDocument();
+    expect(screen.queryByText('Puntuación TMDB: 8.1/10 (20 votos)')).not.toBeInTheDocument();
+    expect(screen.queryByText('Sinopsis de TMDB: Sinopsis de prueba')).not.toBeInTheDocument();
+    expect(within(card).getByText('Sinopsis de prueba')).not.toBeVisible();
+  });
+
+  it('retains the original reply when there is no usable card or a fenced block', () => {
+    const reply = {
+      id: 'movie-turn',
+      role: 'assistant' as const,
+      timestamp: 1,
+      status: 'sent' as const,
+    };
+    const { rerender } = render(<MessageBubble message={{ ...reply, content: catalogBlock }} />);
+    expect(screen.getByText('Duración: 117 min')).toBeVisible();
+    rerender(
+      <MessageBubble
+        message={{
+          ...reply,
+          content: '~~~text\n\nDuración: 117 min\n\n~~~',
+          details: { movies: [movie] },
+        }}
+      />
+    );
+    expect(screen.getByText('Duración: 117 min')).toBeVisible();
+  });
+});
+
 describe('movie result', () => {
   it('shows catalog metadata, safe sources and reserves a poster ratio', () => {
     const { container } = render(<MovieCard movie={movie} />);
@@ -44,7 +99,7 @@ describe('movie result', () => {
     const { rerender } = render(<MovieCard movie={movie} />);
     fireEvent.error(screen.getByRole('img'));
     expect(screen.queryByRole('img')).not.toBeInTheDocument();
-    expect(screen.getByText('Póster no disponible')).toBeInTheDocument();
+    expect(screen.getByText('Sin póster')).toBeInTheDocument();
     rerender(<MovieCard movie={{ ...movie, poster: 'https://image.tmdb.org/t/p/w500/new.png' }} />);
     expect(screen.getByRole('img')).toHaveAttribute('src', expect.stringContaining('new.png'));
   });

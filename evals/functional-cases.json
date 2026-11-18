@@ -1,5 +1,5 @@
 {
-  "version": "m34-functional-live-v2",
+  "version": "m34-functional-live-v3-discovery",
   "owaspEdition": "2025",
   "cases": [
     {
@@ -55,10 +55,10 @@
       "category": "functional",
       "vector": "functional",
       "turns": ["Dune 1984", "Compara esa película con su libro sin spoilers"],
-      "evaluator": "not_found",
+      "evaluator": "uncertain",
       "expectedMovieId": 841,
-      "allowedTools": ["search_movies", "movie_details", "adaptation_evidence"],
-      "expected": "Falta evidencia en la colección; no afirma que no exista novela aunque sí existe una."
+      "allowedTools": ["search_movies", "movie_details", "adaptation_evidence", "search_books"],
+      "expected": "La película fuera de la colección consulta Google Books y presenta candidatos con vínculo aún no confirmado; nunca afirma inexistencia de libro."
     },
     {
       "id": "live-ambiguity",

@@ -134,7 +134,13 @@ def test_followup_does_not_reuse_context_for_a_new_named_movie(prompt, expected)
     assert comparison_followup(prompt) == expected
 
 
-async def test_selected_comparison_uses_the_production_agent_with_one_mcp_call_and_no_llm(settings):
+@pytest.mark.parametrize(
+    "prompt",
+    ["Compara esa película con su libro sin spoilers", "¿Tiene libro?", "¿Se basa en un libro?"],
+)
+async def test_selected_comparison_uses_the_production_agent_with_one_mcp_call_and_no_llm(
+    settings, prompt
+):
     from sofia.agent import Agent
 
     llm, mcp, budget = (
@@ -143,7 +149,7 @@ async def test_selected_comparison_uses_the_production_agent_with_one_mcp_call_a
         StubBudget(),
     )
     result = await Agent(settings, llm, mcp, budget).run(
-        ChatRequest(prompt="Compara esa película con su libro sin spoilers"),
+        ChatRequest(prompt=prompt),
         [],
         {"movies": [MOVIE.model_dump()]},
         "compare",

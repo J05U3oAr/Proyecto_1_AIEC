@@ -186,13 +186,16 @@ describe('comparison and attribution', () => {
     expect(within(details).getByAltText('Powered by Google')).toBeVisible();
     expect(within(details).getAllByRole('link')).toHaveLength(3);
   });
-  it('does not repeat identical verdicts or claim that absence of evidence means no book exists', () => {
-    const comparison = cinemaFixture('not_found').comparison!;
-    render(<ComparisonCard comparison={comparison} responseText={comparison.verdict} />);
-    expect(screen.getByText('Película de esta comparación')).toBeInTheDocument();
-    expect(screen.getByText(/No confirma que el libro no exista/)).toBeInTheDocument();
-    expect(screen.queryByText('Valoración de Sofía · opinión de IA')).not.toBeInTheDocument();
-  });
+  it.each(['', '\n\nPuedo comparar películas con sus libros si hay evidencia.'])(
+    'does not repeat the verdict when the reply has the suffix %j',
+    suffix => {
+      const comparison = cinemaFixture('not_found').comparison!;
+      render(<ComparisonCard comparison={comparison} responseText={comparison.verdict + suffix} />);
+      expect(screen.getByText('Película de esta comparación')).toBeInTheDocument();
+      expect(screen.getByText(/No confirma que el libro no exista/)).toBeInTheDocument();
+      expect(screen.queryByText('Valoración de Sofía · opinión de IA')).not.toBeInTheDocument();
+    }
+  );
   it('handles missing author/year, non-Google evidence and no optional details', () => {
     render(
       <ComparisonCard
@@ -218,6 +221,7 @@ describe('comparison and attribution', () => {
       />
     );
     expect(screen.getByText('Autoría no disponible')).toBeInTheDocument();
+    expect(screen.getByText('Libro candidato · vínculo sin confirmar')).toBeInTheDocument();
     expect(screen.getByText('<script>unsafe</script>')).toBeInTheDocument();
     expect(document.querySelector('script')).toBeNull();
   });

@@ -1,0 +1,14 @@
+{
+  "name": "sofia-promptfoo-evals",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "eval": "node promptfoo-runner.mjs"
+  },
+  "devDependencies": {
+    "promptfoo": "0.126.0"
+  },
+  "engines": {
+    "node": ">=22.22.0"
+  }
+}

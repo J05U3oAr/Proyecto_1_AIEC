@@ -160,6 +160,11 @@ def test_ambiguity_requires_question_and_quota_does_not_allow_retry():
     assert functional_checks(case, [response], [])
     response.response = "Aquí están."
     assert not functional_checks(case, [response], [])
+    response = ChatResponse(response="Elige por título o año: Blade Runner (1982); Otro (2017).")
+    assert functional_checks(case, [response], [])
+    assert not functional_checks(case, [response], [{"tool": "search_books"}])
+    response.response = "Elige por título o año."
+    assert not functional_checks(case, [response], [])
     response = ChatResponse(
         response="Conservo la película, pero no pude consultar los libros.", movies=[movie]
     )

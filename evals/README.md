@@ -176,15 +176,29 @@ GitHub Actions ya haya corrido.
 
 Se adaptó el patrón `agent_provider.py` + `promptfooconfig.yaml` de
 [HDT6 revisado](../docs/delivery/reutilizacion-evals.md), sin copiar su agente FAQ,
-fechas ni porcentajes históricos. El provider opcional llama al mismo `run_case`
-y solo admite IDs del dataset. La CLI Python es el ejecutor canónico; no hace
-falta instalar Promptfoo ni otro SDK para usarlo. El provider es exclusivamente
-offline y su interfaz Python se prueba directamente. No se afirma haber ejecutado
-el CLI de Promptfoo.
+fechas ni porcentajes históricos. El provider llama al mismo `run_case`
+y solo admite IDs del dataset. Promptfoo ejecuta los 22 casos con tres
+repeticiones, sin caché. Conserva los evaluadores locales del runner Python.
 
-Si ya se dispone de una versión fijada de Promptfoo, usar el Python del entorno
-`server/.venv`, añadir `server` y `evals` a `PYTHONPATH` y pasar
-`evals/promptfooconfig.yaml` a `promptfoo eval`. Desactivar caché al repetir casos.
-No añadir un juez remoto: las assertions de la configuración son locales.
+Desde la raíz, con Node >=22.22 y `server/.venv` preparado:
+
+```bash
+npm ci --prefix evals
+npm run evals:promptfoo
+```
+
+La versión de Promptfoo está fijada en `evals/package-lock.json` y se instala
+separada del frontend. El comando selecciona el Python del entorno virtual
+en Windows/macOS/Linux y configura los imports sin necesitar `uv` en el PATH.
+Genera `docs/evidence/m3/promptfoo-current.json` y `promptfoo-current.html`.
+Se puede abrir el HTML local para la defensa; la salida del CLI indica cuántos
+casos aprobaron. Un caso fallido produce un código de salida distinto de cero.
+
+El provider es exclusivamente offline: no carga `.env`, no usa juez remoto y
+no consume NVIDIA, TMDB ni Google Books. Sus resultados miden controles del
+agente con catálogo y modelo sintéticos; no acreditan resistencia de un modelo
+real. La referencia HDT6 utiliza también jueces remotos; no se trasladan a este
+comando para mantener las pruebas sin consumo. La CLI Python y su integración
+actual en CI siguen disponibles.
 La referencia de la interfaz es la
 [documentación oficial del provider Python](https://www.promptfoo.dev/docs/providers/python/).

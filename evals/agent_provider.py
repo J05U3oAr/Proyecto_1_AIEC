@@ -11,5 +11,5 @@ async def call_api(
 ) -> dict[str, object]:
     dataset, _ = load_dataset()
     case = next(case for case in dataset.cases if case.id == prompt.strip())
-    result = await run_case(case, Settings())
+    result = await run_case(case, Settings(_env_file=None))
     return {"output": json.dumps(result, ensure_ascii=False)}

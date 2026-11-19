@@ -17,9 +17,11 @@ def comparison_followup(prompt: str) -> bool:
             r"(?:compara(?:r|la|lo)?(?: (?:esa|esta|la) pelicula)?(?: con (?:su|el) libro)?"
             r"|(?:que diferencias hay|cuales son las diferencias)(?: con (?:su|el) libro)?"
             r"|vale la pena verla (?:comparada con el|frente al) libro"
-            r"|(?:(?:esa|esta|la) pelicula )?tiene (?:un )?libro(?: original)?"
+            r"|(?:(?:esa|esta|la) pelicula |(?:esas|estas|las) peliculas )?"
+            r"tienen? (?:un )?libros?(?: original(?:es)?)?"
             r"|(?:(?:esa|esta|la) pelicula )?(?:se basa|esta basada) en (?:un )?(?:libro|novela)"
-            r"|en que (?:libro|novela) (?:se basa|esta basada)(?: (?:esa|esta|la) pelicula)?)"
+            r"|en que (?:(?:libro|novela) )?(?:se basa|esta basad[ao])"
+            r"(?: (?:esa|esta|la) pelicula)?)"
             r"(?: sin spoilers)?",
             words(prompt),
         )

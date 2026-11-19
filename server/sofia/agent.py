@@ -17,6 +17,7 @@ from sofia.dialogue import (
     RECOMMENDATION_GENRES,
     movie_metadata,
     movie_text,
+    plain_catalog_text,
     route,
     select_candidates,
     unsupported_output,
@@ -140,6 +141,9 @@ class Agent:
         request_id: str,
         trace: list[dict[str, object]],
         usage: dict[str, int],
+        *,
+        tool_calls_used: int = 0,
+        needs_choice: bool = False,
     ) -> TurnResult:
         movies = [
             Movie.model_validate(item) for item in cast(list[object], context.get("movies", []))
@@ -149,23 +153,32 @@ class Agent:
             "books": [],
             "adaptation": None,
         }
-        if len(movies) != 1:
-            text = (
-                movie_text(movies) if movies else "Primero indica el título y año de la película."
-            )
+        if needs_choice or context.get("pending_comparison") is True or len(movies) != 1:
+            if movies:
+                clean["pending_comparison"] = True
+                options = "; ".join(
+                    f"{plain_catalog_text(movie.title)} ({movie.year or 'año no disponible'})"
+                    for movie in movies
+                )
+                text = f"Para verificar el libro, elige una película por título o año: {options}."
+            else:
+                text = "No identifiqué la película. Indícame el título completo o el año."
             return TurnResult(
-                ChatResponse(response=text, requestId=request_id, movies=movies),
+                ChatResponse(response=text, requestId=request_id),
                 clean,
                 trace,
                 usage,
             )
+        remaining = self.settings.max_tool_calls - tool_calls_used
+        if remaining < 1:
+            raise PublicError("tool_limit", "La consulta superó el límite de herramientas.")
         args = MovieId(movieId=movies[0].id)
         discovery_text = None
         candidate_books: list[Book] = []
         try:
             result = await self.mcp.call("adaptation_evidence", args)
             validate_result("adaptation_evidence", args, result)
-            if result.adaptation and result.adaptation.status == "not_found":
+            if result.adaptation and result.adaptation.status == "not_found" and remaining > 1:
                 result.adaptation, candidate_books, discovery_text = await discover(
                     movies[0],
                     self.mcp,
@@ -174,7 +187,7 @@ class Agent:
                     trace,
                     usage,
                     self.settings.max_llm_calls,
-                    max_searches=min(2, self.settings.max_tool_calls - 1),
+                    max_searches=min(2, remaining - 1),
                 )
         except PublicError as error:
             trace.append({"tool": "adaptation_evidence", "status": "failed", "code": error.code})
@@ -246,6 +259,9 @@ class Agent:
             )
         if intent.kind == "adaptation_lookup" and intent.query:
             return await self._lookup_adaptation(intent.query, history, request_id, trace, usage)
+        named_movie = intent.kind == "movie_source_lookup"
+        if named_movie:
+            context = {}
         movies = [
             Movie.model_validate(item) for item in cast(list[object], context.get("movies", []))
         ]
@@ -316,6 +332,15 @@ class Agent:
                 )
             return reply
         if selected is not None:
+            if context.get("pending_comparison") is True:
+                return await self._compare(
+                    request,
+                    {"movies": [movie.model_dump() for movie in (selected or movies)]},
+                    request_id,
+                    trace,
+                    usage,
+                    needs_choice=not selected,
+                )
             if not selected:
                 text = "No hay una opción con esa selección. " + (
                     movie_text(movies)
@@ -330,7 +355,7 @@ class Agent:
                 )
             trace.append({"event": "selection", "status": "verified"})
             return self._verified_reply(selected, history, context, request_id, trace, usage)
-        if intent.kind in {"lookup", "metadata"} and intent.query:
+        if intent.kind in {"lookup", "metadata", "movie_source_lookup"} and intent.query:
             title_year = re.fullmatch(r"(.+?)(?:\s+(?:de|del|from))?\s+\(?(\d{4})\)?", intent.query)
             query = intent.query
             args = SearchMovies(query=query, limit=5)
@@ -342,6 +367,7 @@ class Agent:
                 raise
             trace.append({"tool": "search_movies", "status": "ok", "arguments": {"limit": 5}})
             found = result.movies
+            tool_calls_used = 1
             literal = [movie for movie in found if words(movie.title) == words(query)]
             if title_year and not literal:
                 base = title_year[1].strip(" ,")
@@ -357,6 +383,7 @@ class Agent:
                         )
                     fallback_args = SearchMovies(query=base, limit=5)
                     fallback = await self.mcp.call("search_movies", fallback_args)
+                    tool_calls_used += 1
                     validate_result("search_movies", fallback_args, fallback)
                     trace.append(
                         {"tool": "search_movies", "status": "ok", "arguments": {"limit": 5}}
@@ -369,6 +396,27 @@ class Agent:
                 found = matches
             # Prefer an exact title when the provider also returns sequels/parodies.
             exact = select_candidates(query, found)
+            if named_movie:
+                if exact and len(exact) == 1:
+                    return await self._compare(
+                        request,
+                        {"movies": [exact[0].model_dump()]},
+                        request_id,
+                        trace,
+                        usage,
+                        tool_calls_used=tool_calls_used,
+                    )
+                candidates = exact or [
+                    movie for movie in found if f" {words(query)} " in f" {words(movie.title)} "
+                ]
+                return await self._compare(
+                    request,
+                    {"movies": [movie.model_dump() for movie in candidates]},
+                    request_id,
+                    trace,
+                    usage,
+                    needs_choice=True,
+                )
             return self._verified_reply(exact or found, history, context, request_id, trace, usage)
         return None
 
@@ -654,7 +702,7 @@ class Agent:
         reference = re.fullmatch(
             r"(?:por favor )?(?:ahora )?(?:abre|abrir|abreme|open) "
             r"(?:(?:(?:su|la) ficha(?: de (?:esa|esta) pelicula)? en )?(imdb)"
-            r"|(?:(?:su|el) libro en )?(google books))"
+            r"|(?:(?:(?:su|el) libro|su ficha) en )?(google books))"
             r"(?: por favor)?",
             words(request.prompt),
         )

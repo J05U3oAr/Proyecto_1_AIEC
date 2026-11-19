@@ -123,10 +123,12 @@ def functional_checks(
             status == case.evaluator and cautious and comparison and no_false_absence(last.response)
         )
     if case.evaluator == "ambiguous":
+        listed_choices = re.findall(r"[^;\n:]+\(\d{4}\)", last.response)
         return bool(
-            len(last.movies) > 1
+            (len(last.movies) > 1 or len(listed_choices) > 1)
             and not comparison
-            and "adaptation_evidence" not in calls
+            and not calls
+            and not last.actions
             and re.search(r"cual|prefieres|elige|selecciona|indica", text)
         )
     if case.evaluator in {"imdb", "google_books"}:

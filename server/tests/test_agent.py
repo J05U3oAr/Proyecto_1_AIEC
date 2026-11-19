@@ -272,10 +272,11 @@ async def test_followup_actions_require_current_intent(settings, prompt):
     assert actions[0].resourceId == BOOK["id"]
 
 
-async def test_opening_verified_book_uses_session_without_inference(settings):
-    request = ChatRequest(
-        prompt="Ahora abre el libro en Google Books", navigationIntent={"provider": "google_books"}
-    )
+@pytest.mark.parametrize(
+    "prompt", ["Ahora abre el libro en Google Books", "Abre su ficha en Google Books"]
+)
+async def test_opening_verified_book_uses_session_without_inference(settings, prompt):
+    request = ChatRequest(prompt=prompt, navigationIntent={"provider": "google_books"})
     context = {"movies": [MOVIE], "books": [BOOK], "adaptation": ADAPTATION}
     agent = make_agent(settings, [])
     result = await agent.run(request, [], context, "book-reference")
@@ -340,6 +341,116 @@ async def test_unspecified_book_does_not_reuse_the_previous_movie(settings):
     assert result.response.response == "¿Cuál es el título del libro o la novela?"
     assert result.response.movies == []
     assert agent.mcp.calls == []
+
+
+async def test_named_movie_book_question_resolves_new_title_before_comparing(settings):
+    harry = {
+        **MOVIE,
+        "id": 671,
+        "title": "Harry Potter y la piedra filosofal",
+        "year": 2001,
+        "tmdb": "https://www.themoviedb.org/movie/671",
+    }
+    previous = {**MOVIE, "title": "Shrek"}
+    evidence = {
+        **ADAPTATION,
+        "movieId": 671,
+        "evidence": [
+            {
+                "statement": "Vínculo sintético de la película buscada.",
+                "source": {"provider": "tmdb", "url": harry["tmdb"], "label": "Fixture"},
+            }
+        ],
+    }
+    agent = make_agent(
+        settings,
+        [final("Harry Potter es una adaptación confirmada oficialmente.")],
+        [{"movies": [previous, harry]}, {"adaptation": evidence}],
+    )
+    result = await agent.run(
+        ChatRequest(prompt="¿En qué libro está basado Harry Potter 1?"),
+        [],
+        {"movies": [previous], "books": [BOOK], "adaptation": ADAPTATION},
+        "new-franchise",
+    )
+
+    assert [movie.id for movie in result.response.movies] == [671]
+    assert result.response.comparison.adaptation.movieId == 671
+    assert "Shrek" not in result.response.response
+    assert all(source.url != previous["tmdb"] for source in result.response.sources)
+    assert agent.mcp.calls[-1] == ("adaptation_evidence", {"movieId": 671})
+    assert not agent.llm.inputs
+
+
+async def test_named_movie_book_question_does_not_use_a_different_search_result(settings):
+    agent = make_agent(settings, [], [{"movies": [MOVIE]}])
+    result = await agent.run(
+        ChatRequest(prompt="¿En qué libro se basa Coraline?"),
+        [],
+        {"movies": [MOVIE], "books": [BOOK], "adaptation": ADAPTATION},
+        "missing-movie",
+    )
+    assert result.response.movies == []
+    assert result.response.comparison is None
+    assert result.context["movies"] == []
+    assert [name for name, _ in agent.mcp.calls] == ["search_movies"]
+
+
+async def test_named_movie_book_question_asks_which_version_before_book_lookup(settings):
+    other = {**MOVIE, "id": 42, "year": 1980, "tmdb": "https://www.themoviedb.org/movie/42"}
+    agent = make_agent(settings, [], [{"movies": [MOVIE, other]}])
+    result = await agent.run(
+        ChatRequest(prompt="¿En qué novela está basada Arrival?"), [], {}, "versions"
+    )
+    assert result.response.movies == []
+    assert "2016" in result.response.response and "1980" in result.response.response
+    assert [name for name, _ in agent.mcp.calls] == ["search_movies"]
+
+
+@pytest.mark.parametrize(
+    "prompt", ["¿En qué está basado Harry Potter?", "¿En qué libro está basado Harry Potter?"]
+)
+async def test_franchise_adaptation_request_resumes_when_a_year_is_chosen(settings, prompt):
+    movies = [
+        {**MOVIE, "title": "Harry Potter y la piedra filosofal", "year": 2001},
+        {
+            **MOVIE,
+            "id": 42,
+            "title": "Harry Potter y la cámara secreta",
+            "year": 2002,
+            "tmdb": "https://www.themoviedb.org/movie/42",
+        },
+    ]
+    agent = make_agent(settings, [], [{"movies": movies}, {"adaptation": ADAPTATION}])
+
+    first = await agent.run(ChatRequest(prompt=prompt), [], {}, "franchise")
+    assert "2001" in first.response.response and "2002" in first.response.response
+    assert first.response.movies == []
+    assert [name for name, _ in agent.mcp.calls] == ["search_movies"]
+
+    unmatched = await agent.run(ChatRequest(prompt="2003"), [], first.context, "unmatched")
+    assert unmatched.response.movies == []
+    assert [name for name, _ in agent.mcp.calls] == ["search_movies"]
+
+    choice = await agent.run(ChatRequest(prompt="2001"), [], unmatched.context, "selected")
+    assert choice.response.movies[0].year == 2001
+    assert choice.response.comparison.adaptation.movieId == MOVIE["id"]
+    assert agent.mcp.calls[-1] == ("adaptation_evidence", {"movieId": MOVIE["id"]})
+
+
+async def test_plural_book_followup_does_not_replay_cards_or_call_tools(settings):
+    other = {**MOVIE, "id": 42, "year": 1980, "tmdb": "https://www.themoviedb.org/movie/42"}
+    agent = make_agent(settings, [], [{"adaptation": ADAPTATION}])
+    first = await agent.run(
+        ChatRequest(prompt="¿Tienen libro?"), [], {"movies": [MOVIE, other]}, "plural"
+    )
+    assert first.response.movies == []
+    assert "título o año" in first.response.response
+    assert not agent.mcp.calls
+
+    choice = await agent.run(ChatRequest(prompt="2016"), [], first.context, "selected")
+    assert choice.response.comparison.adaptation.movieId == MOVIE["id"]
+    assert agent.mcp.calls == [("adaptation_evidence", {"movieId": MOVIE["id"]})]
 
 
 async def test_a_prior_comparison_does_not_overwrite_a_new_reply(settings):

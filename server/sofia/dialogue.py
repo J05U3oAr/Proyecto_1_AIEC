@@ -58,6 +58,7 @@ class Intent:
         "out_of_scope",
         "blocked",
         "book_based_recommendation",
+        "movie_source_lookup",
         "adaptation_lookup",
         "genre_recommendation",
         "similar_recommendation",
@@ -110,6 +111,17 @@ def route(prompt: str) -> Intent:
         text,
     ):
         return Intent("social", "¡Con gusto! Aquí estaré si quieres buscar otra película.")
+    movie_source = re.fullmatch(
+        r"en (?:que|cual) (?:(?:libro|novela) )?(?:se basa|esta basad[ao]) (.+)"
+        r"|(?:que|cual) (?:libro|novela) adapto (.+)",
+        without_hello,
+    )
+    if movie_source:
+        title = movie_source[1] or movie_source[2]
+        if title not in {"esa pelicula", "esta pelicula", "la pelicula"}:
+            if title == "harry potter 1":
+                title = "harry potter y la piedra filosofal"
+            return Intent("movie_source_lookup", query=title)
     adaptation_lookup = re.fullmatch(
         r"(?:(?:el libro|la novela)(?: de)? )?(.+?) "
         r"tiene (?:una )?(?:pelicula|adaptacion(?: cinematografica)?)",
